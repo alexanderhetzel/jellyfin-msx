@@ -12,6 +12,8 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.t
 FROM python:3.12-slim
 ENV APP_HOME=/app
 
+RUN apt-get update && apt-get install -y curl
+
 RUN mkdir -p $APP_HOME && addgroup --system app && adduser --system --group app
 WORKDIR /app
 
