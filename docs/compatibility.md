@@ -8,6 +8,7 @@ recorded per actual device, runtime, media combination and test outcome.
 | macOS integrated browser | Official MSX web 0.1.167; real Jellyfin authentication, browsing/posters, 720p MKV/H.264 video, pause/resume/seek/Stop/replay | Browser video passed; audible audio not independently verified |
 | Philips 32PHS6605/12, SAPHI | Exact-model documentation and MTK9288 identity; current candidate profile and admission policy | Physical MSX video, audio, remote and long playback not run |
 | Other MSX devices | No device evidence yet | Unverified |
+| Windows connected Chrome / official MSX 0.1.167 + HTML5X | Public UTF-8 WebVTT, umlauts, DE/EN/Off and sampled seeking; raw SRT/ASS and embedded mov_text negatives | Browser candidate with placement/failure-notice limits; device-unverified |
 
 The private integration lab exercised a Jellyfin release reporting 12.4.0.
 This is one observed release, not a complete supported-version range.

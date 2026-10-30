@@ -1,0 +1,91 @@
+{
+  "type": "list",
+  "headline": "PUBLIC SYNTHETIC / subtitle research",
+  "cache": false,
+  "reuse": false,
+  "preload": "none",
+  "template": {
+    "type": "default",
+    "layout": "0,0,12,1",
+    "color": "msx-glass"
+  },
+  "items": [
+    {
+      "title": "WebVTT DE and EN",
+      "playerLabel": "PUBLIC SYNTHETIC / WebVTT DE and EN",
+      "action": "video:plugin:https://msx.benzac.de/plugins/html5x.html?url=https%3A%2F%2Fraw.githack.com%2Falexanderhetzel%2Fjellyfin-msx%2Fd0c6fe2ab74f643756f9d7ea8119298b238d8f2f%2Ftests%2Ffixtures%2Fmsx-public%2Fsynthetic.mp4",
+      "properties": {
+        "button:content:icon": "subtitles",
+        "button:content:action": "panel:request:player:subtitle",
+        "html5x:cors": "true",
+        "html5x:subtitle": "de",
+        "control:timeout": "30",
+        "html5x:subtitle:de:Deutsch": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/fc20e096d7c0d7c16ed09d440f1aee81a477988e/tests/fixtures/msx-subtitles/de.vtt",
+        "html5x:subtitle:en:English": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/fc20e096d7c0d7c16ed09d440f1aee81a477988e/tests/fixtures/msx-subtitles/en.vtt"
+      }
+    },
+    {
+      "title": "Raw SRT negative",
+      "playerLabel": "PUBLIC SYNTHETIC / Raw SRT negative",
+      "action": "video:plugin:https://msx.benzac.de/plugins/html5x.html?url=https%3A%2F%2Fraw.githack.com%2Falexanderhetzel%2Fjellyfin-msx%2Fd0c6fe2ab74f643756f9d7ea8119298b238d8f2f%2Ftests%2Ffixtures%2Fmsx-public%2Fsynthetic.mp4",
+      "properties": {
+        "button:content:icon": "subtitles",
+        "button:content:action": "panel:request:player:subtitle",
+        "html5x:cors": "true",
+        "html5x:subtitle": "de",
+        "control:timeout": "30",
+        "html5x:subtitle:de:Raw SRT": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/fc20e096d7c0d7c16ed09d440f1aee81a477988e/tests/fixtures/msx-subtitles/de.srt"
+      }
+    },
+    {
+      "title": "Raw ASS negative",
+      "playerLabel": "PUBLIC SYNTHETIC / Raw ASS negative",
+      "action": "video:plugin:https://msx.benzac.de/plugins/html5x.html?url=https%3A%2F%2Fraw.githack.com%2Falexanderhetzel%2Fjellyfin-msx%2Fd0c6fe2ab74f643756f9d7ea8119298b238d8f2f%2Ftests%2Ffixtures%2Fmsx-public%2Fsynthetic.mp4",
+      "properties": {
+        "button:content:icon": "subtitles",
+        "button:content:action": "panel:request:player:subtitle",
+        "html5x:cors": "true",
+        "html5x:subtitle": "de",
+        "control:timeout": "30",
+        "html5x:subtitle:de:Raw ASS": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/fc20e096d7c0d7c16ed09d440f1aee81a477988e/tests/fixtures/msx-subtitles/de.ass"
+      }
+    },
+    {
+      "title": "Embedded mov_text native",
+      "playerLabel": "PUBLIC SYNTHETIC / Embedded mov_text native",
+      "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/fc20e096d7c0d7c16ed09d440f1aee81a477988e/tests/fixtures/msx-subtitles/embedded.mp4",
+      "properties": {
+        "button:content:icon": "subtitles",
+        "button:content:action": "panel:request:player:subtitle",
+        "html5x:cors": "true",
+        "html5x:subtitle": "de",
+        "control:timeout": "30"
+      }
+    },
+    {
+      "title": "Embedded mov_text HTML5X",
+      "playerLabel": "PUBLIC SYNTHETIC / Embedded mov_text HTML5X",
+      "action": "video:plugin:https://msx.benzac.de/plugins/html5x.html?url=https%3A%2F%2Fraw.githack.com%2Falexanderhetzel%2Fjellyfin-msx%2Ffc20e096d7c0d7c16ed09d440f1aee81a477988e%2Ftests%2Ffixtures%2Fmsx-subtitles%2Fembedded.mp4",
+      "properties": {
+        "button:content:icon": "subtitles",
+        "button:content:action": "panel:request:player:subtitle",
+        "html5x:cors": "true",
+        "html5x:subtitle": "de",
+        "control:timeout": "30"
+      }
+    },
+    {
+      "title": "Missing WebVTT negative",
+      "playerLabel": "PUBLIC SYNTHETIC / Missing WebVTT negative",
+      "action": "video:plugin:https://msx.benzac.de/plugins/html5x.html?url=https%3A%2F%2Fraw.githack.com%2Falexanderhetzel%2Fjellyfin-msx%2Fd0c6fe2ab74f643756f9d7ea8119298b238d8f2f%2Ftests%2Ffixtures%2Fmsx-public%2Fsynthetic.mp4",
+      "properties": {
+        "button:content:icon": "subtitles",
+        "button:content:action": "panel:request:player:subtitle",
+        "html5x:cors": "true",
+        "html5x:subtitle": "de",
+        "control:timeout": "30",
+        "html5x:subtitle:de:Missing": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/fc20e096d7c0d7c16ed09d440f1aee81a477988e/tests/fixtures/msx-subtitles/missing.vtt"
+      }
+    }
+  ]
+}
