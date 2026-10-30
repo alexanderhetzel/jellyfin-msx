@@ -12,7 +12,9 @@ def launch_url(plugin_url: str) -> str:
         raise ValueError("Use a public HTTPS URL for the synthetic probe only")
     root = {
         "headline": "MSX storage probe launcher",
-        "action": "execute:request:interaction:startup@" + plugin_url,
+        "action": "[home|delay:issue11:1:execute:request:interaction:startup@"
+        + plugin_url
+        + "]",
         "template": {"type": "default", "layout": "0,0,12,1"},
         "items": [
             {
