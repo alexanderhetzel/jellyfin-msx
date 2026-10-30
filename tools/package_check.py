@@ -82,8 +82,6 @@ def wheel_files(path: Path, root: Path) -> dict[str, bytes]:
 def context_files(path: Path, root: Path) -> dict[str, bytes]:
     expected = {"src/" + name: data for name, data in package_sources(root).items()}
     for name in (
-        "Dockerfile",
-        ".dockerignore",
         "pyproject.toml",
         "uv.lock",
         "LICENSE",

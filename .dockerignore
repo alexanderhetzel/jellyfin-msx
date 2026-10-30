@@ -1,7 +1,5 @@
 # Allowlist: no local configuration, state, media, tools or history in context.
 **
-!Dockerfile
-!.dockerignore
 !pyproject.toml
 !uv.lock
 !LICENSE
