@@ -1,5 +1,10 @@
 # Synthetic integration lab
 
+For the later approved synthetic HTTPS run with actual normal hosted pairing,
+authenticated playback and partial disconnect/recovery observations, see
+[the hosted synthetic HTTPS results](msx-synthetic-https-results.md). This remains
+a partial manual browser run; the complete automated hosted matrix is open.
+
 A separate [temporary synthetic HTTPS setup](temporary-synthetic-https.md) is
 prepared for an explicitly approved public Quick Tunnel. Its preflight is offline;
 preparation does not authorize or prove any hosted private integration.
