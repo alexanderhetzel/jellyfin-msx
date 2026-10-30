@@ -1,5 +1,28 @@
 # Verification status — 2026-10-30
 
+## Supported TestClient dependency — issue #30
+
+**Implemented / automated-tested / device-unverified:** the dev extra adds
+HTTPX2 2.16.0 for Starlette 1.10.0 TestClient's supported client path. Application
+HTTPX 0.28.1, FastAPI, Starlette and all existing dependency versions stay locked
+unchanged. No warning is suppressed; CI now runs the entire Python 3.12/3.13
+suite with `pytest -W error`. Production source and request/security behavior
+are unchanged. [Dependency evidence](build-supply-chain.md#testclient-update--issue-30)
+records the four added lock packages and client-object boundary.
+
+Windows/Python 3.12.14: `uv sync --locked --extra dev --group build` passed;
+`uv run pytest -W error` **360 passed / 1 POSIX skip**, with no warnings;
+`uv run ruff check .` passed; `uv run ruff format --check .` **79 files** passed.
+The full suite includes HTTP/origin/CSRF/chunked pairing bodies, early body-limit
+parser denial, subtitle streaming/size/deadline/revocation and upstream failure
+regressions. `uv run --no-sync python -W error -m tools.synthetic_check` passed;
+offline wheel build with explicit `.venv/Scripts/python.exe` and exact tracked
+source/license/template allowlist passed. The initial unqualified `uv lock`
+failed on a stale external Python 3.15 link; selecting the bundled Python 3.12.14
+explicitly resolved the lock without modifying the global Python installation.
+No browser, physical TV, real Jellyfin, credentials, production deployment or
+OS trust change occurred. Linux matrix/container checks remain CI gates.
+
 ## Playback profile contract — issue #34
 
 **Implemented / automated-tested / device-unverified:** immutable candidate

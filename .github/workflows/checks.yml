@@ -27,7 +27,7 @@ jobs:
           uv sync --frozen --extra dev --group build --no-build-isolation
       - run: uv run --no-sync ruff check .
       - run: uv run --no-sync ruff format --check .
-      - run: uv run --no-sync pytest
+      - run: uv run --no-sync pytest -W error
       - name: Synthetic HTTP contract smoke (no external runtime)
         run: uv run --no-sync python -m tools.synthetic_check
       - name: Verify wheel exclusion and reviewed manifest

@@ -44,7 +44,7 @@ python -m pip install --require-hashes --only-binary=:all: -r tools/requirements
 uv lock --check
 uv sync --frozen --only-group build
 uv sync --frozen --extra dev --group build --no-build-isolation
-uv run --no-sync pytest
+uv run --no-sync pytest -W error
 uv run --no-sync ruff check .
 uv run --no-sync ruff format --check .
 uv run --no-sync python -m tools.synthetic_check
@@ -121,6 +121,32 @@ permissions minimal and the required check names intact when updating Actions.
 5. Independently review the final head, resolve all actionable review threads and
    require actual branch-protection checks. Recheck an updated head; squash merge
    explicitly only after acceptance. Deployment remains separately authorized.
+
+### TestClient update — issue #30
+
+**Implemented / automated-tested:** Starlette 1.10.0 prefers HTTPX2 and warns on
+the legacy HTTPX TestClient path. Its [official TestClient documentation](https://starlette.dev/testclient/)
+and [release notes](https://starlette.dev/release-notes/#120-may-28-2026)
+document the supported replacement. Add `httpx2>=2.16,<3` only to the dev extra;
+retain runtime HTTPX and every existing locked dependency version. The
+[official migration guidance](https://pydantic.dev/docs/httpx2/get-started/migration/)
+supports side-by-side installation but warns that client/request/response and
+exception classes belong to their respective packages. Jellyfin transports and
+their MockTransport fixtures therefore remain HTTPX; Starlette owns the separate
+HTTPX2 TestClient. The full existing suite verifies that boundary.
+
+On 2026-10-30 the deliberate lock update added HTTPX2 2.16.0, HTTPCore2 2.16.0,
+truststore 0.10.5 and Emscripten-only httpx2-jsfetch 1.0. All eight sdist/wheel
+URLs and SHA256 values matched each version's official PyPI JSON metadata
+([HTTPX2](https://pypi.org/pypi/httpx2/2.16.0/json),
+[HTTPCore2](https://pypi.org/pypi/httpcore2/2.16.0/json),
+[truststore](https://pypi.org/pypi/truststore/0.10.5/json),
+[jsfetch](https://pypi.org/pypi/httpx2-jsfetch/1.0/json)). Their Python minimums
+are respectively 3.11, 3.11, 3.10 and 3.12; universal wheels cover the supported
+3.12/3.13 matrix. Emscripten is only a resolver marker, not a newly supported
+execution platform. Installing truststore does not authorize changing OS trust;
+the tests use in-process ASGI and mocked upstream transport. CI treats warnings
+as errors rather than hiding this or future deprecations. See [actual results](status.md).
 
 ### Existing cryptography update #44
 
