@@ -88,8 +88,9 @@ async def probe(base, version):
                     if "Version" in response.json():
                         break
                 except (httpx.RequestError, ContractFailure):
-                    require(time.monotonic() < deadline, "readiness deadline exceeded")
-                    await asyncio.sleep(1)
+                    pass
+                require(time.monotonic() < deadline, "readiness deadline exceeded")
+                await asyncio.sleep(1)
             observed_version = response.json()["Version"]
             require(
                 isinstance(observed_version, str)
@@ -266,11 +267,31 @@ async def probe(base, version):
                 require(error.status == 401, "unexpected logout denial")
             else:
                 raise ContractFailure("logged-out session remained authorized")
-            async with client.stream("GET", url, headers={"Range": "bytes=0-1023"}) as media:
-                require(
-                    media.status_code in (401, 403),
-                    f"logged-out media request HTTP {media.status_code}",
-                )
+            # Use a new transport/connection and explicitly request revalidation;
+            # neither a prior authorized connection nor a cached body is evidence.
+            async with httpx.AsyncClient(
+                timeout=12, follow_redirects=False, trust_env=False
+            ) as fresh:
+                async with fresh.stream(
+                    "GET", url, headers={"Range": "bytes=0-1023", "Cache-Control": "no-cache"}
+                ) as media:
+                    received = b""
+                    async for chunk in media.aiter_bytes():
+                        received += chunk
+                        require(len(received) <= 2048, "revoked range body exceeds bound")
+                    print(
+                        json.dumps(
+                            {
+                                "logout_media_status": media.status_code,
+                                "matches_original_prefix": received == fixture.read_bytes()[:1024],
+                            }
+                        ),
+                        flush=True,
+                    )
+                    require(
+                        media.status_code in (401, 403),
+                        f"fresh logged-out media HTTP {media.status_code}",
+                    )
             return {
                 "version": version + ".0",
                 "base_path": "/jellyfin" if base.endswith("/jellyfin") else "/",
