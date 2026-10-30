@@ -180,23 +180,15 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
         try:
             device = state.pending(activation=link)
         except PortalError as error:
+            if activation:
+                # Never render a recovery form on a no-referrer bearer URL:
+                # Chromium would submit Origin:null and fail its next code check.
+                return activation_redirect("invalid", 60)
             response = form(error.message, error.status)
         else:
             if activation:
                 # Clean the credential form URL before rendering under same-origin policy.
-                response = RedirectResponse("/pair", status_code=303)
-                response.set_cookie(
-                    "pair_activation",
-                    activation,
-                    path="/pair",
-                    secure=not settings.allow_http,
-                    httponly=True,
-                    # Cross-site QR/link navigation must carry this pending-only
-                    # cookie through its top-level GET redirect. POST CSRF stays strict.
-                    samesite="lax",
-                    max_age=max(1, int(device.expires - state.clock())),
-                )
-                return response
+                return activation_redirect(activation, max(1, int(device.expires - state.clock())))
             response = form(device=device)
         response.delete_cookie(
             "pair_activation",
@@ -204,6 +196,20 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
             secure=not settings.allow_http,
             httponly=True,
             samesite="lax",
+        )
+        return response
+
+    def activation_redirect(value, lifetime):
+        response = RedirectResponse("/pair", status_code=303)
+        response.set_cookie(
+            "pair_activation",
+            value,
+            path="/pair",
+            secure=not settings.allow_http,
+            httponly=True,
+            # Only the pending GET handoff is Lax; credential POST CSRF remains Strict.
+            samesite="lax",
+            max_age=lifetime,
         )
         return response
 

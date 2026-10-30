@@ -31,12 +31,18 @@ never its private session capability. Valid links skip manual entry. QR renderin
 and MSX exposure of the link belong to #14; this milestone implements the receiving
 route. Activation validates pending state twice, before a 303 redirect and when
 rendering credentials at clean `/pair`. A transient HttpOnly `pair_activation`
-cookie carries only that activation secret, expires no later than pending expiry,
-and is deleted after the handoff. Its `SameSite=Lax` permits a cross-site top-level
+cookie carries only that activation secret for approximately the remaining
+pending lifetime (integer cookie expiry can round up by less than a second);
+server pending expiry remains authoritative. It is deleted after the handoff.
+Its `SameSite=Lax` permits a cross-site top-level
 GET redirect; it does not authorize a POST. The credential CSRF cookie remains
 HttpOnly, `SameSite=Strict`, Secure outside explicit HTTP development, and scoped
 to `/pair`. Every POST requires the exact configured Origin and double-submit
 CSRF validation. Grant-to-CSRF binding is additionally checked server-side.
+Invalid/expired/used activation queries also redirect clean, using a non-secret
+invalid sentinel cookie, before showing manual recovery. A form left on the
+no-referrer activation URL would submit Origin:null in Chromium and fail its
+next code check; clean recovery prevents that conflict.
 
 The activation response uses `no-referrer`; the clean form keeps `same-origin`
 for normal Chromium form POSTs. Every response remains no-store/private, with
@@ -55,6 +61,11 @@ logs. Disable URI/body/header logging at every hop as already required; do not
 send links to shared preview origins. Browser history and password-manager erasure
 are not implemented or claimed. Device codes and activation/token values are
 excluded from the Device representation. No real credentials are required for CI.
+An attacker-supplied valid link can identify the attacker's pending TV; it cannot
+submit credentials or silently retarget an existing credential form. The user
+still explicitly signs in to pair the identified TV. QR rollout must tell users
+to initiate pairing from their own TV; no link-level proof of physical ownership
+is claimed by this receiving-route milestone.
 
 ## Evidence and remaining acceptance
 
@@ -87,6 +98,12 @@ cross-site redirect; Lax fixed that actual Chromium failure. The rerun visibly
 skipped code entry at clean `/pair` and native synthetic credential submission
 displayed TV paired. This verifies the receiving route only, not QR rendering or
 official-MS​​X pairing integration. No cookie/security bypass was used.
+Independent review additionally caught invalid activation recovery retaining a
+no-referrer URL; a native Chrome rerun after the clean-redirect fix visibly
+advanced from invalid-link recovery to credentials using a current code. Three
+new regressions cover invalid ASCII/non-ASCII/Unicode links without reflecting
+them in cookies or retaining them on the form URL. Empty recovery and credential
+screenshots are local; no submitted code or credential appears in those images.
 
 A requested 390x844 viewport override still reported/rendered 2560-pixel width;
 it was reset. No new mobile-layout pass is claimed. `browser-verify` was not

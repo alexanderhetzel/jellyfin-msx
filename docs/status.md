@@ -32,7 +32,7 @@ history or substitute for log exclusions. No real account/server, deployment,
 runtime modification, TLS trust retry/security bypass or TV action occurred.
 
 Windows / Python 3.12.14: `uv sync --frozen --extra dev` passed;
-`uv run pytest`: **259 passed, 1 skipped**, known Starlette warning #30;
+`uv run pytest`: **262 passed, 1 skipped**, known Starlette warning #30;
 `uv run ruff check .`: passed; `uv run ruff format --check .`: **59 files formatted**;
 `uv build --wheel` and `git diff --check`: passed. All upstream tests use mocks.
 The first adapted suite exposed the old shared five-POST budget across two
@@ -40,6 +40,16 @@ two-stage recovery flows; separate five-attempt code/login budgets and a bounded
 ten-POST envelope corrected it. A new expiry-during-auth test initially changed
 the TestClient facade rather than its actual transport; a fresh client against
 the intended mocked app corrected that test harness and passed the logout check.
+Independent security review found invalid activation recovery would retain the
+no-referrer query URL and fail native Chromium Origin validation. Invalid links
+now redirect with a non-secret sentinel before rendering the code form. Native
+Chrome visibly verified invalid link → clean code recovery → valid code → blank
+credentials; non-ASCII/Unicode invalid-link regressions also pass. The reviewer
+independently ran the preceding 259-test suite/Ruff, inspected sanitized form/
+focus images and assessed the Lax/Strict boundary, grant consumption and privacy
+limits. Its top-of-heading screenshot rendering was inconclusive; the primary
+agent and master inspected the full heading. The reviewer did not operate Chrome,
+real Jellyfin or a TV.
 
 ## Durable server authorization milestone — issue #12
 

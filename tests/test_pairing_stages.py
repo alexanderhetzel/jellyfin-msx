@@ -71,6 +71,7 @@ def test_activation_skips_manual_code_with_independent_pending_secret(portal):
     result = submit(portal, hidden_fields(form), username="viewer", password="test-password")
     assert "TV paired" in result.text and portal.state.get(secret).token == TOKEN
     for activation in (secret, device.activation, "ä" * 40):
+        portal.now[0] += 61  # Each activation now has two bounded GET handoff requests.
         response = portal.client.get("/pair", params={"activation": activation})
         assert response.status_code == 400 and 'name="password"' not in response.text
 
@@ -83,6 +84,22 @@ def test_expired_stage_denied_before_upstream_and_cannot_be_replayed(portal):
     assert result.status_code == 400 and "expired" in result.text
     assert 'name="code"' in result.text and not portal.fake.requests
     assert not portal.state.pairing_stages
+
+
+@pytest.mark.parametrize("activation", ["invalid", "ä" * 40, "\U0001f512" * 8])
+def test_invalid_activation_cleans_url_before_rendering_usable_code_recovery(portal, activation):
+    response = portal.client.get("/pair", params={"activation": activation}, follow_redirects=False)
+    assert response.status_code == 303 and response.headers["location"] == "/pair"
+    assert response.headers["referrer-policy"] == "no-referrer" and "<form" not in response.text
+    assert "pair_activation=invalid" in response.headers["set-cookie"]
+    recovery = portal.client.get("/pair")
+    assert recovery.status_code == 400 and recovery.headers["referrer-policy"] == "same-origin"
+    assert "Create new code" in recovery.text and 'name="password"' not in recovery.text
+    assert "pair_activation" not in portal.client.cookies
+    _, device = portal.state.pair()
+    result = submit(portal, hidden_fields(recovery), code=device.code)
+    assert result.status_code == 200 and 'name="stage"' in result.text
+    assert not portal.fake.requests
 
 
 def test_stage_cannot_change_device_and_replay_after_success_is_denied(portal):
