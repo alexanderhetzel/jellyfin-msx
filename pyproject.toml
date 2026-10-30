@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling==1.33.0"]
 build-backend = "hatchling.build"
 
 [project]
@@ -14,11 +14,15 @@ dependencies = ["fastapi>=0.115,<1", "httpx>=0.28,<0.29", "uvicorn>=0.34,<1", "p
 [project.optional-dependencies]
 dev = ["pytest>=8,<10", "ruff>=0.11,<1"]
 
-[tool.hatch.build.targets.wheel]
-packages = ["src/jellyfin_msx"]
+[dependency-groups]
+# Build without isolation after syncing this exact, transitively locked group.
+build = ["hatchling==1.33.0"]
 
-[tool.hatch.build.targets.wheel.force-include]
-"src/jellyfin_msx/templates/pair.html" = "jellyfin_msx/templates/pair.html"
+[tool.hatch.build]
+include = ["src/jellyfin_msx/**/*.py", "src/jellyfin_msx/templates/*.html"]
+
+[tool.hatch.build.targets.wheel]
+sources = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

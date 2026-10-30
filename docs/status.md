@@ -1,5 +1,36 @@
 # Verification status — 2026-10-30
 
+## Reproducible build-input milestone — issue #27
+
+**Implemented / automated-tested locally / device-unverified:** official Python
+and Caddy index digest pins, exact Hatchling/build-group lock, hash-checked uv
+bootstrap, binary-only/hash-checked container dependency downloads, offline project
+build/runtime installation, explicit wheel/context file allowlists, synthetic
+exclusion canaries and source-byte/SHA256 manifests. CI retains SHA Actions,
+read-only token and credential-free checkout, adds installed-wheel/Fernet/SQLite
+smoke and actual filtered-context/final-image inspection. Weekly update PRs cover
+runtime/build, bootstrap, Actions and Docker. See the
+[input provenance, commands and update contract](build-supply-chain.md).
+
+Windows/Python 3.12.14: `uv lock --check`, frozen sync with dev/build groups,
+`uv run --no-sync pytest` (**265 passed, 1 POSIX-only skip**, known Starlette
+warning #30), Ruff check and format (**62 files**) passed. Offline wheel build
+with explicit `.venv/Scripts/python.exe`, license/NOTICE/template/source manifest
+and synthetic exclusion canaries passed; the synthetic HTTP contract passed.
+An initial build selected the base interpreter through `UV_PYTHON` and lacked
+Hatchling; explicit build-interpreter selection corrected the command. Initial
+canary inspection exposed Hatch's `packages` overriding include filters; replacing
+it with include patterns/path rewriting fixed the actual wheel. An existing
+literal `.lab` guard was retained alongside the context allowlist. These failures
+were observed and corrected, not counted as passes. Docker is absent locally;
+Linux/container/full-history CI and independent final review are pending.
+
+**Deferred dependency update:** PR #44 remains open at its reviewed stale
+50.0.0 head pending current patch/base and renewed checks; the runtime stays on
+48.0.1. Independent artifact/Fernet compatibility review and technical disposition
+are recorded in the PR and build document. No browser, MSX, TV, real server,
+production deployment, credential or trust-store action occurred for #27.
+
 ## Two-stage companion pairing milestone — issue #13
 
 **Implemented / automated-tested / device-unverified:** manual code validation
