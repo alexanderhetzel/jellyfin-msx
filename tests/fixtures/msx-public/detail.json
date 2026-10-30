@@ -1,6 +1,7 @@
 {
   "type": "list",
   "headline": "PUBLIC FIXTURE / Synthetic clip",
+  "extension": "{txt:#b8f16a:Jellyfin MSX}",
   "cache": false,
   "reuse": false,
   "preload": "none",
@@ -9,7 +10,7 @@
     "layout": "0,0,12,1",
     "centration": "title",
     "truncation": "title",
-    "color": "msx-glass"
+    "color": "#182632"
   },
   "items": [
     {

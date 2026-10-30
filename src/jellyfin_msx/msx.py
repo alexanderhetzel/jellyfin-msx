@@ -1,5 +1,7 @@
 import re
 
+from .presentation import ACCENT, PRODUCT, SURFACE
+
 
 def text(value, limit=500):
     """Strip MSX inline-expression delimiters from untrusted library strings."""
@@ -10,18 +12,19 @@ def content(headline: str, items: list[dict], posters=False):
     return {
         "type": "pages" if posters else "list",
         "headline": text(headline),
+        "extension": f"{{txt:{ACCENT}:{PRODUCT}}}",
         "cache": False,
         "reuse": False,
         "preload": "none",
         "template": (
-            {"type": "separate", "layout": "0,0,3,5"}
+            {"type": "separate", "layout": "0,0,3,5", "color": SURFACE}
             if posters
             else {
                 "type": "default",
                 "layout": "0,0,12,1",
                 "centration": "title",
                 "truncation": "title",
-                "color": "msx-glass",
+                "color": SURFACE,
             }
         ),
         "items": items or [{"title": "No items available", "action": "back"}],

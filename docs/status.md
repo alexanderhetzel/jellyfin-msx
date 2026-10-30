@@ -1,5 +1,32 @@
 # Verification status — 2026-10-30
 
+## Consistent visual design — issue #15
+
+**Implemented / automated-tested / browser-tested / device-unverified:** shared
+dark surfaces/light text/green product label in native MSX and companion pages,
+readable code/sign-in/retry/success hierarchy, preserved native MSX controls and
+visible keyboard recovery focus. [Design and actual evidence](visual-design.md)
+records final public fixture pin, measured 1920x1080 official MSX and 390x844 /
+1280x900 companion screenshots, native key/form actions and scope limits.
+Physical readability/overscan/remote acceptance was explicitly preserved in final
+issue #4; no TV or full hosted private pairing pass is inferred.
+
+Windows/Python 3.12.14: `uv sync --locked --extra dev --group build` passed;
+`uv run pytest` **345 passed / 1 POSIX skip**, known warning #30;
+`uv run ruff check .` passed and `uv run ruff format --check .` **76 files** passed.
+`uv build --wheel --no-build-isolation` and the exact tracked-source/license/template
+wheel allowlist check passed, including the presentation module and excluding
+tools, fixtures and local helper/reports. An initial 345-test pass exposed
+Ruff formatting/line-length findings, subsequently corrected; the final full run
+and both Ruff checks passed. Public-export and pairing affected checks also passed.
+No dependency, real server/account, production, trust or runtime-code change.
+Independent review inspected source/security/export boundaries and all sixteen
+named visual captures with no blocking findings; it did not repeat browser
+actions. Final denial capture is the denied-detail view, distinct from the opened
+timed notice observed during actual actions. Owned tabs/listener were closed and
+viewport overrides cleared, with original 2560x1215 dimensions restored.
+
+
 ## Opt-in subtitle resource milestone — issue #22
 
 **Implemented / automated-tested / device-unverified:** disabled-by-default

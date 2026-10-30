@@ -20,11 +20,12 @@ from .jellyfin import Jellyfin, identifier
 from .middleware import PairBodyLimit
 from .msx import button, content, text, wrapped
 from .playback import PROFILE_NAME, choose_source, compatibility_reasons, resolve
+from .presentation import PAIR_CSS
 from .state import State
 from .subtitles import OFFICIAL_ORIGINS, SubtitleResources
 
 ItemId = Annotated[str, Query(pattern=r"^[a-fA-F0-9-]{32,36}$")]
-TEMPLATE = Path(__file__).with_name("templates").joinpath("pair.html").read_text()
+TEMPLATE = Path(__file__).with_name("templates").joinpath("pair.html").read_text(encoding="utf-8")
 
 
 def create_app(settings: Settings | None = None, transport=None, state: State | None = None):
@@ -127,6 +128,8 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
         page = TEMPLATE.replace("{{csrf}}", csrf).replace("{{message}}", escape(message))
         page = page.replace("{{server}}", escape(settings.jellyfin_url))
         if device:
+            page = page.replace("{{heading}}", "Sign in to Jellyfin")
+            page = page.replace("{{step}}", "Step 2 of 2 · Sign in")
             grant = state.stage(device, csrf)
             fields = (
                 f'<input type="hidden" name="stage" value="{grant}">'
@@ -144,6 +147,8 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
                 '<a href="/pair">Use a different TV code</a>.'
             )
         else:
+            page = page.replace("{{heading}}", "Pair your TV")
+            page = page.replace("{{step}}", "Step 1 of 2 · TV code")
             fields = (
                 '<label for="code">TV code</label>'
                 '<input id="code" name="code" inputmode="numeric" autocomplete="off" '
@@ -176,8 +181,10 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
         return HTMLResponse(
             '<!doctype html><html lang="en"><meta name="viewport" '
             'content="width=device-width,initial-scale=1"><title>Jellyfin MSX</title>'
-            "<h1>Jellyfin MSX</h1><p>Enter this server address in MSX Start Parameter."
-            '</p><p><a href="/pair">Pair a TV</a></p></html>'
+            '<link rel="stylesheet" href="/pair.css"><main>'
+            '<p class="brand">Jellyfin MSX</p><h1>Watch with Media Station X</h1>'
+            "<p>Enter this server address in MSX Start Parameter."
+            '</p><p><a href="/pair">Pair your TV</a></p></main></html>'
         )
 
     @app.get("/pair", response_class=HTMLResponse)
@@ -263,8 +270,11 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
                 raise
             response = HTMLResponse(
                 '<!doctype html><html lang="en"><meta name="viewport" '
-                'content="width=device-width,initial-scale=1"><title>TV paired</title>'
-                '<link rel="stylesheet" href="/pair.css"><main><h1>TV paired</h1>'
+                'content="width=device-width,initial-scale=1">'
+                "<title>TV paired · Jellyfin MSX</title>"
+                '<link rel="stylesheet" href="/pair.css"><main>'
+                '<p class="brand">Jellyfin MSX</p><p class="step">Pairing complete</p>'
+                "<h1>TV paired</h1>"
                 '<p role="status">Sign-in succeeded. Return to Media Station X and select '
                 "<strong>Continue after pairing</strong>.</p>"
                 "<p>You can close this page. No further login is needed here.</p></main></html>"
@@ -295,15 +305,7 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
 
     @app.get("/pair.css")
     def css():
-        return Response(
-            "body{font:18px system-ui;margin:3rem auto;padding:0 1.2rem;max-width:32rem;"
-            "background:#101820;color:#f4f7fa}label{display:block;margin:1.3rem 0 .4rem}"
-            "input,button{box-sizing:border-box;width:100%;font:inherit;padding:.8rem;"
-            "border-radius:.4rem;border:1px solid #8a9bad}button{margin-top:1.5rem;"
-            "background:#b8f16a;color:#101820;font-weight:700}p{overflow-wrap:anywhere}"
-            "a{color:#b8f16a}:focus-visible{outline:3px solid #b8f16a;outline-offset:3px}",
-            media_type="text/css",
-        )
+        return Response(PAIR_CSS, media_type="text/css")
 
     @app.get("/msx/start.json")
     def start():
@@ -389,7 +391,10 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
             return content(
                 "Waiting for pairing",
                 [
-                    button("Continue after pairing", "content:" + device_url(secret, "home.json")),
+                    button(
+                        "Continue after pairing",
+                        "content:" + device_url(secret, "home.json"),
+                    ),
                     button("Create new code", "content:" + url("/msx/pair.json")),
                 ],
             )

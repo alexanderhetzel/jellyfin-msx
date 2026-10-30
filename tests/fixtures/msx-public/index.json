@@ -1,6 +1,7 @@
 {
   "type": "list",
   "headline": "PUBLIC FIXTURE / Jellyfin libraries",
+  "extension": "{txt:#b8f16a:Jellyfin MSX}",
   "cache": false,
   "reuse": false,
   "preload": "none",
@@ -9,7 +10,7 @@
     "layout": "0,0,12,1",
     "centration": "title",
     "truncation": "title",
-    "color": "msx-glass"
+    "color": "#182632"
   },
   "items": [
     {
@@ -18,12 +19,14 @@
       "data": {
         "type": "pages",
         "headline": "PUBLIC FIXTURE / Library",
+        "extension": "{txt:#b8f16a:Jellyfin MSX}",
         "cache": false,
         "reuse": false,
         "preload": "none",
         "template": {
           "type": "separate",
-          "layout": "0,0,3,5"
+          "layout": "0,0,3,5",
+          "color": "#182632"
         },
         "items": [
           {
@@ -34,6 +37,7 @@
             "data": {
               "type": "list",
               "headline": "PUBLIC FIXTURE / Synthetic clip",
+              "extension": "{txt:#b8f16a:Jellyfin MSX}",
               "cache": false,
               "reuse": false,
               "preload": "none",
@@ -42,7 +46,7 @@
                 "layout": "0,0,12,1",
                 "centration": "title",
                 "truncation": "title",
-                "color": "msx-glass"
+                "color": "#182632"
               },
               "items": [
                 {
@@ -80,6 +84,7 @@
             "data": {
               "type": "list",
               "headline": "PUBLIC FIXTURE / Synthetic clip",
+              "extension": "{txt:#b8f16a:Jellyfin MSX}",
               "cache": false,
               "reuse": false,
               "preload": "none",
@@ -88,7 +93,7 @@
                 "layout": "0,0,12,1",
                 "centration": "title",
                 "truncation": "title",
-                "color": "msx-glass"
+                "color": "#182632"
               },
               "items": [
                 {
@@ -144,6 +149,39 @@
     {
       "title": "Broken public media (expected failure)",
       "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/deliberately-missing.mp4"
+    },
+    {
+      "title": "Waiting for pairing (public preview)",
+      "action": "content:data",
+      "data": {
+        "type": "list",
+        "headline": "PUBLIC FIXTURE / Waiting for pairing",
+        "extension": "{txt:#b8f16a:Jellyfin MSX}",
+        "cache": false,
+        "reuse": false,
+        "preload": "none",
+        "template": {
+          "type": "default",
+          "layout": "0,0,12,1",
+          "centration": "title",
+          "truncation": "title",
+          "color": "#182632"
+        },
+        "items": [
+          {
+            "title": "Continue after pairing",
+            "action": "info:Public waiting preview only. No TV is being paired."
+          },
+          {
+            "title": "Create new code",
+            "action": "info:Public waiting preview only. No TV is being paired."
+          },
+          {
+            "title": "Public fixture scope",
+            "action": "info:Rendering and player only. Normal hosted pairing, private delivery and dynamic recovery remain untested."
+          }
+        ]
+      }
     }
   ]
 }
