@@ -79,6 +79,11 @@
         },
         handleRequest: function (id, data, callback) {
           document.getElementById("probe-status").textContent = "MSX request: " + id;
+          if (id === "startup") {
+            starts += 1;
+            callback({action: "content:request:interaction:init"});
+            return;
+          }
           callback(id === "init" ? page(operate("read")) : null);
         },
         handleData: function (data) {

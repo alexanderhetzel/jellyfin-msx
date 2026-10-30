@@ -11,9 +11,15 @@ def launch_url(plugin_url: str) -> str:
     if url.scheme != "https" or not url.hostname or url.username or url.password:
         raise ValueError("Use a public HTTPS URL for the synthetic probe only")
     root = {
-        "reference": "request:interaction:init@" + plugin_url,
-        "action": "[home|interaction:commit]",
-        "data": {"operation": "startup"},
+        "headline": "MSX storage probe launcher",
+        "action": "execute:request:interaction:startup@" + plugin_url,
+        "template": {"type": "default", "layout": "0,0,12,1"},
+        "items": [
+            {
+                "label": "Open probe without startup action",
+                "action": "content:request:interaction:init@" + plugin_url,
+            }
+        ],
     }
     encoded = base64.b64encode(json.dumps(root).encode()).decode()
     return (
