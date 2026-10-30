@@ -97,6 +97,10 @@ all placement/private-delivery/device gates remain as described below.
 
 ## Secure contract for #22 — deferred implementation
 
+The later opt-in [backend resource milestone](subtitle-resources.md) implements
+only bounded authenticated plain-WebVTT delivery/cataloguing. The player/UI,
+private hosted integration and placement/error gates below remain deferred.
+
 External WebVTT is a **candidate** with placement/failure-notice limits. Default
 Off. Require an eligible external UTF-8 VTT sidecar; explain raw SRT/ASS, embedded
 and bitmap unsupported paths. Future conversion/extraction requires separate

@@ -1,5 +1,32 @@
 # Verification status — 2026-10-30
 
+## Opt-in subtitle resource milestone — issue #22
+
+**Implemented / automated-tested / device-unverified:** disabled-by-default
+[bounded WebVTT catalogue/resource](subtitle-resources.md), exact source/absolute
+index admission, reauthorization/revocation, fixed upstream route, token withholding,
+UTF-8 plain-cue validation and deadline/size/concurrency limits. Normal MSX UI
+remains Off; #22 remains open for actual controlled-origin hosted private delivery,
+selection, placement, recovery and seek/Off/Stop. No new browser or TV test ran.
+
+Windows/Python 3.12.14: frozen dev/build sync passed; `uv run pytest` **333 passed,
+1 POSIX skip** (known warning #30); Ruff check and format check **74 files** passed.
+First affected run: 60 passed, one test assumed a non-subtitle Audio mutation
+would leave the source eligible. Production correctly rejected the incompatible
+source; the assertion now accepts that fail-closed result. No real server,
+credentials, TLS trust, deployment, vendor-runtime change or library mutation.
+After additional rate/preflight/chunk/transport/parser-bound checks, the full
+suite passed **338 tests / 1 skip**, Ruff/format passed. Offline wheel build with
+explicit `.venv/Scripts/python.exe` and exact source/license/template allowlist
+passed. Independent review found Unicode digits admitted in timestamps; restrict
+the grammar to ASCII with a regression. Review also found an ambiguous double
+timing line could be mistaken for a cue ID; arrow-bearing IDs/payload now fail
+closed. Final local full suite: **345 passed / 1 skip**, Ruff check/format passed,
+offline wheel/exact allowlist and `git diff --check` passed. Additional malformed
+item-Type, duplicate-source, mismatched-item and metadata-revocation regressions
+pass. Docker is absent locally; Compose/container verification is a required CI
+gate. The independent reviewer did not execute a live MSX browser or TV.
+
 ## Subtitle research — issue #21
 
 **Implemented / automated-tested / browser-tested / device-unverified:** public

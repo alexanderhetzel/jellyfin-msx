@@ -21,6 +21,7 @@ from .middleware import PairBodyLimit
 from .msx import button, content, text, wrapped
 from .playback import PROFILE_NAME, choose_source, compatibility_reasons, resolve
 from .state import State
+from .subtitles import OFFICIAL_ORIGINS, SubtitleResources
 
 ItemId = Annotated[str, Query(pattern=r"^[a-fA-F0-9-]{32,36}$")]
 TEMPLATE = Path(__file__).with_name("templates").joinpath("pair.html").read_text()
@@ -30,6 +31,7 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
     settings = settings or Settings.from_env()
     state = state or State(settings)
     jellyfin = Jellyfin(settings, transport)
+    subtitles = SubtitleResources(jellyfin, state)
     # Native playback needs bearer URLs. Never emit request URLs from HTTP client logs.
     logging.getLogger("httpx").setLevel(logging.WARNING)
     logging.getLogger("httpcore").setLevel(logging.WARNING)
@@ -96,6 +98,14 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
         )
         if not settings.allow_http:
             response.headers["Strict-Transport-Security"] = "max-age=31536000"
+        if request.url.path.startswith("/api/device/") and "/subtitles/" in request.url.path:
+            # Override the general read-only MSX CORS policy for private subtitle bytes.
+            for header in ("Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"):
+                if header in response.headers:
+                    del response.headers[header]
+            response.headers["Vary"] = "Origin"
+            if request.headers.get("origin") in OFFICIAL_ORIGINS:
+                response.headers["Access-Control-Allow-Origin"] = request.headers["origin"]
         return response
 
     @app.exception_handler(PortalError)
@@ -595,6 +605,15 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
         if media_type not in {"image/jpeg", "image/png", "image/webp"}:
             raise PortalError(502, "Unsupported image response.")
         return Response(raw, media_type=media_type)
+
+    @app.get("/api/device/{secret}/subtitles/{item_id}/{source_id}")
+    async def subtitle_catalogue(secret: str, item_id: str, source_id: str):
+        return await subtitles.request(secret, item_id, source_id)
+
+    @app.get("/api/device/{secret}/subtitles/{item_id}/{source_id}/{index}.vtt")
+    async def subtitle_resource(secret: str, item_id: str, source_id: str, index: int):
+        raw = await subtitles.request(secret, item_id, source_id, index)
+        return Response(raw, media_type="text/vtt")
 
     @app.get("/api/device/{secret}/diagnostics")
     async def diagnostics_api(secret: str):

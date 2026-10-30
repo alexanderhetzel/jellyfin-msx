@@ -7,6 +7,7 @@ services:
       MSX_ALLOW_HTTP: ${MSX_ALLOW_HTTP:-false}
       MSX_MAX_BITRATE: ${MSX_MAX_BITRATE:-}
       MSX_ALLOW_TRANSCODING: ${MSX_ALLOW_TRANSCODING:-false}
+      MSX_ENABLE_SUBTITLE_RESOURCES: ${MSX_ENABLE_SUBTITLE_RESOURCES:-false}
     restart: unless-stopped
     read_only: true
     security_opt:
