@@ -30,7 +30,7 @@
             "title": "Synthetic clip",
             "action": "content:data",
             "titleFooter": "Movie",
-            "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/533a572c19cd16bb0aace7857ce7677632056023/tests/fixtures/msx-public/poster.png",
+            "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png",
             "data": {
               "type": "list",
               "headline": "PUBLIC FIXTURE / Synthetic clip",
@@ -47,7 +47,7 @@
               "items": [
                 {
                   "title": "Try original (TV unverified)",
-                  "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/533a572c19cd16bb0aace7857ce7677632056023/tests/fixtures/msx-public/synthetic.mp4",
+                  "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
                   "playerLabel": "Public synthetic clip / substituted fixture URL"
                 },
                 {
@@ -143,7 +143,7 @@
     },
     {
       "title": "Broken public media (expected failure)",
-      "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/533a572c19cd16bb0aace7857ce7677632056023/tests/fixtures/msx-public/deliberately-missing.mp4"
+      "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/deliberately-missing.mp4"
     }
   ]
 }
