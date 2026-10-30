@@ -9,20 +9,14 @@
 <body>
   <main>
     <h1>Pair your TV</h1>
-    <p>Enter the code shown in Media Station X and sign in to your Jellyfin account.</p>
+    <p>{{instructions}}</p>
     <p>Server: {{server}}</p>
     <p role="status">{{message}}</p>
     <form action="/pair" method="post">
       <input type="hidden" name="csrf" value="{{csrf}}">
-      <label for="code">TV code</label>
-      <input id="code" name="code" inputmode="numeric" autocomplete="off" maxlength="16" placeholder="1234 5678" required>
-      <label for="username">Jellyfin username</label>
-      <input id="username" name="username" autocomplete="username" maxlength="128" required>
-      <label for="password">Jellyfin password</label>
-      <input id="password" name="password" type="password" autocomplete="current-password" maxlength="1024">
-      <button type="submit">Pair this TV</button>
+      {{fields}}
     </form>
-    <p>Your password is used for this sign-in and is not stored. After pairing, use the TV remote to browse and play.</p>
+    <p>{{help}}</p>
   </main>
 </body>
 </html>

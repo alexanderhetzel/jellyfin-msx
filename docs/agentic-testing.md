@@ -36,7 +36,9 @@ is test operation, not a product feature and not a separate feature ticket.
 3. Complete the normal pairing form. If using an HTTP form client to keep secret
    values outside agent/browser logs, GET the real `/pair` form, retain its normal
    CSRF cookie in memory, read the hidden form field inside that process and POST
-   the current code/account/password with the exact expected Origin. Validate the
+   the current code with the exact expected Origin. Only after a valid code check,
+   retain the rotated cookie and new hidden CSRF/stage fields in memory and POST
+   those fields plus the account/password to the same clean `/pair`. Validate the
    configured destination and TLS; follow no redirects. Do not bypass validation
    or add a special authentication endpoint.
 4. Check the success response, then select Continue in actual MSX and verify that

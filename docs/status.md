@@ -1,5 +1,46 @@
 # Verification status — 2026-10-30
 
+## Two-stage companion pairing milestone — issue #13
+
+**Implemented / automated-tested / device-unverified:** manual code validation
+precedes credentials, with bounded single-use device/CSRF-bound RAM grants,
+absolute pending expiry checked before/after authentication, fixed recovery,
+fresh blank password retries, explicit code restart and independent pending-only
+activation links. Strict POST Origin/CSRF, 8-KiB body protection and bounded code/
+credential attempts remain. A temporary Lax activation cookie supports cross-site
+top-level GET redirects; the sign-in CSRF cookie remains Strict. See the
+[pairing/security/evidence contract](companion-pairing.md). QR rendering is #14.
+
+**Actual companion browser evidence:** connected Chrome native controls verified
+invalid-code recovery without credentials, valid-code progression, wrong-password
+cleared retry, successful synthetic pairing, old-tab CSRF recovery and explicit
+code restart. A labeled local activation-route fixture exposed a Strict-cookie
+redirect failure; changing only that pending-only handoff to Lax visibly fixed
+cross-origin link entry, clean credential URL and successful native sign-in.
+The recovery link's visited-color contrast was corrected and actual keyboard
+focus/full-heading screenshots inspected. No `browser-verify` skill/tool was
+available; the supported Chrome API supplied these observations. A phone viewport
+override did not apply and was reset; no mobile-layout pass is claimed.
+
+**Deferred / issue remains open:** the actual normal official-MS​​X launcher showed
+Data Load Error / Start Error before pairing UI. Final-run sanitized counts show
+no pair.json request, one mock authentication/200 and one paired session from the
+separate companion activation check. Source JSON and the explicit activation
+fixture are not MSX integration. Controlled-host full pairing/private libraries
+and physical TV remain unverified. Activation redirects do not erase browser
+history or substitute for log exclusions. No real account/server, deployment,
+runtime modification, TLS trust retry/security bypass or TV action occurred.
+
+Windows / Python 3.12.14: `uv sync --frozen --extra dev` passed;
+`uv run pytest`: **259 passed, 1 skipped**, known Starlette warning #30;
+`uv run ruff check .`: passed; `uv run ruff format --check .`: **59 files formatted**;
+`uv build --wheel` and `git diff --check`: passed. All upstream tests use mocks.
+The first adapted suite exposed the old shared five-POST budget across two
+two-stage recovery flows; separate five-attempt code/login budgets and a bounded
+ten-POST envelope corrected it. A new expiry-during-auth test initially changed
+the TestClient facade rather than its actual transport; a fresh client against
+the intended mocked app corrected that test harness and passed the logout check.
+
 ## Durable server authorization milestone — issue #12
 
 **Implemented / automated-tested / device-unverified:** disabled-by-default

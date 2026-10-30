@@ -10,7 +10,7 @@ from urllib.parse import urlencode
 
 from fastapi import FastAPI, Form, Query, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import HTMLResponse, JSONResponse, Response
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Response
 from starlette.middleware.cors import CORSMiddleware
 
 from .config import Settings
@@ -71,7 +71,7 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
         try:
             async with asyncio.timeout(25):
                 if request.method == "POST" and request.url.path == "/pair":
-                    limit(request, "login", 5)
+                    limit(request, "pair_post", 10)
                 response = await call_next(request)
         except TimeoutError:
             response = failure(request, PortalError(504, "Request timed out. Try again."))
@@ -83,7 +83,11 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
                 "Pragma": "no-cache",
                 # Chromium sends Origin:null for native form POSTs under no-referrer.
                 # Preserve same-origin CSRF validation without exposing URLs off-site.
-                "Referrer-Policy": "same-origin" if request.url.path == "/pair" else "no-referrer",
+                "Referrer-Policy": (
+                    "same-origin"
+                    if request.url.path == "/pair" and not request.query_params.get("activation")
+                    else "no-referrer"
+                ),
                 "X-Content-Type-Options": "nosniff",
                 "Content-Security-Policy": "default-src 'none'; style-src 'self'; "
                 "form-action 'self'; "
@@ -108,10 +112,39 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
         state.limit(kind + ":" + peer, maximum)
         state.limit(kind + ":global", maximum * 4)
 
-    def form(message="", status=200):
+    def form(message="", status=200, device=None):
         csrf = secrets.token_urlsafe(32)
         page = TEMPLATE.replace("{{csrf}}", csrf).replace("{{message}}", escape(message))
         page = page.replace("{{server}}", escape(settings.jellyfin_url))
+        if device:
+            grant = state.stage(device, csrf)
+            fields = (
+                f'<input type="hidden" name="stage" value="{grant}">'
+                '<label for="username">Jellyfin username</label>'
+                '<input id="username" name="username" autocomplete="username" '
+                'maxlength="128" required>'
+                '<label for="password">Jellyfin password</label>'
+                '<input id="password" name="password" type="password" '
+                'autocomplete="current-password" maxlength="1024">'
+                '<button type="submit">Pair this TV</button>'
+            )
+            instructions = "TV code verified. Sign in to pair this TV before its code expires."
+            help_text = (
+                "Your password is used for this sign-in and is not stored. "
+                '<a href="/pair">Use a different TV code</a>.'
+            )
+        else:
+            fields = (
+                '<label for="code">TV code</label>'
+                '<input id="code" name="code" inputmode="numeric" autocomplete="off" '
+                'maxlength="16" '
+                'placeholder="1234 5678" required>'
+                '<button type="submit">Check TV code</button>'
+            )
+            instructions = "Enter the code shown in Media Station X. Next, sign in to Jellyfin."
+            help_text = "Need a new code? Select Create new code in Media Station X."
+        page = page.replace("{{fields}}", fields).replace("{{instructions}}", instructions)
+        page = page.replace("{{help}}", help_text)
         response = HTMLResponse(page, status_code=status)
         response.set_cookie(
             "pair_csrf",
@@ -138,16 +171,49 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
         )
 
     @app.get("/pair", response_class=HTMLResponse)
-    async def pair_form(request: Request):
+    async def pair_form(request: Request, activation: Annotated[str, Query(max_length=128)] = ""):
         limit(request, "form", 30)
-        return form()
+        link = activation or request.cookies.get("pair_activation", "")
+        if not link:
+            return form()
+        limit(request, "activation", 5)
+        try:
+            device = state.pending(activation=link)
+        except PortalError as error:
+            response = form(error.message, error.status)
+        else:
+            if activation:
+                # Clean the credential form URL before rendering under same-origin policy.
+                response = RedirectResponse("/pair", status_code=303)
+                response.set_cookie(
+                    "pair_activation",
+                    activation,
+                    path="/pair",
+                    secure=not settings.allow_http,
+                    httponly=True,
+                    # Cross-site QR/link navigation must carry this pending-only
+                    # cookie through its top-level GET redirect. POST CSRF stays strict.
+                    samesite="lax",
+                    max_age=max(1, int(device.expires - state.clock())),
+                )
+                return response
+            response = form(device=device)
+        response.delete_cookie(
+            "pair_activation",
+            path="/pair",
+            secure=not settings.allow_http,
+            httponly=True,
+            samesite="lax",
+        )
+        return response
 
     @app.post("/pair", response_class=HTMLResponse)
     async def pair_submit(
         request: Request,
-        code: Annotated[str, Form(max_length=16)],
-        username: Annotated[str, Form(min_length=1, max_length=128)],
         csrf: Annotated[str, Form(max_length=128)],
+        code: Annotated[str, Form(max_length=16)] = "",
+        stage: Annotated[str, Form(max_length=128)] = "",
+        username: Annotated[str, Form(max_length=128)] = "",
         password: Annotated[str, Form(max_length=1024)] = "",
     ):
         device = None
@@ -159,7 +225,14 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
                 or not secrets.compare_digest(cookie.encode(), csrf.encode())
             ):
                 raise PortalError(403, "Form expired. Reload this page and retry.")
-            device = state.claim(code.replace(" ", "").replace("-", ""))
+            if not stage:
+                limit(request, "code", 5)
+                pending = state.pending(code.replace(" ", "").replace("-", ""))
+                return form(device=pending)
+            limit(request, "login", 5)
+            device = state.claim_stage(stage, csrf)
+            if not username:
+                raise PortalError(400, "Enter your Jellyfin username and retry.")
             user, token = await jellyfin.authenticate(device, username, password)
             try:
                 state.complete(device, user, token)
@@ -170,7 +243,7 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
                 finally:
                     device.token = None
                 raise
-            return HTMLResponse(
+            response = HTMLResponse(
                 '<!doctype html><html lang="en"><meta name="viewport" '
                 'content="width=device-width,initial-scale=1"><title>TV paired</title>'
                 '<link rel="stylesheet" href="/pair.css"><main><h1>TV paired</h1>'
@@ -178,6 +251,14 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
                 "<strong>Continue after pairing</strong>.</p>"
                 "<p>You can close this page. No further login is needed here.</p></main></html>"
             )
+            response.delete_cookie(
+                "pair_csrf",
+                path="/pair",
+                secure=not settings.allow_http,
+                httponly=True,
+                samesite="strict",
+            )
+            return response
         except PortalError as error:
             if device:
                 device.claiming = False
@@ -186,6 +267,9 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
                 if error.status in {400, 403, 429}
                 else "Jellyfin sign-in failed. Check your credentials and server availability.",
                 error.status,
+                device=device
+                if device and device.code and device.expires > state.clock()
+                else None,
             )
         finally:
             if device:
@@ -199,7 +283,7 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
             "input,button{box-sizing:border-box;width:100%;font:inherit;padding:.8rem;"
             "border-radius:.4rem;border:1px solid #8a9bad}button{margin-top:1.5rem;"
             "background:#b8f16a;color:#101820;font-weight:700}p{overflow-wrap:anywhere}"
-            ":focus-visible{outline:3px solid #b8f16a;outline-offset:3px}",
+            "a{color:#b8f16a}:focus-visible{outline:3px solid #b8f16a;outline-offset:3px}",
             media_type="text/css",
         )
 
