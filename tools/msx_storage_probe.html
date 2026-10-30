@@ -3,6 +3,10 @@
 <head>
   <meta charset="utf-8">
   <title>Jellyfin MSX synthetic storage probe</title>
+  <script>
+    // Keep diagnostic HTML out of the background of the real MSX interface.
+    if (window.parent !== window) { document.documentElement.style.visibility = "hidden"; }
+  </script>
 </head>
 <body>
   <p id="probe-status">Waiting for the official plugin API readiness callback.</p>
@@ -13,7 +17,6 @@
       document.getElementById("probe-status").textContent = "Official plugin API ready; waiting for MSX.";
       var key = "jellyfin-msx.research.issue11.marker.v1";
       var marker = '{"schema":1,"marker":"synthetic-issue11"}';
-      var starts = 0;
       var instance = String(new Date().getTime());
       var unavailable = false;
       var storage = TVXServices.storage;
@@ -38,7 +41,7 @@
           template: {type: "default", layout: "0,0,12,1"},
           items: [
             {label: result, action: "info:Synthetic research; no authorization is restored."},
-            {label: "Start actions: " + starts + " / plugin instance: " + instance,
+            {label: "Plugin instance: " + instance,
               action: "info:Instance changes when the plugin context is recreated."},
             {label: "Last operation: " + lastOperation, action: "info:Separate mutation outcome and current readback."},
             {label: "Storage API type: " + (storage ? storage.getType() : "unavailable"),
@@ -59,7 +62,6 @@
 
       function operate(operation) {
         try {
-          if (operation === "startup") { starts += 1; }
           if (operation === "unavailable") { unavailable = !unavailable; }
           if (operation === "write" || operation === "corrupt" || operation === "remove") {
             if (unavailable || !storage || !storage.isReady()) { throw new Error("storage unavailable"); }
@@ -79,18 +81,13 @@
         },
         handleRequest: function (id, data, callback) {
           document.getElementById("probe-status").textContent = "MSX request: " + id;
-          if (id === "startup") {
-            starts += 1;
-            callback({response: {status: 200, data: {action: "content:request:interaction:init"}}});
-            return;
-          }
           callback(id === "init" ? page(operate("read")) : null);
         },
         handleData: function (data) {
           var operation = data && data.data && data.data.operation;
-          if (["startup", "read", "write", "corrupt", "remove", "unavailable"].indexOf(operation) >= 0) {
+          if (["read", "write", "corrupt", "remove", "unavailable"].indexOf(operation) >= 0) {
             lastOperation = operation + ": " + operate(operation);
-            TVXInteractionPlugin.executeAction(operation === "startup" ? "content:request:interaction:init" : "reload:content");
+            TVXInteractionPlugin.executeAction("reload:content");
           }
         }
       });
