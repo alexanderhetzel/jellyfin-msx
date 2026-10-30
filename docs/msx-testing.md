@@ -1,5 +1,9 @@
 # Agent-operated MSX integration lab
 
+For an isolated fixture with normal authentication and no operator account, see
+[synthetic integration testing](synthetic-testing.md). Its deterministic HTTP
+contract check is separate from the still-deferred hosted-runtime browser suite.
+
 The overall check-selection and evidence procedure is in
 [the agentic testing cookbook](agentic-testing.md). Routine agent sign-in/pairing
 is test execution, not a feature ticket. With authorized stored test credentials,

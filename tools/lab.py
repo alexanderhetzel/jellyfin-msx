@@ -51,8 +51,8 @@ def smoke_url():
 class TrafficRecorder(httpx.AsyncBaseTransport):
     """Pass through real HTTP; retain only policy flags and counts, never URLs/tokens."""
 
-    def __init__(self):
-        self.transport = httpx.AsyncHTTPTransport()
+    def __init__(self, transport=None):
+        self.transport = transport if transport is not None else httpx.AsyncHTTPTransport()
         self.counts = Counter()
         self.responses = {}
         self.negotiations = []
@@ -94,12 +94,12 @@ class TrafficRecorder(httpx.AsyncBaseTransport):
         await self.transport.aclose()
 
 
-def build_lab(settings):
+def build_lab(settings, *, transport=None):
     if urlsplit(settings.public_url).hostname not in {"localhost", "127.0.0.1"}:
         raise ValueError("The integration lab must stay on loopback")
     if settings.allow_transcoding:
         raise ValueError("The integration lab never enables transcoding")
-    recorder = TrafficRecorder()
+    recorder = TrafficRecorder(transport)
     app = create_app(settings, transport=recorder)
     counts = Counter()
     pairing_results = []

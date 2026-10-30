@@ -1,5 +1,45 @@
 # Verification status — 2026-10-30
 
+## Synthetic integration prerequisite — issue #9
+
+**Implemented:** [isolated synthetic lab and contract command](synthetic-testing.md),
+using the unchanged production authentication/CSRF/routes and a strict mocked
+Jellyfin transport with random login tokens. Synthetic original-file range delivery
+and token revocation run only in the lab; no production media proxy or auth bypass.
+Existing lab recorder accepts injected transport, defaulting to its real transport.
+CI runs the contract command without external services or operator credentials.
+
+**Automated-tested on Windows / Python 3.12.14:** `uv sync --locked --extra dev`
+succeeded; `uv run pytest`: **197 passed**, existing Starlette warning #30;
+`uv run ruff check .`: passed; `uv run ruff format --check .`: **45 files already
+formatted**; `uv build --wheel`: passed. `uv run python -m tools.synthetic_check`
+passed normal pairing, browse/poster/detail, original negotiation/byte-range
+delivery, HD denial without another negotiation, disconnect/revocation and
+re-pairing. Its temporary media bytes are not video. Deliberate `--fault json`,
+`--fault playback` and `--fault csrf` executions each exited 1 at libraries-json,
+playback and pairing, respectively; subprocess regressions assert those exits.
+An initial test collection failed because repository tools were not importable
+from pytest's entry point; explicit repository-root pythonpath fixed that check.
+Independent review caught an invalid checksum in the initial PNG fixture; it was
+replaced with an independently generated valid RGB PNG and a chunk/checksum plus
+decompression regression. Byte equality alone had missed the invalid image asset.
+
+**Browser observation:** connected Chrome extension rendered the native companion
+form on loopback HTTP. Entering a dummy invalid code and synthetic credentials,
+then clicking Pair this TV, displayed the expected pairing-failed message with
+cleared fields. Local screenshot retained under ignored `.lab/reports/`.
+This verifies form submission/denial only, not successful browser pairing or MSX.
+No `browser-verify` tool/skill was available; the supported browser API was used.
+The temporary HTTP process was stopped after inspection; no TLS trust was changed.
+
+**Deferred / device-unverified:** no hosted-runtime fixture playback/rendering,
+generated clip decoding, actual player pause/seek/Stop, browser fault verification,
+fresh-environment browser command or public-CI browser execution is claimed.
+The known Windows exact-leaf import limit was not retried; no new certificate,
+trust, live account, real-server or physical-TV action was performed. Issue #9
+remains open for its full browser acceptance. Real-server and physical gates stay
+separate. The fixture is not an actual Jellyfin release-compatibility check.
+
 ## Multi-version source-pinning software milestone — issue #8
 
 **Implemented:** detail playback actions now carry the selected `media_source_id`.

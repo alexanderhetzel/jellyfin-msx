@@ -22,6 +22,7 @@ packages = ["src/jellyfin_msx"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
 
 [tool.ruff]
 target-version = "py312"
