@@ -25,14 +25,46 @@ literal `.lab` guard was retained alongside the context allowlist. These failure
 were observed and corrected, not counted as passes. A separate temporary Windows
 environment then installed the actual wheel outside the checkout using hashed,
 binary-only runtime exports; Fernet/SQLite restart/rotation/replay smoke passed.
-Docker is absent locally;
-Linux/container/full-history CI and independent final review are pending.
+Docker is absent locally. Initial Linux CI exposed a clean editable install's
+missing dynamic `editables` backend requirement and consumed Docker metadata
+missing from scratch context export. Explicit `dev-mode-dirs = ["src"]` avoids
+that unneeded backend dependency; Dockerfile/.dockerignore are deliberately
+excluded from the exported payload while Docker still consumes them as build
+instructions. The corrected Linux/container jobs and final independent review
+remain pending. Verified official Gitleaks 8.30.1 Windows x64 release checksum;
+`gitleaks git . --log-opts=--all --redact --no-banner` scanned 67 commits and
+reported no leaks. No browser, MSX, TV, real server, production deployment,
+credential or trust-store action occurred for #27.
 
-**Deferred dependency update:** PR #44 remains open at its reviewed stale
-50.0.0 head pending current patch/base and renewed checks; the runtime stays on
-48.0.1. Independent artifact/Fernet compatibility review and technical disposition
-are recorded in the PR and build document. No browser, MSX, TV, real server,
-production deployment, credential or trust-store action occurred for #27.
+## Cryptography dependency refresh — issue #27 / PR #44
+
+**Implemented / automated-tested locally / device-unverified:** the existing
+Dependabot update was refreshed from 50.0.0 to 50.0.2 and brought onto current
+main. The supported constraint is now `cryptography>=50.0.2,<51`; the committed
+lock selects 50.0.2. Official PyCA release notes and current GitHub advisories
+GHSA-m2h6-j472-rp4c, GHSA-jwv3-5hgf-82ww and GHSA-g6cj-pr64-35w5 put old 48.0.1
+inside affected version ranges. Their X.509 verification and PKCS#7 EnvelopedData
+APIs have no identified call path in this project's Fernet/InvalidToken usage;
+that is not a declaration that the old dependency is unaffected. The update also
+obtains the current patch's bundled OpenSSL fixes. Version 49 removed Intel macOS
+and 32-bit Windows wheels; no support for those platforms is asserted here.
+
+Windows/Python 3.12.14: `uv lock --upgrade-package cryptography==50.0.2`,
+`uv sync --frozen --extra dev`, `uv run --no-sync pytest` (**262 passed, 1 POSIX
+skip**, known Starlette warning #30), Ruff check/format (**59 files**),
+`uv build --wheel` and `git diff --check` passed. The build-milestone dependency
+smoke also passed against this environment: template/app construction, Fernet
+roundtrip/expiry/tamper denial and actual SQLite restart/rotation/replay denial,
+all synthetic/offline. This local smoke used the editable environment, not an
+isolated installed wheel. Independent review accepted exact head
+`43e4c5e85779e9e3233b902fa12ea4b7a5523a32`: 53 cryptography artifact URLs/hashes
+match official PyPI; 48.0.1 ↔ 50.0.2 Fernet wire/TTL/expiry/tamper/wrong-key
+compatibility passed both directions; the reviewer reran the full Windows suite
+and Ruff. Linux CPython 3.12/3.13 tests, wheel, Docker/proxy/health/start/pair,
+full-history secret scan and Python/Actions CodeQL checks all passed on that
+head. With no unresolved review threads and actual required checks passed,
+PR #44 was explicitly squash merged as `e30e1cd6f68e7652ba1d325ef175c9e398c09bf0`.
+No real account/database, MSX, TV or production action ran.
 
 ## Two-stage companion pairing milestone — issue #13
 
