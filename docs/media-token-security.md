@@ -16,6 +16,11 @@ behavior and does not establish a new browser, audio or physical-TV pass.
 
 ## Actual authority and disclosure paths
 
+The trace below describes default RAM-only operation. The later optional
+[server authorization milestone](durable-authorization.md) can persist encrypted
+user/token binding under an external key; it does not change direct media URL
+exposure or guarantee upstream token revocation on local expiry/rotation.
+
 The following are fictional schematic examples, not usable credentials or
 retained captures. `SYNTHETIC_USER_TOKEN` denotes an account session, not an
 administrator key; `CAPABILITY_PLACEHOLDER` denotes the independent portal grant.

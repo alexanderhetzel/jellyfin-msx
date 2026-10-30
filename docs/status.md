@@ -1,5 +1,50 @@
 # Verification status — 2026-10-30
 
+## Durable server authorization milestone — issue #12
+
+**Implemented / automated-tested / device-unverified:** disabled-by-default
+encrypted SQLite authorization under an external runtime Fernet key, server/user/
+device/expiry/verifier/generation binding, atomic single-use renewal, bounded
+absolute expiry and generation-bound RAM sessions. Local disconnect revokes
+before upstream logout. Same-origin JSON POST/body limits and existing normal
+CSRF/single-use pairing remain enforced. See the
+[protocol and recovery contract](durable-authorization.md).
+
+**Deferred / issue remains open:** the default MSX UI does not call these APIs.
+Controlled-origin plugin delivery, automatic startup, exact new renewal save/
+readback, and visible official-MS​​X reload/reopen/backend-restart/re-pair acceptance
+are unverified. Physical Philips retention remains in #4. A unit/HTTP contract is
+not an MSX restoration pass. Single-worker deployment is unchanged.
+
+Windows/Python 3.12.14: `uv lock` added cryptography 48.0.1 and its locked
+dependencies; `uv sync --frozen --extra dev` passed. `uv run pytest`: **240 passed, 1 skipped**,
+known Starlette warning #30; `uv run ruff check .`: passed;
+`uv run ruff format --check .`: **57 files already formatted**;
+`uv build --wheel` and `git diff --check`: passed. All upstream tests use mocks.
+New evidence includes normal CSRF pairing then restarted app renewal, independent
+connection races, storage locking/write rollback, corruption/key/server/schema
+denial, bounded expiry/capacity/isolation and local revoke despite upstream failure.
+The first run had 18 new cases pass and one test fail because a test-owned SQLite
+connection was not closed on Windows; explicitly closing test connections fixed
+the harness. No product authorization pass was inferred from that failure.
+
+Actual connected-Chrome delivery check: an unchanged harmless loopback HTTP probe
+loaded standalone, but official MSX 0.1.167 requested an HTTPS iframe and showed
+an invalid-response frame. The failed frame screenshot was visually inspected;
+no storage/backend/renewal operation ran. An initially malformed inline launcher
+was corrected to the public base64 JSON format before observing the separate
+iframe failure. Both owned tabs/listener were closed. No real credentials,
+Jellyfin, certificate/trust retry, security bypass, production resource or TV
+action occurred. This is negative delivery evidence, not a browser integration pass.
+
+The Windows skip checks POSIX directory/file modes; Windows ACLs are an operator
+requirement. WAL and SQLite-backup plaintext marker scans pass. Independent final
+source/security/documentation review found no blockers for the backend milestone,
+independently ran 239 passing tests/one POSIX skip and Ruff/format/diff checks,
+and inspected the negative-delivery screenshot. It also reviewed the final nested
+JSON fixed-error/default-disabled delta and independently passed that new test.
+The reviewer did not operate Chrome, contact a real server or verify a TV.
+
 ## Native media credential decision — issue #25
 
 **Implemented / automated-tested / device-unverified:**

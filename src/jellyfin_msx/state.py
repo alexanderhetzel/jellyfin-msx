@@ -4,6 +4,7 @@ import secrets
 import time
 from dataclasses import dataclass, field
 
+from .authorization import AuthorizationStore
 from .config import Settings
 from .errors import PortalError
 
@@ -20,17 +21,21 @@ class Device:
     user_id: str | None = None
     token: str | None = field(default=None, repr=False)
     claiming: bool = False
+    authorization_generation: int | None = None
     diagnostics: list[dict] = field(default_factory=list)
 
 
 class State:
     """Single-event-loop state. No await between checking and claiming a pairing."""
 
-    def __init__(self, settings: Settings, clock=time.monotonic):
+    def __init__(self, settings: Settings, clock=time.monotonic, wall_clock=time.time):
         self.settings = settings
         self.clock = clock
         self.devices: dict[str, Device] = {}
         self.rates: dict[str, tuple[float, int]] = {}
+        self.authorizations = (
+            AuthorizationStore(settings, wall_clock) if settings.authorization_db else None
+        )
 
     def prune(self):
         now = self.clock()
@@ -62,6 +67,8 @@ class State:
         device = self.devices.get(digest(secret))
         if device is None or (authenticated and not device.token):
             raise PortalError(401, "Session missing or expired. Reopen the MSX start page to pair.")
+        if device.authorization_generation is not None:
+            self.authorizations.validate(device)
         return device
 
     def claim(self, code: str) -> Device:
@@ -85,7 +92,39 @@ class State:
         device.expires = self.clock() + self.settings.session_ttl
 
     def remove(self, secret: str):
+        device = self.devices.get(digest(secret))
+        if device and device.authorization_generation is not None:
+            self.authorizations.revoke(device.device_id)
         self.devices.pop(digest(secret), None)
+
+    def remember(self, secret):
+        if not self.authorizations:
+            raise PortalError(404, "Durable authorization is disabled.")
+        device = self.get(secret)
+        renewal, expires = self.authorizations.enroll(device)
+        device.authorization_generation = 0
+        return renewal, expires
+
+    def restore(self, renewal):
+        if not self.authorizations:
+            raise PortalError(404, "Durable authorization is disabled.")
+        self.prune()
+        if len(self.devices) >= self.settings.max_states:
+            raise PortalError(503, "Session capacity reached. Retry later.")
+        data, generation, replacement = self.authorizations.rotate(renewal)
+        # A successful rotation invalidates older sessions, even in another process.
+        self.devices = {k: v for k, v in self.devices.items() if v.device_id != data["id"]}
+        secret = secrets.token_urlsafe(32)
+        device = Device(
+            self.clock()
+            + min(self.settings.session_ttl, data["expires"] - self.authorizations.clock()),
+            device_id=data["id"],
+            user_id=data["user"],
+            token=data["token"],
+            authorization_generation=generation,
+        )
+        self.devices[digest(secret)] = device
+        return secret, replacement, data["expires"]
 
     def record(self, device: Device, event: dict):
         device.diagnostics.append(event)

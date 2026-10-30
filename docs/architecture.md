@@ -17,7 +17,8 @@
 
 Source boundaries: `config.py` (validated environment), `state.py` (bounded,
 expiring in-memory state and rate limits), `jellyfin.py` (isolated HTTP requests),
-`playback.py` (profile/selection), `msx.py` (JSON), `app.py` (routes).
+`playback.py` (profile/selection), `msx.py` (JSON), `app.py` (routes),
+`authorization.py` (optional encrypted durable renewal authority).
 
 ## Security and operational limits
 
@@ -48,17 +49,20 @@ the conditional gateway design. Initial URL validation does not constrain a
 native player's subsequent redirects or HLS descendants, and a portal JSON
 response's referrer policy does not establish the hosted player's request policy.
 
-Sessions last eight hours with an absolute expiry; restart requires re-pairing.
-M1 is single-process/single-worker. No SQLite/Redis or encryption key is needed
-because credentials are not written to disk. Logout locally invalidates immediately
+Default sessions last eight hours with absolute expiry; restart requires re-pairing.
+The application remains single-process/single-worker. With persistence disabled,
+no SQLite or key is needed because credentials are not written to disk.
+Logout locally invalidates immediately
 and attempts upstream logout; expiry/restart do not guarantee upstream revocation.
 Jellyfin administrators can revoke sessions. This limits M1 production readiness.
 
 [MSX storage/startup research](msx-storage-research.md) now records public-API
 synthetic marker retention in the official Chrome runtime, startup limitations
-and a revocable candidate renewal contract for #12. It does not implement
-persistent authorization or prove SAPHI retention; current RAM-session behavior
-is unchanged. Real renewal secrets require an operator-controlled plugin origin,
+and a candidate renewal contract for #12. The optional
+[durable server authorization](durable-authorization.md) implements encrypted
+server records, single-use renewal and generation-bound RAM grants. The default
+MSX UI does not call those APIs; automatic browser restoration and SAPHI retention
+remain unverified. Real renewal secrets require an operator-controlled plugin origin,
 never the shared source-preview origin used for synthetic research.
 
 Jellyfin API calls have a total deadline below MSX's documented 30-second timeout.
