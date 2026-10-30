@@ -37,7 +37,7 @@ BINARY = ROOT / ".lab/tools/cloudflared/cloudflared.exe"
 CLIP = ROOT / "tests/fixtures/msx-public/synthetic.mp4"
 PORT = 18092
 MAX_SECONDS = 900
-STARTUP_SECONDS = 45
+STARTUP_SECONDS = 180
 CONTROL = ROOT / ".lab/synthetic-https"
 ORIGIN_PATTERN = r"https://[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.trycloudflare\.com"
 
@@ -321,6 +321,7 @@ def activate(binary, seconds=MAX_SECONDS):
 
                 threading.Thread(target=read_reserved, daemon=True).start()
                 await_value(backend, reserved, startup, stop_file)
+                print('{"status":"starting","stage":"listener-reserved"}', flush=True)
                 tunnel = spawn(
                     [
                         *base,
@@ -337,16 +338,22 @@ def activate(binary, seconds=MAX_SECONDS):
                 origins = queue.Queue(maxsize=1)
                 drain_origins(tunnel.stdout, origins)
                 origin = await_value(tunnel, origins, startup, stop_file)
+                print(
+                    json.dumps(
+                        {"status": "starting", "stage": "origin-assigned", "public_origin": origin}
+                    ),
+                    flush=True,
+                )
                 backend.stdin.write((origin + "\n").encode("ascii"))
                 backend.stdin.flush()
                 while True:
                     if time.monotonic() >= startup:
-                        raise PreparationError("startup-timeout")
+                        raise PreparationError("relay-readiness-timeout")
                     if any(p.poll() is not None for p in processes) or stop_file.exists():
                         raise PreparationError("startup-stopped")
                     if ready_local() and ready_public(origin):
                         if time.monotonic() >= startup:
-                            raise PreparationError("startup-timeout")
+                            raise PreparationError("relay-readiness-timeout")
                         break
                     time.sleep(0.1)
                 (CONTROL / "owner.json").write_text(
