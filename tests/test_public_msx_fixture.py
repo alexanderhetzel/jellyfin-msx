@@ -77,3 +77,13 @@ def test_committed_public_assets_have_explicit_provenance():
     # ISO BMFF header verifies this is encoded media, not the HTTP byte fixture.
     assert (directory / "synthetic.mp4").read_bytes()[4:8] == b"ftyp"
     assert "independently generated" in (directory / "README.md").read_text()
+
+
+def test_committed_json_matches_current_production_derived_export():
+    base = (
+        "https://raw.githack.com/alexanderhetzel/jellyfin-msx/"
+        "998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public"
+    )
+    pages = export_pages(base)
+    for name, page in pages.items():
+        assert json.loads((Path("tests/fixtures/msx-public") / name).read_text()) == page

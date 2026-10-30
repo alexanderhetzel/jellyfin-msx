@@ -14,7 +14,7 @@ from urllib.parse import urlsplit
 from fastapi.testclient import TestClient
 
 from jellyfin_msx.config import Settings
-from jellyfin_msx.msx import button, content
+from jellyfin_msx.msx import button
 from tools.synthetic_check import action, pair
 from tools.synthetic_lab import POSTER, build_synthetic_lab
 
@@ -102,18 +102,14 @@ def export_pages(base):
                 "video:" + base + "/deliberately-missing.mp4",
             )
         )
-        result["recovery.json"] = content(
-            "Public fixture recovery",
-            [button("Back to public libraries", "content:" + base + "/index.json")],
-        )
         # Embed pages through the documented content:data action. Only the media
         # and poster require absolute URLs, pinned to a separate asset commit.
         # This avoids circular source-commit links or mutable branch references.
-        for name in ("detail.json", "denied.json", "movies.json", "index.json", "recovery.json"):
+        for name in ("detail.json", "denied.json", "movies.json", "index.json"):
             for row in result[name]["items"]:
                 if row["action"].startswith("content:" + base + "/"):
                     filename = row["action"].rsplit("/", 1)[-1]
-                    if filename == "index.json" and name != "recovery.json":
+                    if filename == "index.json":
                         row["action"] = "back"
                     else:
                         row["action"] = "content:data"

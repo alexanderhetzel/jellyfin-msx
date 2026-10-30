@@ -1,5 +1,47 @@
 # Verification status — 2026-10-30
 
+## Actual public MSX renderer/player milestone — issue #9
+
+**Implemented / browser-tested / device-unverified:** independently encoded public
+synthetic clip, public application-derived fixture exporter, commit-pinned JSON
+and assets, and the [precise runtime/evidence matrix](msx-public-fixture-results.md).
+Export preparation uses normal synthetic production CSRF pairing, then replaces
+every private navigation/media action before publication. No auth bypass or
+private capability/code/token is published. Runtime playback uses a clearly
+substituted public video and does not establish private app/source dispatch.
+
+Actual official MSX 0.1.167 in connected Chrome rendered library/movie/detail and
+HD denial notices. A real 1280x720 frame and advancing time were inspected.
+Actual Pause held 16.316064 for 38.085 seconds; Play resumed. Forward/rewind,
+near-end seek to 29.929254 of 30, Stop/Replay and Back/focus were observed with
+real controls, never media setters. A gradient poster eventually rendered after
+initial black captures; cold-load timing/cause remains unresolved. Missing public
+media had no frames/native inaccessible-media text; screenshot lacked a clear app
+error notice. Actual Stop recovered a usable library with selected-row focus.
+Audio was not independently verified. Early and revised source/asset revisions,
+failed tool captures and safe media observations are recorded in the matrix.
+
+**Automated-tested on Windows / Python 3.12.14:** locked dev sync succeeded;
+`uv run pytest`: **206 passed**, existing Starlette warning #30;
+`uv run ruff check .`: passed; `uv run ruff format --check .`: **51 files already
+formatted**; `uv build --wheel`: passed; `git diff --check`: passed. Local FFmpeg
+7.1 fully decoded the committed synthetic clip (720 frames) to null without error.
+New regressions check public nested actions/leak guards, deterministic export,
+committed snapshot provenance and no real upstream network fallback. CI remains
+offline/synthetic; these counts do not substitute for the actual UI evidence.
+Independent final source/security/evidence review repeated all 206 tests and
+Ruff/format/diff checks, verified the clip checksum and inspected six saved
+frame/poster/control/recovery captures plus sanitized observations. No blocking
+findings remained. The reviewer did not operate the browser, verify audio, fully
+decode media, contact a real server, change TLS trust or test a physical device.
+
+**Deferred:** normal hosted app pairing/private source delivery, dynamic browser
+JSON/PlaybackInfo/CSRF/authorization failures, series/pagination, browser session
+isolation/logout and the complete browser assertion command/CI. Issue #9 remains
+open. No live credentials, real Jellyfin, certificate/trust retry, TLS bypass,
+production deployment or physical-TV action occurred. Real-server/device gates
+remain separate; storage acceptance stays in #11.
+
 ## MSX public storage/startup research — issue #11
 
 **Implemented:** an independently authored synthetic-only interaction probe,

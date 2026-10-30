@@ -1,5 +1,9 @@
 # Synthetic integration lab
 
+For actual official-MSX rendering and encoded-video control observations with
+public substituted assets, see [the public renderer/player milestone](msx-public-fixture-results.md).
+Its public preview deliberately does not exercise dynamic private authentication.
+
 **Implemented / automated-tested:** an isolated fixture for the Jellyfin API
 contract consumed by the production application. Authentication runs through the
 normal production pairing form, including CSRF, pending code validation and
