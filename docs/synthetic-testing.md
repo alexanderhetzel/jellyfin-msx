@@ -1,5 +1,10 @@
 # Synthetic integration lab
 
+For a reusable supported-API connected-Chrome command that asserts normal hosted
+pairing and deliberately broken CSRF/login paths, see
+[the pairing browser check](browser-pairing-check.md). Its actual limited browser
+passes are separate from the HTTP contract below and do not close the full matrix.
+
 For the later approved synthetic HTTPS run with actual normal hosted pairing,
 authenticated playback and partial disconnect/recovery observations, see
 [the hosted synthetic HTTPS results](msx-synthetic-https-results.md). This remains
