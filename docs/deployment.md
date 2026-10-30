@@ -1,5 +1,9 @@
 # Deployment and diagnostics
 
+For the dated Ultra.cc qualification, chosen dedicated-origin deployment shape,
+host-only MSX setup and rollout gates, see [hosting qualification](hosting-qualification.md).
+Production startup and physical-TV HTTPS acceptance are separate from research.
+
 ## Configuration
 
 | Variable | Meaning |
