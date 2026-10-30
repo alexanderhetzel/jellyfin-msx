@@ -1,12 +1,13 @@
 """Explicit disposable REAL-server contract check; never collected by pytest.
 
 Only digest-allowlisted official images, synthetic local files and loopback Docker
-ports are accepted. Credentials/responses stay in RAM; output is allowlisted.
+bridge addresses are accepted. Credentials/responses stay in RAM; output is allowlisted.
 """
 
 import argparse
 import asyncio
 import hashlib
+import ipaddress
 import json
 import os
 import secrets
@@ -92,6 +93,9 @@ async def probe(base, version):
             stage = "normal authentication"
             admin.user_id, admin.token = await jf.authenticate(admin, "fixture-admin", password)
             await request(
+                "GET", "/Startup/User", device=Device(time.monotonic() + 600), expected=(401, 403)
+            )
+            await request(
                 "POST",
                 "/Users/AuthenticateByName",
                 device=Device(time.monotonic() + 600),
@@ -166,6 +170,10 @@ async def probe(base, version):
                 "minimal metadata fixture changed",
             )
             require(item["MediaSources"][0]["MediaStreams"], "missing probed stream metadata")
+            metadata_shapes = {
+                key: "absent" if key not in item else "null" if item[key] is None else "present"
+                for key in ("Overview", "ProductionYear", "CommunityRating", "PremiereDate")
+            }
             anonymous = Device(time.monotonic() + 600, user_id=viewer.user_id)
             for device in (anonymous, denied):
                 try:
@@ -174,6 +182,12 @@ async def probe(base, version):
                     require(error.status in (401, 403, 404), "unexpected item denial")
                 else:
                     raise RuntimeError("private item authorization was not denied")
+            try:
+                await resolve(jf, denied, item_id, False, -1)
+            except PortalError as error:
+                require(error.status in (401, 403, 404), "unexpected playback denial")
+            else:
+                raise RuntimeError("restricted playback permitted")
             stage = "authenticated portal images"
             state = State(settings)
             capability, paired = state.pair()
@@ -237,10 +251,15 @@ async def probe(base, version):
                 require(error.status == 401, "unexpected logout denial")
             else:
                 raise RuntimeError("logged-out session remained authorized")
+            async with client.stream("GET", url, headers={"Range": "bytes=0-1023"}) as media:
+                require(
+                    media.status_code in (401, 403), "logged-out media token remained authorized"
+                )
             return {
                 "version": version + ".0",
                 "base_path": "/jellyfin" if base.endswith("/jellyfin") else "/",
                 "result": "passed",
+                "metadata_shapes": metadata_shapes,
                 "checks": [
                     "regular-auth",
                     "wrong-password-denied",
@@ -302,8 +321,6 @@ def run(version):
                     "1g",
                     "--cpus",
                     "2",
-                    "--publish",
-                    "127.0.0.1::8096",
                     "--log-driver",
                     "none",
                     "--volume",
@@ -314,9 +331,14 @@ def run(version):
                     f"{root / 'media'}:/media:ro",
                     image,
                 )
-                port = docker("port", name, "8096/tcp").split(":")[-1]
-                require(port.isdigit(), "invalid loopback port")
-                result = asyncio.run(probe(f"http://127.0.0.1:{port}{base_path}", version))
+                address = docker(
+                    "inspect",
+                    "--format",
+                    "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}",
+                    name,
+                )
+                require(ipaddress.ip_address(address).is_private, "invalid isolated bridge address")
+                result = asyncio.run(probe(f"http://{address}:8096{base_path}", version))
                 result["image_digest"] = VERSIONS[version]
                 result["fixture_sha256"] = hashlib.sha256(
                     (media / "Synthetic.mp4").read_bytes()
