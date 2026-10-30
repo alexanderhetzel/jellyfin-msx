@@ -1,5 +1,10 @@
 # Synthetic integration lab
 
+For the separate fifty-episode/three-page application-derived public navigation
+probe, empty-state and actual official-MSX observations/limitations, see
+[series navigation results](series-navigation-results.md). The original launcher
+below remains a movie-only fixture; neither preview establishes private hosted E2E.
+
 For actual official-MSX rendering and encoded-video control observations with
 public substituted assets, see [the public renderer/player milestone](msx-public-fixture-results.md).
 Its public preview deliberately does not exercise dynamic private authentication.

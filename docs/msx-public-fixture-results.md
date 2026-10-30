@@ -124,7 +124,7 @@ No raw network capture is retained.
 | Original matrix area | Status after this milestone |
 | --- | --- |
 | Normal hosted pairing, wrong/expired code, wrong credentials | **Deferred**; normal synthetic authentication is automated HTTP/export preparation only. |
-| Series/seasons/episodes and pagination | **Deferred**; public movie navigation only. |
+| Series/seasons/episodes and pagination | Later **public renderer milestone** in [#7 evidence](series-navigation-results.md); normal hosted private navigation remains deferred. This #9 probe itself is movie-only. |
 | Private source pinning through live resolver/file | **Deferred in browser**; mock regressions remain separate, public media URL is substituted. |
 | JSON/PlaybackInfo/CSRF faults, expiry, access denial, network recovery | HTTP contract regressions pass; actual dynamic browser matrix **deferred**. Missing public media is the narrow browser negative above. |
 | Disconnect/private poster/play denial and session isolation | Automated HTTP only; **deferred in hosted browser**. Static Disconnect explicitly shows a scope notice. |
