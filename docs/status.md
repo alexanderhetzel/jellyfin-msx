@@ -18,8 +18,13 @@ Windows/Python 3.12.14: frozen dev/build sync, full `uv run --no-sync pytest`
 (**271 passed, 1 POSIX-only skip**, known warning #30), Ruff check/format
 (**72 files**), offline wheel build with `.venv/Scripts/python.exe`, wheel source/
 license/template allowlist and `git diff --check` passed. A subsequent committed-
-matrix consistency regression passed with all **3 affected tests**; final CI
-and independent source/evidence review are required before merge.
+matrix consistency regression passed with all **3 affected tests**. Independent
+source/security/evidence review reran **272 passed / 1 POSIX skip**, Ruff/format
+72 and offline wheel/allowlist, inspected twelve captures and filtered request
+evidence, and accepted the constrained research scope. It found two premature
+captures (recovery menu and embedded Off-only panel); separate settled UI checks
+replaced those ignored files and the reviewer confirmed both. The reviewer did
+not operate the live browser or a TV. Required final-head CI remains the merge gate.
 Initial FFmpeg null-output extraction failed because no subtitle encoder was
 selected; explicit SRT output successfully extracted all four embedded cues.
 Only local synthetic remux occurred, no AV encode/Ultra request. Publication

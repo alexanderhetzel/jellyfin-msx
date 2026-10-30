@@ -87,6 +87,14 @@ AX click initially selected only; DOM label activated. Glyph/body-Escape timed
 out; observed control classes/Back worked. Tool failures are not TV failures.
 No audible output or physical test.
 
+Independent review found two initial screenshots preceded the settled UI.
+Separate actual rechecks replaced the recovery-menu and embedded Off-only-panel
+captures; the reviewer inspected the corrected files and accepted the evidence.
+It independently checked twelve images, filtered requests, embedded cue extraction,
+272 tests/one POSIX skip, Ruff/format and wheel exclusion. It did not operate the
+live browser or a TV. This closes research criteria only; #22 implementation and
+all placement/private-delivery/device gates remain as described below.
+
 ## Secure contract for #22 — deferred implementation
 
 External WebVTT is a **candidate** with placement/failure-notice limits. Default
