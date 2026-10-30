@@ -1,5 +1,29 @@
 # Verification status — 2026-10-30
 
+## Cryptography dependency refresh — issue #27 / PR #44
+
+**Implemented / automated-tested locally / device-unverified:** the existing
+Dependabot update was refreshed from 50.0.0 to 50.0.2 and brought onto current
+main. The supported constraint is now `cryptography>=50.0.2,<51`; the committed
+lock selects 50.0.2. Official PyCA release notes and current GitHub advisories
+GHSA-m2h6-j472-rp4c, GHSA-jwv3-5hgf-82ww and GHSA-g6cj-pr64-35w5 put old 48.0.1
+inside affected version ranges. Their X.509 verification and PKCS#7 EnvelopedData
+APIs have no identified call path in this project's Fernet/InvalidToken usage;
+that is not a declaration that the old dependency is unaffected. The update also
+obtains the current patch's bundled OpenSSL fixes. Version 49 removed Intel macOS
+and 32-bit Windows wheels; no support for those platforms is asserted here.
+
+Windows/Python 3.12.14: `uv lock --upgrade-package cryptography==50.0.2`,
+`uv sync --frozen --extra dev`, `uv run --no-sync pytest` (**262 passed, 1 POSIX
+skip**, known Starlette warning #30), Ruff check/format (**59 files**),
+`uv build --wheel` and `git diff --check` passed. The build-milestone dependency
+smoke also passed against this environment: template/app construction, Fernet
+roundtrip/expiry/tamper denial and actual SQLite restart/rotation/replay denial,
+all synthetic/offline. This local smoke used the editable environment, not an
+isolated installed wheel. Cross-version old/new Fernet wire compatibility,
+final independent review, Linux CI and Docker checks are recorded separately
+before acceptance. No real account/database, MSX, TV or production action ran.
+
 ## Two-stage companion pairing milestone — issue #13
 
 **Implemented / automated-tested / device-unverified:** manual code validation
