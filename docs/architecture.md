@@ -87,8 +87,13 @@ watch progress, resume, stop reporting and active transcode cleanup are M3 work.
 
 Candidate sources are ranked to prefer AVC and a source fitting the panel, then
 the highest resolution within that size or smallest above it. This is a selection
-preference, not a maximum decoder resolution. The selected source is pinned in
-details and PlaybackInfo; original-container URLs retain MKV/AVI/etc. rather than
+preference, not a maximum decoder resolution. Each detail playback action carries
+the selected source ID. The resolver rechecks item access and validates that exact
+source against fresh metadata; a missing or newly ineligible source requires
+reopening details. Reordering equally ranked versions cannot silently switch
+files or subtitle indices. Legacy resolver requests without a source ID still
+select from current metadata. PlaybackInfo and original-container delivery use
+the same selected source ID; original-container URLs retain MKV/AVI/etc. rather than
 labelling every file MP4. If no source qualifies,
 direct-only mode reports that condition instead of converting media. This also
 avoids ambiguous subtitle indices across files; Jellyfin applies stream indices

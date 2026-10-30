@@ -2,6 +2,34 @@
 
 Status: **REAL BROWSER VIDEO PATH PASSED; broader M2a/TV acceptance still open.**
 
+## Issue #8 Windows continuation: renderer only
+
+**Implemented / automated-tested:** detail actions now pin the selected source
+through refreshed item authorization, PlaybackInfo and original-container delivery.
+Seventeen new mocked route cases cover grouped UHD/HD choices, competing eligible
+versions, no eligible copy, stale pins and subtitle-index consistency. See the
+actual commands and independent-review results in [status](status.md).
+
+The maintainer explicitly selected connected Chrome for this continuation,
+superseding the earlier integrated-browser preference for this run. Official MSX
+0.1.167 rendered actual FastAPI detail JSON generated with synthetic authenticated
+state and mocked Jellyfin. All actions were replaced with harmless notices before
+launch; clicking **Try original (TV unverified)** displayed the expected info
+notice. No player/media state was injected. The synthetic screenshot remains in
+ignored `.lab/reports/issue8-renderer.png`.
+
+**Deferred / device-unverified:** no live grouped-media or physical result in this
+continuation. Public endpoint/TLS verification identified Jellyfin 12.4.0 without
+credentials. A local dashboard loaded on the first approved certificate-trust
+attempt; MSX remained at splash and native browser inspection was stopped by
+the browser-control policy. A later extension-only run rendered inline content
+successfully but repeated local certificate imports stalled and were cancelled.
+No actual approval dialog was observed and no permission/certificate warning was
+bypassed. No credentials were loaded/submitted, no production libraries/policies
+changed, and no live PlaybackInfo was sent. Temporary certificate trust and the
+local lab listener were absent at cleanup. The earlier real-server evidence below
+does not verify this change or the grouped-version cases. Keep #8 open.
+
 ## Current real-server run with HD-policy-v2
 
 Human pairing succeeded in the integrated browser. The agent operated official

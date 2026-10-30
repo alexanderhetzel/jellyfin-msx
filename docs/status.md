@@ -1,5 +1,45 @@
 # Verification status — 2026-10-30
 
+## Multi-version source-pinning software milestone — issue #8
+
+**Implemented:** detail playback actions now carry the selected `media_source_id`.
+After checking current item authorization, the resolver validates that exact
+stored version and pins it through PlaybackInfo and original-container delivery.
+If it disappeared or became ineligible, playback fails before negotiation and
+asks the user to reopen details. Legacy unpinned resolver calls retain current
+selection. This corrects a real gap: two equally ranked versions could previously
+switch when Jellyfin changed their order between details and Play, including a
+different subtitle language at the same numeric index on optional conversion hosts.
+
+**Automated-tested on Windows / Python 3.12.14:** `uv sync --locked --extra dev`
+succeeded; `uv run pytest`: **186 passed**, one existing Starlette TestClient
+deprecation (#30); `uv run ruff check .`: passed; `uv run ruff format --check .`:
+**41 files already formatted**; `uv build --wheel`: passed. Seventeen added route regressions follow actual
+detail actions across UHD + competing HD permutations, original MP4/MKV/AVI
+delivery, reordered equal candidates, removed/ineligible pins, all-ineligible
+groups, substituted PlaybackInfo responses, item denial and overlapping subtitle
+indices. All automated transport is mocked. Independent source/test review found
+no open blockers and independently repeated the full suite and Ruff checks.
+
+**Official-browser renderer check:** official MSX 0.1.167 in the maintainer's
+authorized Chrome extension session rendered the actual synthetic FastAPI detail
+response. Private/media actions were replaced with harmless notices; clicking
+the visible original-play row displayed its notice. This verifies rendering and
+activation only. It is not live source delivery, video decoding or a TV pass.
+
+**Deferred / device-unverified:** real grouped-media and physical Philips
+acceptance remain open in #8. The configured public Jellyfin endpoint passed TLS
+verification and identified version 12.4.0 without credentials. A first local
+HTTPS dashboard rendered, but its MSX launch stayed at splash; native-window
+inspection then hit a browser-control policy stop. On the resumed extension-only
+run, the same explicitly approved temporary leaf could not be reinstalled:
+Windows certificate-store API and certutil imports stalled and were cancelled.
+No certificate dialog was observed, no TLS bypass was used, and no live credentials
+were loaded or submitted. Final read-only checks found zero matching temporary
+trust entries and no listener on the lab port. No live grouped-media, PlaybackInfo,
+conversion, subtitle or physical-device result is inferred from these attempts.
+The historical real playback evidence below belongs to the earlier environment.
+
 ## Hosting qualification research — issue #3
 
 **Implemented:** [dated hosting decision and rollout runbook](hosting-qualification.md),

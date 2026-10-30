@@ -209,14 +209,35 @@ def authenticated_url(base: str, returned: str, token: str) -> str:
     return urlunsplit((candidate.scheme, candidate.netloc, candidate.path, urlencode(query), ""))
 
 
-async def resolve(jellyfin: Jellyfin, device: Device, item_id: str, force: bool, subtitle: int):
+async def resolve(
+    jellyfin: Jellyfin,
+    device: Device,
+    item_id: str,
+    force: bool,
+    subtitle: int,
+    media_source_id: str | None = None,
+):
     allow_transcoding = jellyfin.settings.allow_transcoding
     if not allow_transcoding and (force or subtitle >= 0):
         raise PortalError(409, "Transcoding and subtitle burn-in are disabled for this server.")
     item = await jellyfin.item(device, item_id)  # enforce user access before negotiation
     if item.get("Type") not in {"Movie", "Episode", "Video"}:
         raise PortalError(400, "Select a movie or episode to play.")
-    selected = choose_source(item, jellyfin.settings.max_bitrate, allow_transcoding)
+    if media_source_id is None:
+        selected = choose_source(item, jellyfin.settings.max_bitrate, allow_transcoding)
+    else:
+        identifier(media_source_id)
+        selected = next(
+            (s for s in item.get("MediaSources", []) if s.get("Id") == media_source_id), None
+        )
+        if (
+            not selected
+            or not within_hd_policy(selected)
+            or (not allow_transcoding and not compatible(selected, jellyfin.settings.max_bitrate))
+        ):
+            raise PortalError(
+                409, "Selected version is no longer eligible. Reopen the item details."
+            )
     source_id = identifier(selected.get("Id"))
     body = {
         "UserId": device.user_id,
