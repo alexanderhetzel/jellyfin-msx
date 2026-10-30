@@ -35,7 +35,7 @@
       function page(result) {
         return {
           type: "list", cache: false, headline: "MSX storage research - synthetic only",
-          action: "interaction:commit", data: {operation: "startup"},
+          action: "[home|interaction:commit]", data: {operation: "startup"},
           reference: "request:interaction:init",
           template: {type: "default", layout: "0,0,12,1"},
           items: [
