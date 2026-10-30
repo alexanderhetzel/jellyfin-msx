@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Jellyfin MSX synthetic storage probe</title>
+  <script>
+    // Keep diagnostic HTML out of the background of the real MSX interface.
+    if (window.parent !== window) { document.documentElement.style.visibility = "hidden"; }
+  </script>
+</head>
+<body>
+  <p id="probe-status">Waiting for the official plugin API readiness callback.</p>
+  <script src="https://msx.benzac.de/js/tvx-plugin.min.js"></script>
+  <script>
+    // Independently authored API client. Never use this probe with credentials.
+    TVXPluginTools.onReady(function () {
+      document.getElementById("probe-status").textContent = "Official plugin API ready; waiting for MSX.";
+      var key = "jellyfin-msx.research.issue11.marker.v1";
+      var marker = '{"schema":1,"marker":"synthetic-issue11"}';
+      var instance = String(new Date().getTime());
+      var unavailable = false;
+      var storage = TVXServices.storage;
+      var lastOperation = "No mutation attempted";
+
+      function read() {
+        if (unavailable) { throw new Error("probe-injected unavailable adapter"); }
+        if (!storage || !storage.isReady()) { throw new Error("storage not ready"); }
+        var value = storage.get(key, null);
+        if (value === null) { return "ABSENT - re-pair required"; }
+        if (value !== marker) { return "CORRUPT - re-pair required"; }
+        return "PRESENT - synthetic marker only";
+      }
+
+      function button(label, operation) {
+        return {label: label, action: "interaction:commit", data: {operation: operation}};
+      }
+
+      function page(result) {
+        return {
+          type: "list", cache: false, headline: "MSX storage research - synthetic only",
+          template: {type: "default", layout: "0,0,12,1"},
+          items: [
+            {label: result, action: "info:Synthetic research; no authorization is restored."},
+            {label: "Plugin instance: " + instance,
+              action: "info:Instance changes when the plugin context is recreated."},
+            {label: "Last operation: " + lastOperation, action: "info:Separate mutation outcome and current readback."},
+            {label: "Storage API type: " + (storage ? storage.getType() : "unavailable"),
+              action: "info:Storage type is diagnostic, not a durability guarantee."},
+            {label: "Browser: " + ((navigator.userAgent.match(/Chrome\/[\d.]+/) || ["unreported"])[0]),
+              action: "info:Browser user-agent version; platform behavior remains unverified."},
+            button("Read marker", "read"), button("Write synthetic marker", "write"),
+            button("Write corrupt marker", "corrupt"), button("Remove probe marker", "remove"),
+            button("Toggle injected unavailable adapter", "unavailable"),
+            {label: "Reload content", action: "reload:content"},
+            {label: "Navigate to harmless page", action: "content:data", data: {
+              headline: "Harmless navigation target", template: {type: "default", layout: "0,0,12,1"},
+              items: [{label: "Back to probe", action: "back"}]
+            }}
+          ]
+        };
+      }
+
+      function operate(operation) {
+        try {
+          if (operation === "unavailable") { unavailable = !unavailable; }
+          if (operation === "write" || operation === "corrupt" || operation === "remove") {
+            if (unavailable || !storage || !storage.isReady()) { throw new Error("storage unavailable"); }
+            if (operation === "remove") { storage.remove(key); }
+            else { storage.set(key, operation === "write" ? marker : "invalid-synthetic-marker"); }
+          }
+          return read();
+        } catch (error) {
+          return "UNAVAILABLE - re-pair required (" + (unavailable ? "injected" : "API failure") + ")";
+        }
+      }
+
+      TVXInteractionPlugin.setupHandler({
+        init: function () {},
+        ready: function () {
+          document.getElementById("probe-status").textContent = "MSX interaction handler ready.";
+        },
+        handleRequest: function (id, data, callback) {
+          document.getElementById("probe-status").textContent = "MSX request: " + id;
+          callback(id === "init" ? page(operate("read")) : null);
+        },
+        handleData: function (data) {
+          var operation = data && data.data && data.data.operation;
+          if (["read", "write", "corrupt", "remove", "unavailable"].indexOf(operation) >= 0) {
+            lastOperation = operation + ": " + operate(operation);
+            TVXInteractionPlugin.executeAction("reload:content");
+          }
+        }
+      });
+      TVXInteractionPlugin.init();
+    });
+  </script>
+  <p>Interaction probe: use the MSX controls. Synthetic values only.</p>
+</body>
+</html>

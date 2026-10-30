@@ -1,5 +1,48 @@
 # Verification status — 2026-10-30
 
+## MSX public storage/startup research — issue #11
+
+**Implemented:** an independently authored synthetic-only interaction probe,
+hosted startup JSON and launch helper, plus the
+[storage evidence, candidate renewal contract and physical comparison checklist](msx-storage-research.md).
+No persistent authentication feature or production session behavior changed.
+
+**Browser-tested / device-unverified:** official MSX 0.1.167 in connected Chrome
+156 (running executable 156.0.8078.80), same existing profile and MSX/shared
+source-preview origin pair. Actual MSX clicks exercised missing, write/readback,
+content reload, navigation away/Back, close/reopen read-before-write, corrupt,
+injected-unavailable/failed-write recovery and exact-key cleanup. The marker
+remained PRESENT across the tested lifecycle and became ABSENT after cleanup.
+Screenshots were saved locally and visually inspected for readable labels,
+selection and clipping. The record identifies source revisions, actual viewport
+conditions and the early diagnostic-background cosmetic issue.
+The final probe hides that background; affected screenshots were rechecked.
+A distinctive public startup action launcher appeared on load and reappeared
+after closing/reopening. The manually opened final probe then read PRESENT
+before any write, with a new plugin instance; final cleanup read ABSENT.
+
+**Limits:** automatic plugin bootstrap was not demonstrated; the tested direct
+startup request reached a visible load error. The selected usable candidate
+requires explicit interaction before storage/renewal. This does not satisfy
+#12's direct-return goal. Unavailability was injected, not an actual browser
+storage denial. The shared preview origin must never hold real renewal secrets.
+No browser-process restart, TV, standby, clear-data, app-update, credentials,
+operator-server request, certificate/trust change or TLS bypass occurred.
+
+**Automated-tested on Windows / Python 3.12.14:** `uv sync --locked --extra dev`
+succeeded; `uv run pytest`: **197 passed**, existing Starlette warning #30;
+`uv run ruff check .`: passed; `uv run ruff format --check .`: **47 files already
+formatted**; `uv build --wheel`: passed; `git diff --check`: passed. These checks
+do not establish MSX integration; the observations
+above come from the actual official runtime.
+
+Independent final source/security/evidence review repeated all 197 tests and
+Ruff/format checks and inspected final reopen/cleanup screenshots. It identified
+an overly broad write-success claim; the research now explicitly distinguishes
+thrown/injected failure from undetectable same-value silent writes. Retention is
+supported by separate reopen-before-write evidence. No reviewer browser/server/
+TV operation was performed.
+
 ## Synthetic integration prerequisite — issue #9
 
 **Implemented:** [isolated synthetic lab and contract command](synthetic-testing.md),

@@ -49,6 +49,13 @@ because credentials are not written to disk. Logout locally invalidates immediat
 and attempts upstream logout; expiry/restart do not guarantee upstream revocation.
 Jellyfin administrators can revoke sessions. This limits M1 production readiness.
 
+[MSX storage/startup research](msx-storage-research.md) now records public-API
+synthetic marker retention in the official Chrome runtime, startup limitations
+and a revocable candidate renewal contract for #12. It does not implement
+persistent authorization or prove SAPHI retention; current RAM-session behavior
+is unchanged. Real renewal secrets require an operator-controlled plugin origin,
+never the shared source-preview origin used for synthetic research.
+
 Jellyfin API calls have a total deadline below MSX's documented 30-second timeout.
 Upstream redirects are not followed; returned playback URLs must remain under the
 configured HTTPS server/base path. No arbitrary request-supplied server addresses.
