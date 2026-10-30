@@ -1,13 +1,23 @@
 {
   "name": "Jellyfin MSX storage research",
   "version": "1.0.0",
-  "headline": "MSX storage probe launcher",
-  "action": "content:request:interaction:init@https://raw.githack.com/alexanderhetzel/jellyfin-msx/2206a290fab803d7d343ac293289caedfb9deb0f/tools/msx_storage_probe.html",
+  "headline": "Startup action did not execute",
+  "action": "content:data",
+  "data": {
+    "headline": "Startup action executed - open the storage probe",
+    "template": {"type": "default", "layout": "0,0,12,1"},
+    "items": [
+      {
+        "label": "Open storage probe",
+        "action": "content:request:interaction:init@https://raw.githack.com/alexanderhetzel/jellyfin-msx/aa8765c98927f9f38cb8b1059634c6b22ffe2c71/tools/msx_storage_probe.html"
+      }
+    ]
+  },
   "template": {"type": "default", "layout": "0,0,12,1"},
   "items": [
     {
-      "label": "Open probe without startup action",
-      "action": "content:request:interaction:init@https://raw.githack.com/alexanderhetzel/jellyfin-msx/2206a290fab803d7d343ac293289caedfb9deb0f/tools/msx_storage_probe.html"
+      "label": "Open storage probe (fallback)",
+      "action": "content:request:interaction:init@https://raw.githack.com/alexanderhetzel/jellyfin-msx/aa8765c98927f9f38cb8b1059634c6b22ffe2c71/tools/msx_storage_probe.html"
     }
   ]
 }
