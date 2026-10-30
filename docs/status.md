@@ -26,11 +26,14 @@ were observed and corrected, not counted as passes. A separate temporary Windows
 environment then installed the actual wheel outside the checkout using hashed,
 binary-only runtime exports; Fernet/SQLite restart/rotation/replay smoke passed.
 Docker is absent locally. Initial Linux CI exposed a clean editable install's
-missing dynamic `editables` backend requirement and consumed Docker metadata
-missing from scratch context export. Explicit `dev-mode-dirs = ["src"]` avoids
-that unneeded backend dependency; Dockerfile/.dockerignore are deliberately
-excluded from the exported payload while Docker still consumes them as build
-instructions. The corrected Linux/container jobs and final independent review
+missing dynamic `editables` backend requirement and context allowlist failures.
+Explicit `dev-mode-dirs = ["src"]` avoids that unneeded backend dependency.
+The payload now excludes consumed Dockerfile/.dockerignore metadata; directory
+admission is followed by recursive exclusions before individual files are
+admitted, preventing parent exceptions from admitting local descendants.
+Independent review also required mismatch diagnostics to log only unexpected
+file counts, never arbitrary names containing a canary substring; a regression
+covers that privacy boundary. Corrected Linux/container jobs and final review
 remain pending. Verified official Gitleaks 8.30.1 Windows x64 release checksum;
 `gitleaks git . --log-opts=--all --redact --no-banner` scanned 67 commits and
 reported no leaks. No browser, MSX, TV, real server, production deployment,

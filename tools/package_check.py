@@ -39,11 +39,10 @@ def check_files(actual: dict[str, bytes], expected: dict[str, bytes]) -> None:
     if actual.keys() != expected.keys():
         missing = sorted(expected.keys() - actual.keys())
         extra = actual.keys() - expected.keys()
-        # Unexpected operator filenames may be private; only identify known canaries.
-        canaries = sorted(name for name in extra if "supply-chain-canary" in name)
+        # Unexpected operator filenames may be private; log their count only.
         raise ValueError(
             f"Package/context file allowlist mismatch: missing reviewed {missing}; "
-            f"{len(extra)} unexpected files; synthetic canaries {canaries}"
+            f"{len(extra)} unexpected files"
         )
     if any(actual[name] != expected[name] for name in expected):
         raise ValueError("Packaged bytes differ from reviewed source")

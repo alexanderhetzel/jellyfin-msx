@@ -27,6 +27,14 @@ def test_canary_never_overwrites_existing_files(tmp_path):
     assert not (tmp_path / package_check.CANARY_PATHS[1]).exists()
 
 
+def test_allowlist_failure_does_not_log_unexpected_filenames():
+    private_name = "private-title-supply-chain-canary.mkv"
+    with pytest.raises(ValueError) as error:
+        package_check.check_files({private_name: b"synthetic"}, {})
+    assert private_name not in str(error.value)
+    assert "1 unexpected files" in str(error.value)
+
+
 def test_wheel_rejects_duplicate_members(tmp_path):
     wheel = tmp_path / "duplicate.whl"
     with zipfile.ZipFile(wheel, "w") as archive:
