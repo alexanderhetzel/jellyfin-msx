@@ -86,6 +86,11 @@ inspection alone does not scan removed files in image layers. The context check
 prevents the injected local files from entering the build in the first place.
 Hatch file-selection semantics are documented in the
 [official build configuration](https://hatch.pypa.io/latest/config/build/).
+Docker's [official context/exclusion rules](https://docs.docker.com/build/concepts/context/#dockerignore-files)
+explain last-rule precedence, recursive matching and consumed Docker metadata.
+Admitting a parent directory requires explicit exclusions of its descendants
+before selected child files are admitted. Inspection failures log counts of
+unexpected filenames only; the HTTP smoke discards response bodies.
 
 To repeat the canary check, use a clean disposable checkout, run
 `python -m tools.package_check seed` before building and `clean` afterward.

@@ -74,9 +74,9 @@ jobs:
         run: |
           docker run -d --name portal -p 127.0.0.1:8090:8090 -e MSX_PUBLIC_URL=https://portal.invalid -e JELLYFIN_URL=https://jellyfin.invalid jellyfin-msx:test
           for attempt in $(seq 1 30); do
-            if curl --fail http://127.0.0.1:8090/healthz; then
-              curl --fail http://127.0.0.1:8090/msx/start.json
-              curl --fail http://127.0.0.1:8090/pair
+            if curl --fail --silent --show-error --output /dev/null http://127.0.0.1:8090/healthz; then
+              curl --fail --silent --show-error --output /dev/null http://127.0.0.1:8090/msx/start.json
+              curl --fail --silent --show-error --output /dev/null http://127.0.0.1:8090/pair
               exit 0
             fi
             sleep 1
