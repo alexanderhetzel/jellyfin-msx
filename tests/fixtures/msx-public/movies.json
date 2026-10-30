@@ -1,0 +1,113 @@
+{
+  "type": "pages",
+  "headline": "PUBLIC FIXTURE / Library",
+  "cache": false,
+  "reuse": false,
+  "preload": "none",
+  "template": {
+    "type": "separate",
+    "layout": "0,0,3,5"
+  },
+  "items": [
+    {
+      "title": "Synthetic clip",
+      "action": "content:data",
+      "titleFooter": "Movie",
+      "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/533a572c19cd16bb0aace7857ce7677632056023/tests/fixtures/msx-public/poster.png",
+      "data": {
+        "type": "list",
+        "headline": "PUBLIC FIXTURE / Synthetic clip",
+        "cache": false,
+        "reuse": false,
+        "preload": "none",
+        "template": {
+          "type": "default",
+          "layout": "0,0,12,1",
+          "centration": "title",
+          "truncation": "title",
+          "color": "msx-glass"
+        },
+        "items": [
+          {
+            "title": "Try original (TV unverified)",
+            "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/533a572c19cd16bb0aace7857ce7677632056023/tests/fixtures/msx-public/synthetic.mp4",
+            "playerLabel": "Public synthetic clip / substituted fixture URL"
+          },
+          {
+            "title": "Philips 32PHS6605/12: documentation-based candidate",
+            "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+          },
+          {
+            "title": "Generated test pattern and tone; no operator media.",
+            "action": "info:Generated test pattern and tone; no operator media."
+          },
+          {
+            "title": "Year: unknown   Type: Movie",
+            "action": "info:Metadata supplied by Jellyfin."
+          },
+          {
+            "title": "Diagnostics",
+            "action": "info:Dynamic authentication and diagnostics are not covered by this public fixture."
+          },
+          {
+            "title": "Public fixture scope",
+            "action": "info:Rendering and player only. Normal hosted pairing, private delivery and dynamic recovery remain untested."
+          }
+        ]
+      }
+    },
+    {
+      "title": "Oversized candidate",
+      "action": "content:data",
+      "titleFooter": "Movie",
+      "data": {
+        "type": "list",
+        "headline": "PUBLIC FIXTURE / Synthetic clip",
+        "cache": false,
+        "reuse": false,
+        "preload": "none",
+        "template": {
+          "type": "default",
+          "layout": "0,0,12,1",
+          "centration": "title",
+          "truncation": "title",
+          "color": "msx-glass"
+        },
+        "items": [
+          {
+            "title": "Outside documented candidate profile",
+            "action": "info:No eligible stored version for this Philips profile. Video must be at most 1920x1080; 4K playback/downscaling is not supported by this client. Use a matching 720p/1080p copy. Transcoding is disabled."
+          },
+          {
+            "title": "Compatibility details",
+            "action": "info:Version 1: Video exceeds the 1920x1080 client limit; 4K playback/downscaling is disabled"
+          },
+          {
+            "title": "Generated test pattern and tone; no operator media.",
+            "action": "info:Generated test pattern and tone; no operator media."
+          },
+          {
+            "title": "Year: unknown   Type: Movie",
+            "action": "info:Metadata supplied by Jellyfin."
+          },
+          {
+            "title": "Diagnostics",
+            "action": "info:Dynamic authentication and diagnostics are not covered by this public fixture."
+          },
+          {
+            "title": "Public fixture scope",
+            "action": "info:Rendering and player only. Normal hosted pairing, private delivery and dynamic recovery remain untested."
+          }
+        ]
+      }
+    },
+    {
+      "title": "Libraries",
+      "action": "back"
+    },
+    {
+      "title": "Public fixture scope",
+      "action": "info:Rendering and player only. Normal hosted pairing, private delivery and dynamic recovery remain untested."
+    }
+  ]
+}

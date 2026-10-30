@@ -1,0 +1,41 @@
+{
+  "type": "list",
+  "headline": "PUBLIC FIXTURE / Synthetic clip",
+  "cache": false,
+  "reuse": false,
+  "preload": "none",
+  "template": {
+    "type": "default",
+    "layout": "0,0,12,1",
+    "centration": "title",
+    "truncation": "title",
+    "color": "msx-glass"
+  },
+  "items": [
+    {
+      "title": "Try original (TV unverified)",
+      "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/533a572c19cd16bb0aace7857ce7677632056023/tests/fixtures/msx-public/synthetic.mp4",
+      "playerLabel": "Public synthetic clip / substituted fixture URL"
+    },
+    {
+      "title": "Philips 32PHS6605/12: documentation-based candidate",
+      "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+    },
+    {
+      "title": "Generated test pattern and tone; no operator media.",
+      "action": "info:Generated test pattern and tone; no operator media."
+    },
+    {
+      "title": "Year: unknown   Type: Movie",
+      "action": "info:Metadata supplied by Jellyfin."
+    },
+    {
+      "title": "Diagnostics",
+      "action": "info:Dynamic authentication and diagnostics are not covered by this public fixture."
+    },
+    {
+      "title": "Public fixture scope",
+      "action": "info:Rendering and player only. Normal hosted pairing, private delivery and dynamic recovery remain untested."
+    }
+  ]
+}
