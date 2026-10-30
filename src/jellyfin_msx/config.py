@@ -14,6 +14,7 @@ class Settings:
     max_states: int = 256
     max_bitrate: int | None = None
     allow_transcoding: bool = False
+    enable_subtitle_resources: bool = False
     authorization_db: str | None = None
     authorization_key: str | None = field(default=None, repr=False)
     authorization_ttl: int = 30 * 86400
@@ -49,6 +50,10 @@ class Settings:
             )
         if min(self.session_ttl, self.pairing_ttl, self.max_states) <= 0:
             raise ValueError("State limits must be positive")
+        if self.enable_subtitle_resources and not all(
+            value.startswith("https://") for value in (self.public_url, self.jellyfin_url)
+        ):
+            raise ValueError("Subtitle resources require HTTPS portal and Jellyfin origins")
         if bool(self.authorization_db) != bool(self.authorization_key):
             raise ValueError("Authorization database and external key must be configured together")
         if not 1 <= self.authorization_ttl <= 90 * 86400:
@@ -69,6 +74,8 @@ class Settings:
             if os.getenv("MSX_MAX_BITRATE", "").strip()
             else None,
             allow_transcoding=os.getenv("MSX_ALLOW_TRANSCODING", "false").lower() == "true",
+            enable_subtitle_resources=os.getenv("MSX_ENABLE_SUBTITLE_RESOURCES", "false").lower()
+            == "true",
             authorization_db=os.getenv("MSX_AUTHORIZATION_DB") or None,
             authorization_key=os.getenv("MSX_AUTHORIZATION_KEY") or None,
             authorization_ttl=int(os.getenv("MSX_AUTHORIZATION_TTL", str(30 * 86400))),
