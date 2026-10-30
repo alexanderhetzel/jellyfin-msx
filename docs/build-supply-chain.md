@@ -129,6 +129,12 @@ the legacy HTTPX TestClient path. Its [official TestClient documentation](https:
 and [release notes](https://starlette.dev/release-notes/#120-may-28-2026)
 document the supported replacement. Add `httpx2>=2.16,<3` only to the dev extra;
 retain runtime HTTPX and every existing locked dependency version. The
+[exact Starlette 1.10.0 optional dependency contract](https://github.com/Kludex/starlette/blob/1.10.0/pyproject.toml)
+requires HTTPX2 >=2.0.0 in its full extra. HTTPX2 and HTTPCore2 are maintained in
+the [Pydantic repository](https://github.com/pydantic/httpx2/tree/v2.16.0);
+the tagged package metadata names Pydantic Services Inc. and BSD-3-Clause.
+The [core changelog](https://github.com/pydantic/httpx2/blob/v2.16.0/src/httpcore2/CHANGELOG.md)
+records its fork from encode/httpcore 1.0.9. The
 [official migration guidance](https://pydantic.dev/docs/httpx2/get-started/migration/)
 supports side-by-side installation but warns that client/request/response and
 exception classes belong to their respective packages. Jellyfin transports and
