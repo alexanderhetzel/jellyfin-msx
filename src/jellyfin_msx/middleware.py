@@ -8,7 +8,16 @@ class PairBodyLimit:
         self.app, self.maximum = app, maximum
 
     async def __call__(self, scope, receive, send):
-        if scope["type"] != "http" or scope["method"] != "POST" or scope["path"] != "/pair":
+        if (
+            scope["type"] != "http"
+            or scope["method"] != "POST"
+            or scope["path"]
+            not in {
+                "/pair",
+                "/api/device-authorization/enroll",
+                "/api/device-authorization/renew",
+            }
+        ):
             return await self.app(scope, receive, send)
         chunks, size = [], 0
         while True:
@@ -17,7 +26,7 @@ class PairBodyLimit:
                 return
             size += len(message.get("body", b""))
             if size > self.maximum:
-                response = JSONResponse({"error": "Pairing form is too large."}, status_code=413)
+                response = JSONResponse({"error": "Request body is too large."}, status_code=413)
                 return await response(scope, receive, send)
             chunks.append(message.get("body", b""))
             if not message.get("more_body", False):

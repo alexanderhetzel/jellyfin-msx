@@ -1,5 +1,6 @@
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from pathlib import Path
 from urllib.parse import urlsplit
 
 
@@ -13,6 +14,9 @@ class Settings:
     max_states: int = 256
     max_bitrate: int | None = None
     allow_transcoding: bool = False
+    authorization_db: str | None = None
+    authorization_key: str | None = field(default=None, repr=False)
+    authorization_ttl: int = 30 * 86400
 
     def __post_init__(self):
         for name in ("public_url", "jellyfin_url"):
@@ -45,6 +49,15 @@ class Settings:
             )
         if min(self.session_ttl, self.pairing_ttl, self.max_states) <= 0:
             raise ValueError("State limits must be positive")
+        if bool(self.authorization_db) != bool(self.authorization_key):
+            raise ValueError("Authorization database and external key must be configured together")
+        if not 1 <= self.authorization_ttl <= 90 * 86400:
+            raise ValueError("Authorization lifetime must be between 1 second and 90 days")
+        if self.authorization_db and (
+            not Path(self.authorization_db).is_absolute()
+            or not self.public_url.startswith("https://")
+        ):
+            raise ValueError("Durable authorization requires an absolute database path and HTTPS")
 
     @classmethod
     def from_env(cls):
@@ -56,4 +69,7 @@ class Settings:
             if os.getenv("MSX_MAX_BITRATE", "").strip()
             else None,
             allow_transcoding=os.getenv("MSX_ALLOW_TRANSCODING", "false").lower() == "true",
+            authorization_db=os.getenv("MSX_AUTHORIZATION_DB") or None,
+            authorization_key=os.getenv("MSX_AUTHORIZATION_KEY") or None,
+            authorization_ttl=int(os.getenv("MSX_AUTHORIZATION_TTL", str(30 * 86400))),
         )

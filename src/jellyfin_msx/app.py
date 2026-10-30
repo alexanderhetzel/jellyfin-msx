@@ -212,6 +212,54 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
             "parameter": "content:" + url("/msx/pair.json"),
         }
 
+    async def authorization_input(request, field):
+        limit(request, "authorization", 12)
+        if request.headers.get("origin") != settings.public_url:
+            raise PortalError(403, "Same-origin request required.")
+        if request.headers.get("content-type", "").split(";")[0] != "application/json":
+            raise PortalError(400, "JSON request required.")
+        try:
+            data = await request.json()
+        except (ValueError, UnicodeError, RecursionError):
+            raise PortalError(400, "Invalid authorization request.") from None
+        if (
+            not isinstance(data, dict)
+            or set(data) != {field}
+            or not isinstance(data[field], str)
+            or len(data[field]) != 43
+        ):
+            raise PortalError(400, "Invalid authorization request.")
+        return data[field]
+
+    @app.post("/api/device-authorization/enroll")
+    async def enroll_authorization(request: Request):
+        secret = await authorization_input(request, "session")
+        renewal, expires = state.remember(secret)
+        return {"renewal": renewal, "expires": expires, "generation": 0}
+
+    @app.post("/api/device-authorization/renew")
+    async def renew_authorization(request: Request):
+        renewal = await authorization_input(request, "renewal")
+        secret, replacement, expires = state.restore(renewal)
+        device = state.get(secret)
+        try:
+            # Check current upstream authorization before handing out a usable session.
+            await jellyfin.json("GET", f"/Users/{device.user_id}/Views", device)
+        except PortalError as error:
+            # Rotation is already committed: uncertain outcomes require safe re-pairing.
+            state.remove(secret)
+            raise PortalError(
+                error.status, "Authorization could not be restored. Pair again."
+            ) from None
+        # Disconnect may have occurred while the upstream request was outstanding.
+        state.get(secret)
+        return {
+            "renewal": replacement,
+            "session": secret,
+            "expires": expires,
+            "generation": device.authorization_generation,
+        }
+
     @app.get("/msx/pair.json")
     async def pairing(request: Request):
         limit(request, "new_pair", 10)
