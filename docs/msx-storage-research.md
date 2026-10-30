@@ -77,7 +77,10 @@ The marker is a fixed versioned synthetic string. Other values are classified
 as corrupt. A deliberate adapter-unavailable switch exercises application failure
 handling; it does **not** disable browser storage or establish a genuine browser
 quota, permission or storage-denial result. The last mutation outcome and fresh
-readback are separate, so an unsuccessful write cannot be hidden by an older value.
+readback are separate, so thrown/injected mutation failures remain visible even
+when a later read succeeds. A silent no-op write of the same already stored
+marker cannot be detected by immediate readback; retention evidence comes from
+the separate close/reopen read-before-write test, not a promise of durable writes.
 
 [Start Action](https://msx.benzac.de/wiki/index.php?title=Start_Action) documents
 startup `action`/`data`, replacement of the default `home` action, and skipping

@@ -36,6 +36,13 @@ formatted**; `uv build --wheel`: passed; `git diff --check`: passed. These check
 do not establish MSX integration; the observations
 above come from the actual official runtime.
 
+Independent final source/security/evidence review repeated all 197 tests and
+Ruff/format checks and inspected final reopen/cleanup screenshots. It identified
+an overly broad write-success claim; the research now explicitly distinguishes
+thrown/injected failure from undetectable same-value silent writes. Retention is
+supported by separate reopen-before-write evidence. No reviewer browser/server/
+TV operation was performed.
+
 ## Synthetic integration prerequisite — issue #9
 
 **Implemented:** [isolated synthetic lab and contract command](synthetic-testing.md),
