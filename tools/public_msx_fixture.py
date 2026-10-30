@@ -40,6 +40,16 @@ def export_pages(base):
     origin = "https://localhost:18091"
     app, _, _ = build_synthetic_lab(Settings(origin, origin + "/jellyfin"))
     with TestClient(app, base_url=origin) as client:
+        pairing = client.get("/msx/pair.json").json()
+        waiting = client.get(
+            action(pairing, "Continue after pairing").removeprefix("content:")
+        ).json()
+        # Waiting UI comes from the real pending-session route. Never export the
+        # pairing response, code, activation link or private reload/new-code URL.
+        waiting["items"] = [
+            button(row["title"], "info:Public waiting preview only. No TV is being paired.")
+            for row in waiting["items"]
+        ]
         home_action = pair(client, origin)
         home = client.get(home_action.removeprefix("content:")).json()
         browse = client.get(action(home, "Synthetic movies").removeprefix("content:")).json()
@@ -56,6 +66,7 @@ def export_pages(base):
             "movies.json": browse,
             "detail.json": detail,
             "denied.json": denied,
+            "waiting.json": waiting,
         }
         result = {}
         for name, original in pages.items():
@@ -100,6 +111,13 @@ def export_pages(base):
             button(
                 "Broken public media (expected failure)",
                 "video:" + base + "/deliberately-missing.mp4",
+            )
+        )
+        result["index.json"]["items"].append(
+            button(
+                "Waiting for pairing (public preview)",
+                "content:data",
+                data=copy.deepcopy(result["waiting.json"]),
             )
         )
         # Embed pages through the documented content:data action. Only the media

@@ -1,7 +1,7 @@
 {
   "type": "list",
   "headline": "PUBLIC FIXTURE / Synthetic clip",
-  "extension": "Jellyfin MSX",
+  "extension": "{txt:#b8f16a:Jellyfin MSX}",
   "cache": false,
   "reuse": false,
   "preload": "none",

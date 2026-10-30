@@ -2,7 +2,7 @@
   "init": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Jellyfin libraries",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -31,7 +31,7 @@
   "page1": {
     "type": "pages",
     "headline": "PUBLIC NAVIGATION / Library",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -56,7 +56,7 @@
   "page2": {
     "type": "pages",
     "headline": "PUBLIC NAVIGATION / Library",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -93,7 +93,7 @@
   "page3": {
     "type": "pages",
     "headline": "PUBLIC NAVIGATION / Library",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -260,7 +260,7 @@
   "page4": {
     "type": "pages",
     "headline": "PUBLIC NAVIGATION / Library",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -291,7 +291,7 @@
   "page6": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 01",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -329,7 +329,7 @@
   "page7": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 02",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -367,7 +367,7 @@
   "page8": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 03",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -405,7 +405,7 @@
   "page9": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 04",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -443,7 +443,7 @@
   "page10": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 05",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -481,7 +481,7 @@
   "page11": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 06",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -519,7 +519,7 @@
   "page12": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 07",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -557,7 +557,7 @@
   "page13": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 08",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -595,7 +595,7 @@
   "page14": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 09",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -633,7 +633,7 @@
   "page15": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 10",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -671,7 +671,7 @@
   "page16": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 11",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -709,7 +709,7 @@
   "page17": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 12",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -747,7 +747,7 @@
   "page18": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 13",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -785,7 +785,7 @@
   "page19": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 14",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -823,7 +823,7 @@
   "page20": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 15",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -861,7 +861,7 @@
   "page21": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 16",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -899,7 +899,7 @@
   "page22": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 17",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -937,7 +937,7 @@
   "page23": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 18",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -975,7 +975,7 @@
   "page24": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 19",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -1013,7 +1013,7 @@
   "page25": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 20",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -1051,7 +1051,7 @@
   "page26": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 21",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -1089,7 +1089,7 @@
   "page27": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 22",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -1127,7 +1127,7 @@
   "page28": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 23",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -1165,7 +1165,7 @@
   "page29": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 24",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -1203,7 +1203,7 @@
   "page30": {
     "type": "pages",
     "headline": "PUBLIC NAVIGATION / Library",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -1374,7 +1374,7 @@
   "page31": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 25",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -1412,7 +1412,7 @@
   "page32": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 26",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -1450,7 +1450,7 @@
   "page33": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 27",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -1488,7 +1488,7 @@
   "page34": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 28",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -1526,7 +1526,7 @@
   "page35": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 29",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -1564,7 +1564,7 @@
   "page36": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 30",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -1602,7 +1602,7 @@
   "page37": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 31",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -1640,7 +1640,7 @@
   "page38": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 32",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -1678,7 +1678,7 @@
   "page39": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 33",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -1716,7 +1716,7 @@
   "page40": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 34",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -1754,7 +1754,7 @@
   "page41": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 35",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -1792,7 +1792,7 @@
   "page42": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 36",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -1830,7 +1830,7 @@
   "page43": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 37",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -1868,7 +1868,7 @@
   "page44": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 38",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -1906,7 +1906,7 @@
   "page45": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 39",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -1944,7 +1944,7 @@
   "page46": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 40",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -1982,7 +1982,7 @@
   "page47": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 41",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -2020,7 +2020,7 @@
   "page48": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 42",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -2058,7 +2058,7 @@
   "page49": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 43",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -2096,7 +2096,7 @@
   "page50": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 44",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -2134,7 +2134,7 @@
   "page51": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 45",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -2172,7 +2172,7 @@
   "page52": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 46",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -2210,7 +2210,7 @@
   "page53": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 47",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -2248,7 +2248,7 @@
   "page54": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 48",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -2286,7 +2286,7 @@
   "page55": {
     "type": "pages",
     "headline": "PUBLIC NAVIGATION / Library",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -2321,7 +2321,7 @@
   "page56": {
     "type": "pages",
     "headline": "PUBLIC NAVIGATION / Library",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -2488,7 +2488,7 @@
   "page57": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 49",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",
@@ -2526,7 +2526,7 @@
   "page58": {
     "type": "list",
     "headline": "PUBLIC NAVIGATION / Episode 50",
-    "extension": "Jellyfin MSX",
+    "extension": "{txt:#b8f16a:Jellyfin MSX}",
     "cache": false,
     "reuse": false,
     "preload": "none",

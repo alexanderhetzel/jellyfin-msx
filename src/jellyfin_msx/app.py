@@ -25,7 +25,7 @@ from .state import State
 from .subtitles import OFFICIAL_ORIGINS, SubtitleResources
 
 ItemId = Annotated[str, Query(pattern=r"^[a-fA-F0-9-]{32,36}$")]
-TEMPLATE = Path(__file__).with_name("templates").joinpath("pair.html").read_text()
+TEMPLATE = Path(__file__).with_name("templates").joinpath("pair.html").read_text(encoding="utf-8")
 
 
 def create_app(settings: Settings | None = None, transport=None, state: State | None = None):
@@ -271,7 +271,7 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
             response = HTMLResponse(
                 '<!doctype html><html lang="en"><meta name="viewport" '
                 'content="width=device-width,initial-scale=1">'
-                '<title>TV paired · Jellyfin MSX</title>'
+                "<title>TV paired · Jellyfin MSX</title>"
                 '<link rel="stylesheet" href="/pair.css"><main>'
                 '<p class="brand">Jellyfin MSX</p><p class="step">Pairing complete</p>'
                 "<h1>TV paired</h1>"

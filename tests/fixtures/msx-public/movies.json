@@ -1,7 +1,7 @@
 {
   "type": "pages",
   "headline": "PUBLIC FIXTURE / Library",
-  "extension": "Jellyfin MSX",
+  "extension": "{txt:#b8f16a:Jellyfin MSX}",
   "cache": false,
   "reuse": false,
   "preload": "none",
@@ -19,7 +19,7 @@
       "data": {
         "type": "list",
         "headline": "PUBLIC FIXTURE / Synthetic clip",
-        "extension": "Jellyfin MSX",
+        "extension": "{txt:#b8f16a:Jellyfin MSX}",
         "cache": false,
         "reuse": false,
         "preload": "none",
@@ -66,7 +66,7 @@
       "data": {
         "type": "list",
         "headline": "PUBLIC FIXTURE / Synthetic clip",
-        "extension": "Jellyfin MSX",
+        "extension": "{txt:#b8f16a:Jellyfin MSX}",
         "cache": false,
         "reuse": false,
         "preload": "none",

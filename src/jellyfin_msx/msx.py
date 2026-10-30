@@ -1,6 +1,6 @@
 import re
 
-from .presentation import PRODUCT, SURFACE
+from .presentation import ACCENT, PRODUCT, SURFACE
 
 
 def text(value, limit=500):
@@ -12,7 +12,7 @@ def content(headline: str, items: list[dict], posters=False):
     return {
         "type": "pages" if posters else "list",
         "headline": text(headline),
-        "extension": PRODUCT,
+        "extension": f"{{txt:{ACCENT}:{PRODUCT}}}",
         "cache": False,
         "reuse": False,
         "preload": "none",
