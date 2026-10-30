@@ -1,0 +1,13 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:08.000
+EN A 0–8: English first cue
+
+00:00:08.000 --> 00:00:16.000
+EN B 8–16: English second cue
+
+00:00:16.000 --> 00:00:24.000
+EN C 16–24: English third cue
+
+00:00:24.000 --> 00:00:30.000
+EN D 24–30: English end
