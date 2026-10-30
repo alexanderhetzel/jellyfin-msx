@@ -25,6 +25,12 @@ token-replacement and redacted lab regressions also passed (51 focused tests).
 No real Jellyfin, credentials, native-player packet capture, browser/TV test,
 deployment log verification, TLS/trust change or production resource was used.
 This is research acceptance, not a new private-hosted integration/device pass.
+Independent source/security review checked the primary contracts and research
+acceptance and independently reran 217 tests, Ruff/format and diff checks. Its
+diagnostic-wording finding was corrected: only generated negotiation fields
+omit upstream credentials; arbitrary bounded platform/player labels are not a
+secret scrubber. The reviewer did not operate a browser, private server,
+deployment or physical device.
 
 ## Public MSX lifecycle research milestone — issue #17
 
