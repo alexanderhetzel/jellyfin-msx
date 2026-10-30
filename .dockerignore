@@ -5,11 +5,15 @@
 !LICENSE
 !NOTICE.md
 !src/
+src/**
 !src/jellyfin_msx/
+src/jellyfin_msx/**
 !src/jellyfin_msx/*.py
 !src/jellyfin_msx/templates/
+src/jellyfin_msx/templates/**
 !src/jellyfin_msx/templates/*.html
 !tools/
+tools/**
 !tools/requirements.txt
 # Explicit protection for the existing private-lab contract as well.
 .lab
