@@ -1,5 +1,35 @@
 # Verification status — 2026-10-30
 
+## Public MSX lifecycle research milestone — issue #17
+
+**Implemented / browser-tested / device-unverified:** independently authored
+240-record synthetic interaction probe, commit-pinned public launcher and
+[actual callback matrix / candidate telemetry design](msx-lifecycle-research.md).
+Official MSX 0.1.167 in connected Chrome emitted actual load, pause, play, seek
+and stop callbacks from real controls. Requested progress samples are explicitly
+separate from emitted events. Initial load lacked a separate play callback;
+Stop data and an immediate sample were stale; natural completion carried the
+previous ended=true state on the next load. Back/content exit kept playing.
+Missing media and a real tab-scoped offline fetch failure produced load/pause
+with zero duration, without a collected app:disconnect. Cached media continued
+offline. Network/cache overrides were restored. Screenshots and sanitized ordered
+records are retained locally; no runtime events/player state were fabricated.
+
+**Deferred / issue remains open:** genuine browser suspension/resume. With
+documented suspend=1, actual tab changes still exposed visible documents in this
+automation environment; no collected suspend/resume callback established the
+required precondition. Physical comparison stays in #4. Abrupt-close final
+delivery is not guaranteed; the proposed lease fallback is design only.
+No production telemetry endpoint or Jellyfin reporting was added. Real plugin
+authenticated transport needs a controlled HTTPS origin and separate validation.
+
+**Automated-tested on Windows / Python 3.12.14:** frozen dev sync passed;
+`uv run pytest`: **206 passed**, existing Starlette warning #30;
+`uv run ruff check .`: passed; `uv run ruff format --check .`: **51 files already
+formatted**; `uv build --wheel`: passed. These check the existing application and
+do not exercise JavaScript or replace actual callback evidence. No real server,
+credential, TLS/trust change, production resource or physical-TV action occurred.
+
 ## Actual public MSX renderer/player milestone — issue #9
 
 **Implemented / browser-tested / device-unverified:** independently encoded public
