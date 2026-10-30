@@ -1,5 +1,39 @@
 # Verification status — 2026-10-30
 
+## Series navigation renderer milestone — issue #7
+
+**Implemented / automated-tested / browser-tested / device-unverified:** isolated
+fifty-episode catalogue, 24/24/2 pagination, empty/restricted seasons, explicit
+production empty-state row and deterministic application-derived public graph.
+The [actual evidence and reproduction](series-navigation-results.md) separate
+normal private mocked HTTP tests from public substituted rendering/video.
+
+Official MSX 0.1.167 in connected Chrome visibly traversed all fifty labels,
+both Next/Previous boundaries, episode 24/50 details, Back focus, empty-season
+focus and denial recovery. Episode 50's substituted clip showed a real frame,
+advancing time, pause and Stop. Returning the exported production 401 wrapper
+through the public content callback instead showed generic Content Not Available,
+not the permission message. **Issue remains open** for normal hosted private
+authentication/delivery and its actual HTTP error behavior. No TV or audio pass.
+
+Windows/Python 3.12.14: frozen dev/build sync, `uv run --no-sync pytest`
+(**269 passed, 1 POSIX-only skip**, known Starlette warning #30), Ruff check/format
+(**67 files**), locked offline wheel build with explicit `.venv/Scripts/python.exe`,
+`tools.package_check wheel` exact source/license/template allowlist and
+`git diff --check` passed. The first exporter attempts failed on missing synthetic
+folder-item poster authorization and the real twelve-resolver rate budget; adding
+the fixture item contract and sampling six boundary negotiations fixed preparation.
+One metadata assertion incorrectly expected a stripped separator and was corrected.
+Independent publication review passed 52 affected tests/Ruff/wheel/allowlist and
+accepted the public source boundary. Independent source/evidence review also reran
+269 tests/one skip and Ruff/format, inspecting the saved focus, paused-frame, empty,
+negative-denial, recovery and settled-poster evidence. A narrow final iframe-only
+visibility fix removes the probe diagnostics from behind MSX. Its first launch timed
+out; one ordinary reload succeeded, and affected series/poster/empty/denial/Back
+screens were rechecked. Final-head approval and CI are recorded in the PR before
+merge. No real server, credential, trust-store, production resource,
+proprietary-runtime change or physical-device action occurred.
+
 ## Reproducible build-input milestone — issue #27
 
 **Implemented / automated-tested / device-unverified:** official Python
