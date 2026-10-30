@@ -35,8 +35,6 @@
       function page(result) {
         return {
           type: "list", cache: false, headline: "MSX storage research - synthetic only",
-          action: "[home|interaction:commit]", data: {operation: "startup"},
-          reference: "request:interaction:init",
           template: {type: "default", layout: "0,0,12,1"},
           items: [
             {label: result, action: "info:Synthetic research; no authorization is restored."},
@@ -45,6 +43,8 @@
             {label: "Last operation: " + lastOperation, action: "info:Separate mutation outcome and current readback."},
             {label: "Storage API type: " + (storage ? storage.getType() : "unavailable"),
               action: "info:Storage type is diagnostic, not a durability guarantee."},
+            {label: "Browser: " + ((navigator.userAgent.match(/Chrome\/[\d.]+/) || ["unreported"])[0]),
+              action: "info:Browser user-agent version; platform behavior remains unverified."},
             button("Read marker", "read"), button("Write synthetic marker", "write"),
             button("Write corrupt marker", "corrupt"), button("Remove probe marker", "remove"),
             button("Toggle injected unavailable adapter", "unavailable"),
