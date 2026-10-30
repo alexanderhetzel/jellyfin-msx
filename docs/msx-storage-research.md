@@ -123,7 +123,11 @@ The following is a design contract, not an implemented persistence feature:
    expiry, revocation and account authorization. Rotate renewal secrets with
    bounded crash/retry handling; do not accidentally create an unlimited replay
    grace period. #12 must specify transaction/concurrency behavior and validate
-   the actual public API request/response path before shipping it.
+   the actual public API request/response path before shipping it. When persisting
+   a new secret generation, privately read back and compare the exact expected
+   value/generation, never merely key presence; do not log either value. Failed
+   persistence or a rotation race must use bounded recovery/re-pairing rather
+   than claiming that renewal is durably saved.
 5. Missing, malformed, unsupported-schema, unreadable or failed-write state
    produces an explicit non-durable/re-pair path. Never infer authorization from
    marker presence or silently substitute a device ID. Network failure offers
