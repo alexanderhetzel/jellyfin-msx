@@ -26,6 +26,8 @@ jobs:
       - run: uv run --no-sync ruff check .
       - run: uv run --no-sync ruff format --check .
       - run: uv run --no-sync pytest
+      - name: Synthetic HTTP contract smoke (no external runtime)
+        run: uv run --no-sync python -m tools.synthetic_check
       - run: uv build --wheel
   docker:
     runs-on: ubuntu-latest
