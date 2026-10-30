@@ -7,6 +7,7 @@ import socket
 import subprocess
 import sys
 import time
+from types import SimpleNamespace
 
 import httpx
 import pytest
@@ -19,6 +20,67 @@ from tools.synthetic_check import action, pair
 from tools.synthetic_lab import MOVIE, build_synthetic_lab
 
 ORIGIN = "https://synthetic-test.trycloudflare.com"
+
+
+@pytest.mark.parametrize(
+    "seconds,ready_at,success", [(900, 90, True), (60, 61, False), (900, 181, False)]
+)
+def test_delayed_relay_readiness_keeps_original_total_budget(
+    monkeypatch, tmp_path, capsys, seconds, ready_at, success
+):
+    assert https.STARTUP_SECONDS == 180
+    clock = [0.0]
+    monkeypatch.setattr(
+        https,
+        "time",
+        SimpleNamespace(
+            monotonic=lambda: clock[0], sleep=lambda delay: clock.__setitem__(0, clock[0] + 10)
+        ),
+    )
+    monkeypatch.setattr(https, "CONTROL", tmp_path / "control")
+    monkeypatch.setattr(https, "verify_binary", lambda _: None)
+    processes = []
+
+    def spawn(*args, **kwargs):
+        process = SimpleNamespace(
+            pid=len(processes) + 1,
+            stdout=io.BytesIO(b"RESERVED\n"),
+            stdin=io.BytesIO(),
+            poll=lambda: None,
+        )
+        processes.append(process)
+        return process
+
+    stopped = []
+    monkeypatch.setattr(https, "spawn", spawn)
+    monkeypatch.setattr(https, "stop_process", lambda process: stopped.append(process))
+    monkeypatch.setattr(https, "drain_origins", lambda stream, values: None)
+    allocation_deadlines = []
+
+    def allocated(process, values, deadline, stop_file):
+        allocation_deadlines.append(deadline)
+        return "RESERVED" if len(allocation_deadlines) == 1 else ORIGIN
+
+    monkeypatch.setattr(https, "await_value", allocated)
+    monkeypatch.setattr(https, "ready_local", lambda: True)
+
+    def relay_ready(origin):
+        clock[0] = ready_at
+        return True
+
+    monkeypatch.setattr(https, "ready_public", relay_ready)
+    if success:
+        https.activate(tmp_path / "fake", seconds=seconds)
+    else:
+        with pytest.raises(https.PreparationError, match="relay-readiness-timeout"):
+            https.activate(tmp_path / "fake", seconds=seconds)
+    events = [json.loads(line) for line in capsys.readouterr().out.splitlines()]
+    assert any(event["status"] == "ready" for event in events) is success
+    assert allocation_deadlines == [min(seconds, 180)] * 2
+    if success:
+        assert clock[0] == seconds  # Startup consumed the original budget; it did not renew it.
+    assert stopped == list(reversed(processes))
+    assert not https.CONTROL.exists()
 
 
 @pytest.mark.parametrize(

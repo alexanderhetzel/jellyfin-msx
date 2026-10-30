@@ -1,5 +1,26 @@
 # Verification status — 2026-10-30
 
+## Approved synthetic HTTPS readiness follow-up — issue #9
+
+**Implemented / automated-tested / device-unverified:** after explicit human
+approval for synthetic-only temporary Cloudflare exposure, three bounded starts
+failed readiness and cleaned up. The local backend returned the expected health
+JSON; the OS resolver and connected Chrome initially could not resolve assigned
+names, although public HTTPS DNS queries returned answers. The unchanged OS
+resolver later resolved those names naturally. No resolver, TLS or browser
+security settings changed.
+
+The startup window is now 180 seconds inside the original 900-second total
+lifetime. Regression cases cover delayed readiness, shorter total budgets,
+readiness probes crossing the deadline and owned cleanup. `uv run pytest -W error`
+passed **394 tests / 1 POSIX skip**, Ruff passed, formatting passed **83 files**,
+and independent affected-diff review found no blockers after repeating the 34
+focused tests. One further approved attempt reached actual local and verified
+public HTTPS health readiness after its initial DNS failure cleared naturally.
+Only the fixed health endpoint was requested; no MSX pairing session was created
+or paired by the worker. This is HTTPS delivery evidence, not an actual hosted-MSX
+rendering/playback pass. The original issue #9 browser matrix remains open.
+
 ## Temporary synthetic HTTPS local preparation — issue #9
 
 **Implemented / automated-tested / device-unverified:** a separate opt-in

@@ -1,5 +1,12 @@
 # Temporary synthetic HTTPS preparation — issue #9
 
+The preparation checkpoint below predates the later explicit human approval for
+temporary synthetic-only activation. That approved follow-up reached local and
+verified public HTTPS health readiness after a longer bounded startup wait; see
+[actual verification status](status.md). Readiness alone does not verify hosted
+MSX rendering or playback. No operator configuration, credentials or media were
+used, and no system DNS, trust or browser security setting changed.
+
 **Implemented / automated-tested / device-unverified:** a local-only preparation
 milestone. No public tunnel was started, and no new hosted-MSX integration pass
 is claimed. Activation is a separate new public-exposure decision; preparing,
@@ -122,7 +129,7 @@ refuses an existing directory rather than replacing another run's state.
   printed by that channel. Backend access/error logs are disabled in its dedicated
   process; unexpected launcher exceptions become fixed error codes. Provider-side
   handling is outside this local log-redaction claim.
-- Startup has a 45-second deadline with bounded local/verified-HTTPS relay health
+- Startup has a 180-second deadline with bounded local/verified-HTTPS relay health
   checks (two-second public request timeout; no redirects or environment proxy).
   Health readiness is not a successful MSX/private application test. Total parent
   lifetime is at most 900 seconds, plus bounded owned-process shutdown.
