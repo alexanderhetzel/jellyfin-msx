@@ -88,7 +88,13 @@ graph; a safe master URL alone is insufficient evidence.
 
 **Implemented, with deployment limits:** application HTTP-client URL logs are
 suppressed at normal configured levels; lab evidence retains allowlisted policy
-fields/status counters, and playback diagnostics omit URLs/tokens/source IDs.
+fields/status counters, and generated negotiation fields omit upstream media
+URLs/tokens/source IDs. The `platform`/`player` query labels are untrusted,
+length-bounded text retained in diagnostics, not a general-purpose secret scrubber;
+never submit credentials or private URLs in those labels. The public MSX
+attached-info contract can also include a media URL: future telemetry must
+allowlist safe fields instead of forwarding raw player data (see
+[lifecycle research](msx-lifecycle-research.md)).
 Packaged Uvicorn disables access logs; `deploy/Caddyfile` has no access-log
 directive and excludes proxy error request-URI logging. These controls cover the
 portal, not the separate Jellyfin host, its reverse proxy/CDN, player logs or
