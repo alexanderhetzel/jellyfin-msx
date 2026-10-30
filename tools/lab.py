@@ -101,6 +101,11 @@ def build_lab(settings, *, transport=None):
         raise ValueError("The integration lab never enables transcoding")
     recorder = TrafficRecorder(transport)
     app = create_app(settings, transport=recorder)
+    return attach_observations(app, settings, recorder)
+
+
+def attach_observations(app, settings, recorder):
+    """Attach redacted lab UI to an already constructed app; never create transport."""
     counts = Counter()
     pairing_results = []
     launch = (
