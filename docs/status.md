@@ -1,5 +1,45 @@
 # Verification status — 2026-10-30
 
+## Hosting qualification research — issue #3
+
+**Implemented:** [dated hosting decision and rollout runbook](hosting-qualification.md),
+including official Ultra Python/systemd/port/HTTPS evidence, current public-service
+policy constraints, unknown secret-injection/logging guarantees, and the source's
+origin-only boundary. The selected application deployment shape is the existing
+single-worker Compose/Caddy package on a controlled Linux host with a dedicated
+HTTPS origin. No particular host was provisioned or production service started.
+
+**Automated-tested on Windows / Python 3.12.14:** `uv sync --locked --extra dev`
+with the bundled interpreter succeeded; `uv run pytest`: **169 passed**, one known
+Starlette TestClient deprecation (#30); `uv run ruff check .`: passed;
+`uv run ruff format --check .`: **40 files already formatted**; `uv build --wheel`:
+passed. These commands used the existing uv executable from the development
+checkout; no operator credentials or real Jellyfin requests were used.
+
+An isolated subprocess loaded the newly built wheel unpacked into a temporary
+directory (not the editable source) and served loopback HTTP. Health returned
+the expected status/version/device-unverified fields; start returned the exact
+HTTPS pairing URL, CORS for the official MSX origin and `no-store`. A configured
+public path prefix was rejected. The process was stopped afterward. Initial
+smoke-harness attempts incorrectly imported the wheel as a zip and expected CORS
+without an Origin header / an exact Cache-Control string; correcting those harness
+assumptions produced the pass. No product code changed. This is a Windows wheel
+smoke, not the Linux Compose, public HTTPS or MSX runtime check.
+
+Independent documentation review found no blocking findings, checked the official
+provider/MSX sources and local configuration/packaging boundaries, and passed
+`git diff --check`. The reviewer did not repeat browser, service or TV tests.
+
+**Deferred / device-unverified:** production DNS/TLS/startup, chosen-host reboot
+recovery, proxy error-path marker check, and actual TV HTTPS/start discovery.
+No Docker CLI was available on PATH in this Windows ticket environment; the
+historical Docker evidence below is not a new local execution. No browser form or
+MSX application test was performed for this documentation-only milestone. Issue
+#3 remains open for outstanding rollout/device verification; no hardware pass is
+inferred from the automated suite.
+
+## Earlier publication and integration evidence
+
 Development is now tracked in [repository Issues](https://github.com/alexanderhetzel/jellyfin-msx/issues)
 and the [Jellyfin MSX Project](https://github.com/users/alexanderhetzel/projects/5).
 The current publication/setup work is [issue #2](https://github.com/alexanderhetzel/jellyfin-msx/issues/2).
