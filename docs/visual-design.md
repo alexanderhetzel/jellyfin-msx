@@ -127,6 +127,16 @@ Ignored `.lab/reports/` screenshots: `issue15-final-tv-libraries`,
 `issue15-desktop-success` (all JPEG). Public-only request metadata is in
 `issue15-public-request-evidence.json`. Earlier non-final captures are retained
 separately. Raw initial loading/resize frames are not settled-image evidence.
+The retained final denial image shows the denied-detail rows after the timed
+notice disappeared; the opened HD/no-conversion notice is an actual UI/AX action
+observation, not a claim about the content of that retained image.
+
+Independent review inspected all sixteen named screenshots and the source,
+export/security boundaries and evidence claims. It found no blocking source or
+visual findings; the denial-image distinction above records its evidence nuance.
+The reviewer did not repeat live browser actions. The owned synthetic listener
+and three browser tabs were closed. Both tab emulations and the browser-scoped
+override were reset; both pages measured the original 2560x1215 afterward.
 
 **Deferred / device-unverified:** physical Philips normal-distance readability,
 overscan, arrows/OK/Back and platform font/rendering parity remain in #4.

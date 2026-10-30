@@ -20,6 +20,11 @@ tools, fixtures and local helper/reports. An initial 345-test pass exposed
 Ruff formatting/line-length findings, subsequently corrected; the final full run
 and both Ruff checks passed. Public-export and pairing affected checks also passed.
 No dependency, real server/account, production, trust or runtime-code change.
+Independent review inspected source/security/export boundaries and all sixteen
+named visual captures with no blocking findings; it did not repeat browser
+actions. Final denial capture is the denied-detail view, distinct from the opened
+timed notice observed during actual actions. Owned tabs/listener were closed and
+viewport overrides cleared, with original 2560x1215 dimensions restored.
 
 
 ## Opt-in subtitle resource milestone — issue #22
