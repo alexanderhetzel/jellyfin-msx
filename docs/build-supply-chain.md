@@ -119,7 +119,7 @@ permissions minimal and the required check names intact when updating Actions.
 
 ### Existing cryptography update #44
 
-**Deferred update / current runtime lock retained:** independent review of
+**Implemented / automated-tested update:** initial independent review of
 [#44](https://github.com/alexanderhetzel/jellyfin-msx/pull/44) at
 `e99bafd0f2b9573aeb3dc99acd928d69e20b4e8a` found only the `<49` to `<51` constraint
 change and 48.0.1 to 50.0.0 lock change. All 40 cryptography artifact URLs/hashes
@@ -129,7 +129,18 @@ project uses Fernet/InvalidToken, not the removed asymmetric APIs or PKCS#7 API
 affected by the v50 fix. Version 49 drops Intel macOS/32-bit Windows wheels.
 The [official changelog](https://cryptography.io/en/latest/changelog/) already lists
 50.0.2 with newer bundled OpenSSL, and that PR's base predates current main.
-It remains open pending a refreshed patch/current base, full current-head checks
-and independent review. Its old green checks do not establish that acceptance.
-No production database migration or MSX/device pass follows from the isolated
-Fernet test. This milestone creates no duplicate major-update PR.
+The original candidate was held while the same PR was refreshed onto current
+main with `cryptography>=50.0.2,<51` and lock 50.0.2. Independent final review of
+`43e4c5e85779e9e3233b902fa12ea4b7a5523a32` verified all 53 new artifact URLs/hashes
+against official PyPI, unchanged unrelated dependencies and 48.0.1 ↔ 50.0.2 Fernet
+compatibility in both directions. Full Windows/Linux matrix, Docker/proxy/wheel,
+secret scan and CodeQL checks passed, with no open review threads. PR #44 was
+explicitly squash merged as `e30e1cd6f68e7652ba1d325ef175c9e398c09bf0`.
+Old 48.0.1 falls inside the ranges of
+[GHSA-m2h6-j472-rp4c](https://github.com/advisories/GHSA-m2h6-j472-rp4c),
+[GHSA-jwv3-5hgf-82ww](https://github.com/advisories/GHSA-jwv3-5hgf-82ww) and
+[GHSA-g6cj-pr64-35w5](https://github.com/advisories/GHSA-g6cj-pr64-35w5). No affected
+API path was identified in the current application; the update still removes
+those known affected dependency versions. No production database migration or
+MSX/device pass follows from the synthetic tests. No duplicate major-update PR
+was created.
