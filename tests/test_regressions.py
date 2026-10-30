@@ -5,7 +5,7 @@ import re
 
 import httpx
 import pytest
-from conftest import LIBRARY, MOVIE, SOURCE, TOKEN, media_source
+from conftest import LIBRARY, MOVIE, SOURCE, TOKEN, code_stage, media_source
 
 from jellyfin_msx.jellyfin import normalize_contract
 from jellyfin_msx.middleware import PairBodyLimit
@@ -129,12 +129,11 @@ def test_asgi_limit_stops_before_reading_remaining_chunks():
 
 def test_blank_password_reaches_jellyfin_instead_of_validation_error(portal):
     _, device = portal.state.pair()
-    page = portal.client.get("/pair")
-    csrf = re.search(r'name="csrf" value="([^"]+)"', page.text).group(1)
+    fields = code_stage(portal.client, device.code)
     response = portal.client.post(
         "/pair",
         headers={"Origin": portal.settings.public_url},
-        data={"code": device.code, "username": "viewer", "password": "", "csrf": csrf},
+        data={**fields, "username": "viewer", "password": ""},
     )
     assert response.status_code == 401  # mock server rejects it, but POST reaches the server
     assert json.loads(portal.fake.requests[-1].content)["Pw"] == ""

@@ -49,6 +49,15 @@ def pair(client, origin, fault=None):
     if fault == "csrf":
         fields["csrf"] = "deliberately-broken"
     result = client.post("/pair", data=fields, headers={"Origin": origin})
+    require(result.status_code == 200 and 'name="stage"' in result.text, "pairing")
+    stage_fields = dict(
+        re.findall(r'<input type="hidden" name="([^"]+)" value="([^"]+)"', result.text)
+    )
+    result = client.post(
+        "/pair",
+        data={**stage_fields, "username": USERNAME, "password": PASSWORD},
+        headers={"Origin": origin},
+    )
     require(result.status_code == 200 and "Sign-in succeeded" in result.text, "pairing")
     return home_action
 

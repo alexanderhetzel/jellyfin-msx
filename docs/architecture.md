@@ -5,8 +5,11 @@
 1. MSX loads `/msx/start.json` (also `/msx/start.json` under the MSX setup convention).
    Its content action loads `/msx/pair.json`, which creates a five-minute pairing.
 2. TV displays a short code and companion address `/pair`. The operator enters
-   that code and Jellyfin credentials in a browser. A same-origin, CSRF-protected
-   POST authenticates against the single operator-configured Jellyfin server.
+   that code in a browser, checks it, then enters Jellyfin credentials in a
+   device/cookie-bound second stage. Same-origin, CSRF-protected POSTs validate
+   and authenticate against the single operator-configured Jellyfin server.
+   See [the companion pairing contract](companion-pairing.md) for activation links,
+   expiry, single-use grants and tab/retry recovery.
 3. TV selects “Continue” with the remote. Its random capability identifies the
    paired session. No cookie support or third-party input plugin is required on TV.
 4. Backend requests user views/children/details from Jellyfin. Private posters

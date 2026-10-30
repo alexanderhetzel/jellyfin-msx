@@ -132,7 +132,17 @@ def test_csrf_does_not_authenticate_and_reports_never_expose_secrets():
         assert client.get("/__lab/report").json()["jellyfin_requests"] == {}
         form = client.get("/pair")
         fields["csrf"] = re.search(r'name="csrf" value="([^"]+)"', form.text)[1]
-        assert client.post("/pair", data=fields, headers={"Origin": origin}).status_code == 200
+        form = client.post("/pair", data=fields, headers={"Origin": origin})
+        assert form.status_code == 200 and not fixture.tokens
+        fields = dict(re.findall(r'<input type="hidden" name="([^"]+)" value="([^"]+)"', form.text))
+        assert (
+            client.post(
+                "/pair",
+                data={**fields, "username": USERNAME, "password": PASSWORD},
+                headers={"Origin": origin},
+            ).status_code
+            == 200
+        )
         token = next(iter(fixture.tokens))
         report = client.get("/__lab/report").text + client.get("/__synthetic/report").text
         for value in (secret, code, code.replace(" ", ""), csrf, token, PASSWORD, USERNAME):
