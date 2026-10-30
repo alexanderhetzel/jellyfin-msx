@@ -1,5 +1,38 @@
 # Verification status — 2026-10-30
 
+## Playback profile contract — issue #34
+
+**Implemented / automated-tested / device-unverified:** immutable candidate
+descriptions separate codec/container/ranking data from the shared HD admission
+policy. Production remains fixed to the existing Philips candidate; no runtime
+selector, new hardware profile or UI change was introduced. The
+[profile contract](playback-profile-contract.md) defines trusted future selection,
+unknown-selection rejection, session/profile/source binding and evidence,
+configuration, diagnostics, UI and regression requirements before rollout.
+Two synthetic test-only profiles demonstrate independent source ranking and
+PlaybackInfo declarations, HD/metadata/operator restrictions, output isolation
+and production hint-spoofing denial. Browser/physical acceptance and selectable
+production profile rollout are explicitly deferred; no new Jellyfin-version or
+upstream media-revocation result is claimed.
+
+Windows/Python 3.12.14: `uv sync --locked --extra dev --group build` passed;
+affected profile/Philips/direct-only tests **86 passed**; full `uv run pytest`
+**360 passed / 1 POSIX skip**, existing warning #30; `uv run ruff check .`
+passed, `uv run ruff format --check .` **79 files** passed; `git diff --check`
+passed. Initial Ruff line-length finding was corrected by formatting before the
+full checks. No real Jellyfin, credentials, browser, TV, conversion, deployment,
+TLS trust, dependency or proprietary runtime change occurred. Primary official
+MSX request/player documentation and the exact-model manufacturer datasheet were
+read; source links, versions and limits are recorded in the contract.
+Wheel build (`uv build --wheel --no-build-isolation`) and exact tracked-source/
+license/template allowlist check passed. Independent review reran the full suite,
+Ruff/format and whitespace checks and corroborated the primary evidence without
+blocking source/security findings. Its small diagnostic-description clarification
+was corrected and output-mutation HD isolation strengthened; the affected
+**15 tests** and Ruff/format passed again. Reviewer did not operate MSX, a TV,
+real Jellyfin or a container. Required GitHub container/check gates still apply
+before merge; no local Docker execution is inferred.
+
 ## Consistent visual design — issue #15
 
 **Implemented / automated-tested / browser-tested / device-unverified:** shared

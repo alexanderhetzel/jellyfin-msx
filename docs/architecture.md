@@ -76,6 +76,13 @@ HLS segments. NAT, certificates and server transcode permissions remain operator
 
 ## Playback contract
 
+The [multi-device profile contract](playback-profile-contract.md) separates
+immutable source-defined candidate descriptions from HD admission, operator
+policy and runtime observations. Production remains fixed to the Philips
+candidate below; two synthetic helper profiles prove isolation without adding
+device support or a runtime selector. The contract defines trusted selection,
+session/source binding, diagnostics/UI and regressions required before rollout.
+
 The current profile is `philips-32phs6605-12-hd-policy-v2`, based on exact-model
 multimedia documentation and qualified platform streaming evidence. Its candidate
 containers/codecs and conditional Dolby/DTS warnings are defined in

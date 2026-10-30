@@ -4,13 +4,14 @@ from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from .device_profile import (
     AUDIO_CODECS,
-    CONTAINERS,
     MAX_VIDEO_HEIGHT,
     MAX_VIDEO_WIDTH,
     MODEL,
+    PHILIPS,
     PROFILE_BASIS,
     PROFILE_NAME,
     VIDEO_CODECS,
+    CandidateProfile,
     evidence_warnings,
 )
 from .errors import PortalError
@@ -22,20 +23,25 @@ def lower(value):
     return value.lower() if isinstance(value, str) else ""
 
 
-def choose_source(item, bitrate, allow_transcoding=False):
+def choose_source(item, bitrate, allow_transcoding=False, *, candidate_profile=PHILIPS):
     sources = item.get("MediaSources") or []
     if not sources:
         raise PortalError(409, "Jellyfin returned no media source for this item.")
-    candidates = [source for source in sources if compatible(source, bitrate)]
+    candidates = [
+        source
+        for source in sources
+        if compatible(source, bitrate, candidate_profile=candidate_profile)
+    ]
     if candidates:
 
         def preference(source):
             video = next(s for s in source["MediaStreams"] if s.get("Type") == "Video")
             pixels = video["Width"] * video["Height"]
-            fits_panel = video["Width"] <= 1366 and video["Height"] <= 768
+            width, height = candidate_profile.preferred_size
+            fits_panel = video["Width"] <= width and video["Height"] <= height
             # Selection preference, not a maximum decoder resolution.
             return (
-                lower(video.get("Codec")) != "h264",
+                lower(video.get("Codec")) != candidate_profile.preferred_video_codec,
                 not fits_panel,
                 -pixels if fits_panel else pixels,
             )
@@ -55,15 +61,15 @@ def choose_source(item, bitrate, allow_transcoding=False):
     )
 
 
-def profile(bitrate: int | None = None, allow_transcoding=False):
+def profile(bitrate: int | None = None, allow_transcoding=False, *, candidate_profile=PHILIPS):
     result = {
-        "Name": PROFILE_NAME,
+        "Name": candidate_profile.name,
         "DirectPlayProfiles": [
             {
-                "Container": ",".join(CONTAINERS),
+                "Container": ",".join(candidate_profile.containers),
                 "Type": "Video",
-                "VideoCodec": ",".join(VIDEO_CODECS),
-                "AudioCodec": ",".join(AUDIO_CODECS),
+                "VideoCodec": ",".join(candidate_profile.video_codecs),
+                "AudioCodec": ",".join(candidate_profile.audio_codecs),
             }
         ],
         "TranscodingProfiles": [
@@ -82,7 +88,7 @@ def profile(bitrate: int | None = None, allow_transcoding=False):
         "CodecProfiles": [
             {
                 "Type": "Video",
-                "Codec": ",".join(VIDEO_CODECS),
+                "Codec": ",".join(candidate_profile.video_codecs),
                 "Conditions": [
                     {
                         "Condition": "LessThanEqual",
@@ -110,13 +116,18 @@ def profile(bitrate: int | None = None, allow_transcoding=False):
     return result
 
 
-def compatibility_reasons(source: dict, bitrate: int | None = None) -> list[str]:
+def compatibility_reasons(
+    source: dict,
+    bitrate: int | None = None,
+    *,
+    candidate_profile: CandidateProfile = PHILIPS,
+) -> list[str]:
     """Fixed policy explanations; never reflect file names, URLs or arbitrary metadata."""
     reasons = []
     streams = source.get("MediaStreams") or []
     videos = [s for s in streams if s.get("Type") == "Video"]
     audios = [s for s in streams if s.get("Type") == "Audio"]
-    if lower(source.get("Container")) not in CONTAINERS:
+    if lower(source.get("Container")) not in candidate_profile.containers:
         reasons.append("Container is not covered by the documented candidate profile")
     if source.get("IsRemote") or source.get("RequiredHttpHeaders") or source.get("RequiresOpening"):
         reasons.append("Source requires an unsupported remote or opening mechanism")
@@ -126,7 +137,7 @@ def compatibility_reasons(source: dict, bitrate: int | None = None) -> list[str]
         reasons.append("Total bitrate missing or exceeds the operator's network budget")
     if not audios:
         reasons.append("Audio stream metadata missing")
-    if any(lower(a.get("Codec")) not in AUDIO_CODECS for a in audios):
+    if any(lower(a.get("Codec")) not in candidate_profile.audio_codecs for a in audios):
         reasons.append("An audio codec is not covered by the documented candidate profile")
     if any(
         not isinstance(a.get("Channels"), int)
@@ -145,7 +156,7 @@ def compatibility_reasons(source: dict, bitrate: int | None = None) -> list[str]
         reasons.append(
             "Video exceeds the 1920x1080 client limit; 4K playback/downscaling is disabled"
         )
-    if lower(video.get("Codec")) not in VIDEO_CODECS:
+    if lower(video.get("Codec")) not in candidate_profile.video_codecs:
         reasons.append("Video codec is not covered by the documented candidate profile")
     return reasons
 
@@ -159,9 +170,11 @@ def positive_number(value):
         return False  # Malformed numeric metadata, not a hardware decoder ceiling.
 
 
-def compatible(source: dict, bitrate: int | None = None) -> bool:
+def compatible(
+    source: dict, bitrate: int | None = None, *, candidate_profile: CandidateProfile = PHILIPS
+) -> bool:
     """Matches documentation-based candidates, not a physical-device pass."""
-    return not compatibility_reasons(source, bitrate)
+    return not compatibility_reasons(source, bitrate, candidate_profile=candidate_profile)
 
 
 def within_hd_policy(source: dict) -> bool:

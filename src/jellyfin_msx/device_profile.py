@@ -3,6 +3,31 @@
 Evidence, scope and unresolved limits: docs/philips-32phs6605-12.md.
 """
 
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True)
+class CandidateProfile:
+    """Trusted source-defined candidates, never a client-supplied permission set.
+
+    Application admission limits and operator bitrate budgets live outside this
+    description. A profile is not proof of any physical playback combination.
+    Production remains fixed to PHILIPS; synthetic instances are test seams only.
+    """
+
+    name: str
+    model: str
+    basis: str
+    evidence_document: str
+    containers: tuple[str, ...]
+    video_codecs: tuple[str, ...]
+    audio_codecs: tuple[str, ...]
+    conditional_audio: frozenset[str]
+    warnings: tuple[str, ...]
+    preferred_size: tuple[int, int]
+    preferred_video_codec: str = "h264"
+
+
 MODEL = "Philips 32PHS6605/12"
 PROFILE_NAME = "philips-32phs6605-12-hd-policy-v2"
 PROFILE_BASIS = "model_documentation_hd_admission_policy_msx_unverified"
@@ -27,15 +52,29 @@ AUDIO_CODECS = (
 )
 CONDITIONAL_AUDIO = frozenset({"ac3", "eac3", "dts"})
 
-
-def evidence_warnings(source):
-    warnings = [
+PHILIPS = CandidateProfile(
+    name=PROFILE_NAME,
+    model=MODEL,
+    basis=PROFILE_BASIS,
+    evidence_document="docs/philips-32phs6605-12.md",
+    containers=CONTAINERS,
+    video_codecs=VIDEO_CODECS,
+    audio_codecs=AUDIO_CODECS,
+    conditional_audio=CONDITIONAL_AUDIO,
+    warnings=(
         "MSX playback on this Philips model is not yet verified",
         "Client policy permits up to 1920x1080; 4K playback/downscaling is not supported",
         "Exact container/codec combinations and decoder limits remain unverified",
-    ]
+    ),
+    preferred_size=(1366, 768),
+)
+
+
+def evidence_warnings(source, *, candidate_profile: CandidateProfile = PHILIPS):
+    warnings = list(candidate_profile.warnings)
     if any(
-        stream.get("Type") == "Audio" and stream.get("Codec", "").lower() in CONDITIONAL_AUDIO
+        stream.get("Type") == "Audio"
+        and stream.get("Codec", "").lower() in candidate_profile.conditional_audio
         for stream in source.get("MediaStreams", [])
         if isinstance(stream.get("Codec"), str)
     ):
