@@ -7,6 +7,7 @@ API contract; it is not a Jellyfin server compatibility test.
 import argparse
 import copy
 import json
+import re
 import secrets
 import struct
 import zlib
@@ -153,6 +154,12 @@ def build_synthetic_lab(settings, *, media=MEDIA, fault=None):
         raise ValueError("Unknown synthetic failure")
     fixture = SyntheticJellyfin(settings.public_url, fault)
     app, launch = build_lab(settings, transport=httpx.MockTransport(fixture.handle))
+    attach_fixture_media(app, fixture, media, fault)
+    return app, launch, fixture
+
+
+def attach_fixture_media(app, fixture, media, fault):
+    """Attach only the fixture's explicitly supplied media, never a directory mount."""
 
     @app.api_route(f"/jellyfin/Videos/{MOVIE}/stream.mp4", methods=["GET", "HEAD"])
     async def stream(request: Request):
@@ -164,6 +171,37 @@ def build_synthetic_lab(settings, *, media=MEDIA, fault=None):
         ):
             fixture.media_requests["denied"] += 1
             return Response(status_code=401)
+        if isinstance(media, bytes):
+            # Public synthetic delivery snapshots the reviewed clip in RAM so a
+            # later local path/symlink change cannot expose a different file.
+            headers = {"Accept-Ranges": "bytes"}
+            selection = request.headers.get("range")
+            if selection:
+                match = re.fullmatch(r"bytes=(\d{0,12})-(\d{0,12})", selection)
+                if not match or not any(match.groups()):
+                    return Response(
+                        status_code=416, headers={"Content-Range": f"bytes */{len(media)}"}
+                    )
+                start = int(match[1]) if match[1] else max(0, len(media) - int(match[2]))
+                end = min(
+                    int(match[2]) if match[1] and match[2] else len(media) - 1, len(media) - 1
+                )
+                if start > end:
+                    return Response(
+                        status_code=416, headers={"Content-Range": f"bytes */{len(media)}"}
+                    )
+                headers["Content-Range"] = f"bytes {start}-{end}/{len(media)}"
+                payload, status = media[start : end + 1], 206
+            else:
+                payload, status = media, 200
+            headers["Content-Length"] = str(len(payload))
+            fixture.media_requests["original"] += 1
+            return Response(
+                b"" if request.method == "HEAD" else payload,
+                status_code=status,
+                media_type="video/mp4",
+                headers=headers,
+            )
         if not media.is_file():
             fixture.media_requests["missing"] += 1
             return Response(status_code=503)
@@ -179,8 +217,6 @@ def build_synthetic_lab(settings, *, media=MEDIA, fault=None):
             "browser_verified": False,
             "physical_device_verified": False,
         }
-
-    return app, launch, fixture
 
 
 def main():

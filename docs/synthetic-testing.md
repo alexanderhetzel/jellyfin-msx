@@ -1,5 +1,9 @@
 # Synthetic integration lab
 
+A separate [temporary synthetic HTTPS setup](temporary-synthetic-https.md) is
+prepared for an explicitly approved public Quick Tunnel. Its preflight is offline;
+preparation does not authorize or prove any hosted private integration.
+
 For the separate fifty-episode/three-page application-derived public navigation
 probe, empty-state and actual official-MSX observations/limitations, see
 [series navigation results](series-navigation-results.md). The original launcher
@@ -49,8 +53,8 @@ the fixture's Views response; playback denies Direct Play in PlaybackInfo; CSRF
 corrupts the submitted normal form field. They detect broken HTTP contracts, not
 broken hosted-runtime rendering or decoder behavior. The pytest suite verifies
 these exit codes. Exceptions print only an allowlisted stage, never a traceback
-that could include a capability or media URL. Existing Starlette warning #30 is
-visible and is not globally suppressed.
+that could include a capability or media URL. The supported dev TestClient uses
+HTTPX2 after #30; `uv run pytest -W error` checks without suppressing warnings.
 
 Public CI runs these isolated contracts with no browser, network server, FFmpeg,
 operator secrets or account. All upstream REST uses `httpx.MockTransport`, with no

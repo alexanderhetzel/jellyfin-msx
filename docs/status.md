@@ -1,5 +1,49 @@
 # Verification status — 2026-10-30
 
+## Temporary synthetic HTTPS local preparation — issue #9
+
+**Implemented / automated-tested / device-unverified:** a separate opt-in
+synthetic public-origin factory and Windows-owned helper supervisor, with
+[exact commands, binary provenance, containment and pending activation scope](temporary-synthetic-https.md).
+The real operator lab remains loopback-only. Public preparation uses explicit
+same-origin strict mocked Jellyfin, normal two-stage CSRF pairing, random RAM
+tokens, no operator/environment/credential-store configuration and only the
+checksum-verified committed clip snapshotted into RAM. No production source,
+runtime dependency, persistence or default authentication policy changed.
+
+The official cloudflared 2026.10.7 asset metadata/digest was re-read, the local
+download matched SHA256, and only version/help were executed. Safe `--check`
+reported prepared/approval-required/tunnel-not-started. The future opt-in command
+has exclusive owned loopback reservation before tunnel startup, isolated config/
+environment, hidden helpers, bounded raw-log filtering, verified-HTTPS no-redirect
+relay health, 45-second startup and 900-second lifetime limits, EOF watchdogs,
+Windows descendant Job Object containment and exact owned-process cleanup.
+The lifetime is followed by bounded shutdown; no process-name scan or broad kill.
+
+Windows/Python 3.12.14: locked dev/build sync passed; `uv run pytest -W error`
+**391 passed / 1 POSIX skip**, no warnings; `uv run ruff check .` passed;
+`uv run ruff format --check .` **83 files** passed; `git diff --check` passed.
+Offline wheel build with explicit `.venv/Scripts/python.exe` and the exact
+tracked-source/license/template allowlist passed. All helper/config/binary/media
+files remain excluded from production artifacts. Normal synthetic HTTP check
+passed. Tests include a real owned local-only backend listener and harmless
+Python helper processes, including occupied-port refusal, startup/runtime/stop/
+interrupt failure cleanup and abrupt Windows wrapper/descendant termination.
+An initial test incorrectly expected LF instead of Windows CRLF; that test
+assumption was corrected. No real tunnel was used to pass any test.
+
+Independent source/security review repeated the full warning-free suite, Ruff/
+format/diff, offline wheel and exact 19-member manifest with no blocking findings;
+it verified primary Cloudflare/Microsoft sources and did not run the vendor
+executable, a tunnel, browser, real server, credentials, trust or hardware actions.
+
+**Deferred:** activation requires a new explicit human decision for temporary
+public exposure. No public tunnel, allocation/relay request, HTTPS companion or
+official-MSX private-flow test occurred. No trust import/bypass, live configuration,
+operator account/media, production resources or TV action occurred. Local helper
+tests and preflight are not hosted integration evidence. Issue #9 remains open;
+its original browser matrix and real-server/final-device gates are preserved.
+
 ## Supported TestClient dependency — issue #30
 
 **Implemented / automated-tested / device-unverified:** the dev extra adds
