@@ -18,8 +18,23 @@ source of truth; the personal Project is their planning view. Do not maintain a
 Markdown backlog or parallel local task plan. See `docs/development.md`.
 Link accepted issues to the Project and populate its Status, Priority, Work type,
 Area and Size fields; keep native dependency links and issue descriptions aligned.
-Do not commit, push, publish or deploy without authorization. If Git is available,
-use a task branch before implementation and preserve dirty worktrees.
+The maintainer has explicitly authorized autonomous implementation, commits,
+pushes, PR creation and squash merges for requested work in this repository.
+Do not wait for human merge approval after acceptance, independent review and
+required checks pass. This project-specific authorization overrides generic
+skill instructions to stop at a PR or never merge. Never bypass branch protection
+or merge failing, unreviewed or unaccepted work. Production deployment and actions
+outside the requested scope still need their own authorization.
+Use a task branch before implementation and preserve dirty worktrees.
+
+When the maintainer starts a multi-ticket run, use one master chat to coordinate
+one separate Codex chat per issue, each in its own worktree. Subagents may help
+inside a ticket chat; they do not replace the separate ticket chats. Read
+`docs/agent-orchestration.md` before coordinating a run. The master may create,
+read, wait for and send follow-up instructions to those chats within that run.
+If any ticket chat needs human input, stop dispatching and pause all active ticket
+work until the maintainer responds. Elapsed time, retries and automation wake-ups
+are never approval. A workflow-setup request does not start ticket implementation.
 
 ## Engineering rules
 
