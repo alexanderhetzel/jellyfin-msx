@@ -1,6 +1,6 @@
 """Explicit disposable REAL-server contract check; never collected by pytest.
 
-Only digest-allowlisted official images, synthetic local files and loopback Docker
+Only digest-allowlisted official images, synthetic local files and isolated Docker
 bridge addresses are accepted. Credentials/responses stay in RAM; output is allowlisted.
 """
 
@@ -85,7 +85,8 @@ async def probe(base, version):
             while True:
                 try:
                     response = await request("GET", "/System/Info/Public")
-                    break
+                    if "Version" in response.json():
+                        break
                 except (httpx.RequestError, ContractFailure):
                     require(time.monotonic() < deadline, "readiness deadline exceeded")
                     await asyncio.sleep(1)
@@ -267,7 +268,8 @@ async def probe(base, version):
                 raise ContractFailure("logged-out session remained authorized")
             async with client.stream("GET", url, headers={"Range": "bytes=0-1023"}) as media:
                 require(
-                    media.status_code in (401, 403), "logged-out media token remained authorized"
+                    media.status_code in (401, 403),
+                    f"logged-out media request HTTP {media.status_code}",
                 )
             return {
                 "version": version + ".0",
@@ -322,6 +324,10 @@ def run(version):
             (root / "cache").mkdir()
             (config / "config/network.xml").write_text(
                 f"<NetworkConfiguration><BaseUrl>{base_path}</BaseUrl><EnableUPnP>false</EnableUPnP><EnableIPv6>false</EnableIPv6></NetworkConfiguration>"
+            )
+            # Upstream logout can log tokens. Disable every sink before startup.
+            (config / "config/logging.default.json").write_text(
+                json.dumps({"Serilog": {"MinimumLevel": {"Default": "Fatal"}, "WriteTo": []}})
             )
             docker(
                 "network", "create", "--internal", "--label", f"msx-contract.owner={owner}", name

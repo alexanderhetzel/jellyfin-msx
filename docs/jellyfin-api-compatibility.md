@@ -13,7 +13,7 @@ of those releases, not only the oldest and newest. No older 10.x, prerelease,
 future release, vendor build or non-Linux architecture is certified.
 
 `tools/jellyfin_versions.json` pins the official `jellyfin/jellyfin` multi-platform
-image index for each release. Both independent reviewers checked the exact
+image index for each release. The author and independent reviewer checked the exact
 registry manifest response SHA256 and `Docker-Content-Digest` against these pins
 on October 30. The official Docker Hub tag metadata agreed. CI executes Linux
 amd64 children; an index containing other architectures is not a test of them.
