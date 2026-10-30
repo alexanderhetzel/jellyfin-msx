@@ -1,7 +1,9 @@
 # Jellyfin server API compatibility
 
-**Implemented; real-server verification pending — 2026-10-30.** This document
-describes the isolated API check for issue #32. No new MSX rendering, audible
+**Implemented / automated-tested in part / device-unverified — 2026-10-30.**
+The real API matrix ran, but the complete contract **failed**. Issue #32 remains
+open and PR #52 remains draft/unmerged. No full supported-version range is
+established. No new MSX rendering, audible
 audio, physical-device or production deployment pass follows from this check.
 
 ## Selected versions and provenance
@@ -67,7 +69,8 @@ are published. HTTP is limited to this disposable isolated test network.
 
 Generated passwords and tokens remain in the probe process and disposable
 server state. No operator credentials, config, library or server are read.
-Container stdout logging is disabled; raw HTTP responses, exception tracebacks,
+Container stdout logging and all server Serilog sinks are disabled before startup;
+upstream logout can otherwise emit tokens at Information level. Raw HTTP responses, exception tracebacks,
 passwords, tokens, pairing capabilities and media URLs are never emitted or
 uploaded. Output contains only fixed check names, version/base path, pinned
 digest, fixture hash and allowlisted optional-field shape observations.
@@ -117,4 +120,35 @@ unchanged.
 Initial runs failed in the harness before API observations: published ports were
 unavailable on the internal Docker network. The probe now addresses the isolated
 bridge directly. No supported-version claim is based on those failed runs.
-Final passing runs and exact observations will be recorded here after execution.
+The completed [real-server run 41132506701](https://github.com/alexanderhetzel/jellyfin-msx/actions/runs/41132506701)
+tested harness head `dc80fa6` with the manifest pins above. It observed:
+
+| Exact reported server | Root core API | `/jellyfin` core API | Complete contract |
+| --- | --- | --- | --- |
+| 12.0.0 | Passed | Passed | Failed |
+| 12.1.0 | Passed | Passed | Failed |
+| 12.2.0 | Passed | Passed | Failed |
+| 12.3.0 | Passed | Passed | Failed |
+| 12.4.0 | Passed | Passed | Failed |
+
+“Core API” means every assertion listed above through the original-file range
+retrieval, including non-admin access/denial and the production resolver. All ten
+rows observed `Overview`, `ProductionYear`, `CommunityRating` and `PremiereDate`
+**absent**, not explicit JSON null. The fixture SHA256 was
+`44f03da6c498584f27f5f04471935dc2ec5931769e28fbaf7c0a91fcff8fc406`.
+
+All ten rows then observed successful logout and denied metadata access, but a
+fresh independent HTTP connection with cache revalidation still retrieved a 206
+response matching the original 1024-byte prefix. This narrowly establishes that
+immediate original-file revocation was **not** demonstrated for this tested path.
+It is not a general security conclusion about every Jellyfin endpoint/deployment.
+The strict denial expectation remains failing; no expected-failure waiver or
+weakened assertion turns the matrix green. All five job cleanup steps succeeded.
+
+This limitation needs a separate security/authorization decision before this
+client advertises a complete compatibility range. Portal capability revocation,
+authenticated item denial and original-file revocation are distinct boundaries.
+Follow [SECURITY.md](../SECURITY.md) for any vulnerability report; retain only
+synthetic, sanitized evidence. No operator server was contacted. Do not infer a
+device/MSX pass, reliable original-file revocation or production readiness from
+the passing core assertions. There was no squash merge while checks failed.
