@@ -14,7 +14,7 @@ runtime/build, bootstrap, Actions and Docker. See the
 
 Windows/Python 3.12.14: `uv lock --check`, frozen sync with dev/build groups,
 `uv run --no-sync pytest` (**265 passed, 1 POSIX-only skip**, known Starlette
-warning #30), Ruff check and format (**62 files**) passed. Offline wheel build
+warning #30), Ruff check and format (**63 files**) passed. Offline wheel build
 with explicit `.venv/Scripts/python.exe`, license/NOTICE/template/source manifest
 and synthetic exclusion canaries passed; the synthetic HTTP contract passed.
 An initial build selected the base interpreter through `UV_PYTHON` and lacked
@@ -22,7 +22,10 @@ Hatchling; explicit build-interpreter selection corrected the command. Initial
 canary inspection exposed Hatch's `packages` overriding include filters; replacing
 it with include patterns/path rewriting fixed the actual wheel. An existing
 literal `.lab` guard was retained alongside the context allowlist. These failures
-were observed and corrected, not counted as passes. Docker is absent locally;
+were observed and corrected, not counted as passes. A separate temporary Windows
+environment then installed the actual wheel outside the checkout using hashed,
+binary-only runtime exports; Fernet/SQLite restart/rotation/replay smoke passed.
+Docker is absent locally;
 Linux/container/full-history CI and independent final review are pending.
 
 **Deferred dependency update:** PR #44 remains open at its reviewed stale

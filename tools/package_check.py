@@ -46,7 +46,7 @@ def check_files(actual: dict[str, bytes], expected: dict[str, bytes]) -> None:
 
 def seed(root: Path) -> None:
     # Preflight before any write; never overwrite operator files.
-    if any((root / name).exists() for name in CANARY_PATHS):
+    if any((root / name).exists() or (root / name).is_symlink() for name in CANARY_PATHS):
         raise ValueError("Canary path already exists")
     for name in CANARY_PATHS:
         path = root / name
