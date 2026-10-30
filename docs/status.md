@@ -29,6 +29,10 @@ authenticated transport needs a controlled HTTPS origin and separate validation.
 formatted**; `uv build --wheel`: passed. These check the existing application and
 do not exercise JavaScript or replace actual callback evidence. No real server,
 credential, TLS/trust change, production resource or physical-TV action occurred.
+Independent source/API/evidence review checked both ordered record sets and six
+saved screenshots, and independently reran 206 tests and Ruff/format/diff checks.
+Its replay-conflict finding was corrected by specifying a bounded digest window;
+the reviewer did not operate the browser or verify audio/hardware.
 
 ## Actual public MSX renderer/player milestone — issue #9
 

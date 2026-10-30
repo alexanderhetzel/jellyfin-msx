@@ -95,6 +95,9 @@ media: this did not establish a failed fetch. After stopping, disabling only tha
 tab's cache and repeating offline, a real Media request failed with
 `net::ERR_INTERNET_DISCONNECTED` (not canceled). Collected #97 load was followed
 by #98 pause, then zero-duration snapshots changed from state=2 to state=3.
+The saved offline screenshot shows an MSX Error notice saying the source is not
+supported, with the public synthetic URL. This differs from the black
+missing-media screenshot and does not diagnose a decoder incompatibility.
 No collected `app:disconnect` accompanied this scoped fetch failure. This does
 not test a real OS link loss, prove navigator online/offline signaling or exercise
 loss after a long uncached stream has begun. Network emulation and cache override
@@ -149,9 +152,12 @@ the plugin's real HTTPS POST/header/CORS path on an operator-controlled origin.
    dropping superseded progress. Retry at most three times with bounded backoff
    (1/2/4 seconds); do not build a durable offline history or endless queue. Keep
    the last accepted safe position if an upload cannot be acknowledged.
-4. Backend retains a bounded high-water sequence per playback generation and
-   acknowledges it. Replayed sequences are idempotent; reject conflicting reused
-   sequence payloads and old generations. Do not apply late events from an old
+4. Backend retains a high-water sequence plus a bounded recent window of 64
+   sequence-to-payload digests per playback generation and acknowledges accepted
+   sequence values. A replay inside that window is idempotent only if its
+   canonical sanitized payload digest matches; reject conflicting reuse. Reject
+   older-than-window observations without applying them (do not claim to detect
+   their content conflicts). Reject old generations. Do not apply late events from an old
    source or iframe to a new playback. Client elapsed time and receipt order are
    diagnostics, not trusted wall time. A replay/new load requires explicit
    generation correlation, especially because load's attached data is for the
@@ -197,6 +203,9 @@ uv run python -m tools.msx_storage_probe https://raw.githack.com/alexanderhetzel
 ```
 
 This existing generic helper prints a launch URL, not an E2E assertion command.
+The fetched pinned launcher and its Open interaction were rechecked in the
+official runtime after the full matrix; `issue17-pinned-launch.jpg` records the
+result. All owned probe/temporary tabs were closed afterwards.
 Open it in connected Chrome, click Open lifecycle probe, then the real Play
 control. Inspect a real frame and the `MSX17` sanitized console records. Pause,
 wait for separate held samples, resume, forward/rewind, Stop/eject, replay and
@@ -235,3 +244,9 @@ this limitation requires no TV or credentials and does not create a human-input
 gate. Physical/device evidence remains deferred to #4. Neither 206 existing
 Python tests nor this public probe establishes authenticated production transport,
 private source delivery, audible audio or an all-client integration pass.
+
+Independent review inspected the final source/public API contract, both ordered
+record sets and six saved UI images. It identified the high-water-only replay
+ambiguity; the bounded digest window above resolves that design gap. The reviewer
+independently ran the existing 206 tests and Ruff/format/diff checks, but did not
+operate the browser, test authenticated transport, or verify audio/hardware.
