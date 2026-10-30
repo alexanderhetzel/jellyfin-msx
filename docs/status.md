@@ -1,5 +1,21 @@
 # Verification status — 2026-10-30
 
+## Partial hosted synthetic HTTPS browser observations — issue #9
+
+**Implemented / device-unverified:** a separate worker-owned tab in connected
+Chrome operated official MSX 0.1.167 through the approved temporary synthetic
+HTTPS relay. [Actual actions, media observations and limitations](msx-synthetic-https-results.md)
+record normal two-stage CSRF pairing, authenticated libraries/details, actual
+1280x720 decoded moving frames and advancing time, pause/resume, forward/back
+seek, Escape Stop, replay, visible oversized-source denial, own-session disconnect,
+stale-route 401 and start-page recovery. Audio and physical TV remain unverified.
+Separate tabs shared the browser profile; cookie-context isolation is not claimed.
+The worker did not operate the user's session or stop/restart the relay early.
+No complete browser command, failure-sensitivity matrix or real-server pass is
+claimed; #9 remains open. The accompanying evidence change is documentation-only;
+the readiness implementation checks below still apply, not a new automated
+browser test result.
+
 ## Approved synthetic HTTPS readiness follow-up — issue #9
 
 **Implemented / automated-tested / device-unverified:** after explicit human
