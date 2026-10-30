@@ -259,6 +259,17 @@ async def probe(base, version):
                     require(len(data) <= 1024, "range response exceeded bound")
                 fixture = ROOT / "tests/fixtures/msx-public/synthetic.mp4"
                 require(data == fixture.read_bytes()[:1024], "original file bytes differ")
+            print(
+                json.dumps(
+                    {
+                        "version": observed_version,
+                        "base_path": urlsplit(base).path or "/",
+                        "core_api_checks": "passed",
+                        "metadata_shapes": metadata_shapes,
+                    }
+                ),
+                flush=True,
+            )
             stage = "logout revocation"
             await jf.logout(viewer)
             try:
@@ -327,6 +338,7 @@ def run(version):
     image = f"jellyfin/jellyfin:{version}@{VERSIONS[version]}"
     owner = os.environ.get("CONTRACT_OWNER", secrets.token_hex(16))
     docker("pull", image)
+    failed = False
     for base_path in ("", "/jellyfin"):
         name = "msx-contract-" + secrets.token_hex(8)
         with tempfile.TemporaryDirectory(prefix="msx-contract-") as directory:
@@ -386,11 +398,22 @@ def run(version):
                     name,
                 )
                 require(ipaddress.ip_address(address).is_private, "invalid isolated bridge address")
-                result = asyncio.run(probe(f"http://{address}:8096{base_path}", version))
-                result["image_digest"] = VERSIONS[version]
-                result["fixture_sha256"] = hashlib.sha256(
-                    (media / "Synthetic.mp4").read_bytes()
-                ).hexdigest()
+                try:
+                    result = asyncio.run(probe(f"http://{address}:8096{base_path}", version))
+                except ContractFailure as error:
+                    failed = True
+                    result = {
+                        "version": version + ".0",
+                        "base_path": base_path or "/",
+                        "result": "failed",
+                        "stage": str(error),
+                    }
+                result.update(
+                    image_digest=VERSIONS[version],
+                    fixture_sha256=hashlib.sha256(
+                        (media / "Synthetic.mp4").read_bytes()
+                    ).hexdigest(),
+                )
                 print(json.dumps(result), flush=True)
             finally:
                 # Report failed cleanup as a failed check; never remove other resources.
@@ -398,6 +421,7 @@ def run(version):
                     docker("rm", "--force", "--volumes", name)
                 finally:
                     docker("network", "rm", name)
+    require(not failed, "one or more isolated contracts failed; no complete version pass")
 
 
 def main():
