@@ -101,6 +101,12 @@ stored version. Force-HLS and subtitle-burn controls are hidden by default.
 PlaybackInfo error, unsupported source, off-origin URL or denied transcoding returns
 a visible MSX response error. Player controls are MSX's standard controls.
 
+[Subtitle research](msx-subtitle-research.md) selects external UTF-8 WebVTT via
+official HTML5X as a constrained browser-tested candidate for #22. Raw SRT/ASS
+and tested embedded MP4 text did not render; paused-switch/seek placement and
+missing-track notices have limitations. Production subtitles remain Off; the
+authenticated source/index-pinned resource contract is not implemented yet.
+
 M1 records playback *decisions*, not proof that video started. Automatic fallback,
 watch progress, resume, stop reporting and active transcode cleanup are M3 work.
 

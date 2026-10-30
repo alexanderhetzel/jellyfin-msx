@@ -5,6 +5,14 @@ from urllib.parse import unquote
 from tools.public_subtitle_fixture import MEDIA, PLUGIN, fixture
 
 
+def test_committed_matrix_matches_generator():
+    base = (
+        "https://raw.githack.com/alexanderhetzel/jellyfin-msx/"
+        "fc20e096d7c0d7c16ed09d440f1aee81a477988e/tests/fixtures/msx-subtitles"
+    )
+    assert json.loads(Path("tests/fixtures/msx-subtitles/index.json").read_text()) == fixture(base)
+
+
 def test_public_subtitle_matrix_uses_official_plugin_without_online_proxy():
     base = "https://fixture.example.test/public-subtitles"
     page = fixture(base)

@@ -1,5 +1,31 @@
 # Verification status — 2026-10-30
 
+## Subtitle research — issue #21
+
+**Implemented / automated-tested / browser-tested / device-unverified:** public
+UTF-8 VTT/SRT/ASS fixtures, locally remuxed embedded mov_text, official HTML5X
+matrix and [source/request evidence and secure #22 contract](msx-subtitle-research.md).
+Actual MSX 0.1.167/connected Chrome displayed German umlauts/two-line VTT,
+DE→EN/Off and sampled backward/forward cue changes. Paused switching/seeking
+showed unstable placement; resumed English remained against the lower edge.
+Raw SRT/ASS did not render despite 200 responses; native/HTML5X embedded text
+had no tracks/cues, plugin panel on native produced recoverable Data Load Error.
+Missing track left DE indicated without a specific notice while video played.
+These are researched limits, not a polished production subtitle pass. Existing
+production behavior is unchanged; #22 owns private delivery and #4 physical TV.
+
+Windows/Python 3.12.14: frozen dev/build sync, full `uv run --no-sync pytest`
+(**271 passed, 1 POSIX-only skip**, known warning #30), Ruff check/format
+(**72 files**), offline wheel build with `.venv/Scripts/python.exe`, wheel source/
+license/template allowlist and `git diff --check` passed. A subsequent committed-
+matrix consistency regression passed with all **3 affected tests**; final CI
+and independent source/evidence review are required before merge.
+Initial FFmpeg null-output extraction failed because no subtitle encoder was
+selected; explicit SRT output successfully extracted all four embedded cues.
+Only local synthetic remux occurred, no AV encode/Ultra request. Publication
+review accepted public-only assets/provenance and package exclusions. No real
+credentials, private grant publication, trust/TLS change or deployment occurred.
+
 ## Series navigation renderer milestone — issue #7
 
 **Implemented / automated-tested / browser-tested / device-unverified:** isolated
