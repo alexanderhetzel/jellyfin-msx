@@ -3,7 +3,7 @@ import re
 from urllib.parse import parse_qs, urlsplit
 
 import pytest
-from conftest import EPISODE, LIBRARY, MOVIE, TOKEN, USER
+from conftest import EPISODE, LIBRARY, MOVIE, TOKEN, USER, code_stage
 
 from jellyfin_msx.config import Settings
 from jellyfin_msx.errors import PortalError
@@ -39,10 +39,9 @@ def test_public_start_and_pairing_do_not_disclose_library(portal):
 def test_browser_pair_to_tv_home_and_one_time_code(portal):
     secret, device = portal.state.pair()
     code = device.code
-    response = portal.client.get("/pair")
-    assert response.headers["referrer-policy"] == "same-origin"
-    csrf = re.search(r'name="csrf" value="([^"]+)"', response.text).group(1)
-    data = {"code": code, "username": "viewer", "password": "test-password", "csrf": csrf}
+    fields = code_stage(portal.client, code)
+    assert not portal.fake.requests
+    data = {**fields, "username": "viewer", "password": "test-password"}
     response = portal.client.post("/pair", data=data, headers={"Origin": "https://portal.test"})
     assert response.status_code == 200
     assert "TV paired" in response.text
@@ -81,16 +80,14 @@ def test_pair_csrf_denies_without_upstream_request(portal, origin, csrf):
 
 def test_bad_password_leaves_pair_retryable_and_does_not_store_password(portal):
     secret, device = portal.state.pair()
-    page = portal.client.get("/pair")
-    csrf = re.search(r'name="csrf" value="([^"]+)"', page.text).group(1)
+    fields = code_stage(portal.client, device.code)
     response = portal.client.post(
         "/pair",
         headers={"Origin": "https://portal.test"},
         data={
-            "code": device.code,
+            **fields,
             "username": "viewer",
             "password": "wrong-password",
-            "csrf": csrf,
         },
     )
     assert response.status_code == 401 and not device.claiming and device.token is None

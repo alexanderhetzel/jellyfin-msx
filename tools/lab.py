@@ -130,7 +130,8 @@ def build_lab(settings, *, transport=None):
             pairing_results.append(
                 {
                     "status": response.status_code,
-                    "outcome": "success" if response.status_code == 200 else "error",
+                    # A successful code-check response is not an authenticated session.
+                    "outcome": "http-accepted" if response.status_code == 200 else "error",
                 }
             )
             del pairing_results[:-20]

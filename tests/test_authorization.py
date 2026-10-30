@@ -1,6 +1,5 @@
 import asyncio
 import os
-import re
 import sqlite3
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import closing
@@ -364,12 +363,13 @@ def test_normal_csrf_pairing_then_body_only_restore_after_restart(durable):
     with TestClient(app, base_url=durable.public_url) as client:
         secret, device = state.pair()
         code = device.code
-        page = client.get("/pair")
-        csrf = re.search(r'name="csrf" value="([^"]+)"', page.text).group(1)
+        from conftest import code_stage
+
+        fields = code_stage(client, code)
         result = client.post(
             "/pair",
             headers=headers,
-            data={"code": code, "username": "viewer", "password": "test-password", "csrf": csrf},
+            data={**fields, "username": "viewer", "password": "test-password"},
         )
         assert result.status_code == 200 and "TV paired" in result.text
         with pytest.raises(PortalError):

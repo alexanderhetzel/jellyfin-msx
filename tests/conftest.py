@@ -1,5 +1,6 @@
 import copy
 import json
+import re
 from types import SimpleNamespace
 
 import httpx
@@ -18,6 +19,19 @@ SERIES = "5" * 32
 SEASON = "6" * 32
 EPISODE = "7" * 32
 TOKEN = "test-token-not-a-real-secret-123456"
+
+
+def hidden_fields(response):
+    return dict(re.findall(r'<input type="hidden" name="([^"]+)" value="([^"]+)"', response.text))
+
+
+def code_stage(client, code):
+    fields = hidden_fields(client.get("/pair"))
+    response = client.post(
+        "/pair", data={**fields, "code": code}, headers={"Origin": str(client.base_url).rstrip("/")}
+    )
+    assert response.status_code == 200 and 'name="stage"' in response.text
+    return hidden_fields(response)
 
 
 def media_source():
