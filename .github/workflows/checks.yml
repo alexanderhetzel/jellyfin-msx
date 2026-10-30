@@ -21,14 +21,28 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install locked dependencies
         run: |
-          python -m pip install uv==0.9.8
-          uv sync --frozen --extra dev
+          python -m pip install --require-hashes --only-binary=:all: -r tools/requirements.txt
+          uv lock --check
+          uv sync --frozen --only-group build
+          uv sync --frozen --extra dev --group build --no-build-isolation
       - run: uv run --no-sync ruff check .
       - run: uv run --no-sync ruff format --check .
       - run: uv run --no-sync pytest
       - name: Synthetic HTTP contract smoke (no external runtime)
         run: uv run --no-sync python -m tools.synthetic_check
-      - run: uv build --wheel
+      - name: Verify wheel exclusion and reviewed manifest
+        run: |
+          python -m tools.package_check seed
+          uv build --python .venv/bin/python --wheel --no-build-isolation --offline
+          python -m tools.package_check wheel dist/jellyfin_msx-0.1.0-py3-none-any.whl
+      - name: Smoke-test installed wheel with locked runtime dependencies
+        run: |
+          uv export --frozen --no-dev --no-emit-project --format requirements-txt --output-file "$RUNNER_TEMP/runtime.txt"
+          python -m venv "$RUNNER_TEMP/wheel-smoke"
+          "$RUNNER_TEMP/wheel-smoke/bin/pip" install --require-hashes --only-binary=:all: -r "$RUNNER_TEMP/runtime.txt"
+          "$RUNNER_TEMP/wheel-smoke/bin/pip" install --no-index --no-deps dist/*.whl
+          cd "$RUNNER_TEMP"
+          "$RUNNER_TEMP/wheel-smoke/bin/python" "$GITHUB_WORKSPACE/tools/dependency_smoke.py"
   docker:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -37,16 +51,32 @@ jobs:
         with:
           persist-credentials: false
       - run: docker compose --env-file .env.example config --quiet
+      - name: Verify filtered Docker context with synthetic exclusion canaries
+        run: |
+          python -m tools.package_check seed
+          printf 'FROM scratch\nCOPY . /\n' | docker build --file - --output "type=local,dest=$RUNNER_TEMP/build-context" .
+          python -m tools.package_check context "$RUNNER_TEMP/build-context"
       - run: docker build --tag jellyfin-msx:test .
       - name: Validate HTTPS proxy configuration
-        run: docker run --rm -e MSX_DOMAIN=tv.example.com -v "$PWD/deploy/Caddyfile:/etc/caddy/Caddyfile:ro" caddy:2-alpine caddy adapt --config /etc/caddy/Caddyfile --adapter caddyfile --validate
+        run: |
+          proxy_image=$(docker compose --env-file .env.example config --format json | python -c 'import json,sys; print(json.load(sys.stdin)["services"]["https"]["image"])')
+          docker run --rm -e MSX_DOMAIN=tv.example.com -v "$PWD/deploy/Caddyfile:/etc/caddy/Caddyfile:ro" "$proxy_image" caddy adapt --config /etc/caddy/Caddyfile --adapter caddyfile --validate
+      - name: Inspect final container filesystem and runtime dependencies
+        run: |
+          test "$(docker image inspect jellyfin-msx:test --format '{{.Config.User}}')" = 10001
+          docker create --name package-audit jellyfin-msx:test
+          docker export --output "$RUNNER_TEMP/portal.tar" package-audit
+          python -m tools.package_check image "$RUNNER_TEMP/portal.tar"
+          docker rm package-audit
+          docker run --rm --entrypoint pip jellyfin-msx:test check
+          docker run --rm -v "$PWD/tools/dependency_smoke.py:/dependency_smoke.py:ro" --entrypoint python jellyfin-msx:test /dependency_smoke.py
       - name: Smoke-test the packaged application
         run: |
           docker run -d --name portal -p 127.0.0.1:8090:8090 -e MSX_PUBLIC_URL=https://portal.invalid -e JELLYFIN_URL=https://jellyfin.invalid jellyfin-msx:test
           for attempt in $(seq 1 30); do
-            if curl --fail http://127.0.0.1:8090/healthz; then
-              curl --fail http://127.0.0.1:8090/msx/start.json
-              curl --fail http://127.0.0.1:8090/pair
+            if curl --fail --silent --show-error --output /dev/null http://127.0.0.1:8090/healthz; then
+              curl --fail --silent --show-error --output /dev/null http://127.0.0.1:8090/msx/start.json
+              curl --fail --silent --show-error --output /dev/null http://127.0.0.1:8090/pair
               exit 0
             fi
             sleep 1

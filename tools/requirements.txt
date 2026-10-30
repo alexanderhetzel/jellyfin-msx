@@ -1,0 +1,6 @@
+# uv bootstrap wheel SHA256 values from https://pypi.org/pypi/uv/0.9.8/json
+# Linux amd64/arm64, Windows amd64. Other platforms require reviewed wheel hashes.
+uv==0.9.8 \
+    --hash=sha256:14670bf55ecb5cfd0f3654fbf51c58a21dec3ad8ab531079b3ed8599271dc77b \
+    --hash=sha256:50d130c46d97d7f10675ebea8608b7b4722c84b5745cd1bb0c8ae6d7984c05d5 \
+    --hash=sha256:6a01d7cd41953ffac583139b10ad1df004a67c0246a6b694eb5bcdbc8c99deaf

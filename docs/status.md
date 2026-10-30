@@ -1,5 +1,58 @@
 # Verification status — 2026-10-30
 
+## Reproducible build-input milestone — issue #27
+
+**Implemented / automated-tested / device-unverified:** official Python
+and Caddy index digest pins, exact Hatchling/build-group lock, hash-checked uv
+bootstrap, binary-only/hash-checked container dependency downloads, offline project
+build/runtime installation, explicit wheel/context file allowlists, synthetic
+exclusion canaries and source-byte/SHA256 manifests. CI retains SHA Actions,
+read-only token and credential-free checkout, adds installed-wheel/Fernet/SQLite
+smoke and actual filtered-context/final-image inspection. Weekly update PRs cover
+runtime/build, bootstrap, Actions and Docker. See the
+[input provenance, commands and update contract](build-supply-chain.md).
+
+Windows/Python 3.12.14: `uv lock --check`, frozen sync with dev/build groups,
+`uv run --no-sync pytest` (**266 passed, 1 POSIX-only skip**, known Starlette
+warning #30), Ruff check and format (**63 files**) passed. Offline wheel build
+with explicit `.venv/Scripts/python.exe`, license/NOTICE/template/source manifest
+and synthetic exclusion canaries passed; the synthetic HTTP contract passed.
+An initial build selected the base interpreter through `UV_PYTHON` and lacked
+Hatchling; explicit build-interpreter selection corrected the command. Initial
+canary inspection exposed Hatch's `packages` overriding include filters; replacing
+it with include patterns/path rewriting fixed the actual wheel. An existing
+literal `.lab` guard was retained alongside the context allowlist. These failures
+were observed and corrected, not counted as passes. A separate temporary Windows
+environment then installed the actual wheel outside the checkout using hashed,
+binary-only runtime exports; Fernet/SQLite restart/rotation/replay smoke passed.
+Docker is absent locally. Initial Linux CI exposed a clean editable install's
+missing dynamic `editables` backend requirement and context allowlist failures.
+Explicit `dev-mode-dirs = ["src"]` avoids that unneeded backend dependency.
+The payload now excludes consumed Dockerfile/.dockerignore metadata; directory
+admission is followed by recursive exclusions before individual files are
+admitted, preventing parent exceptions from admitting local descendants.
+Independent review also required mismatch diagnostics to log only unexpected
+file counts, never arbitrary names containing a canary substring; a regression
+covers that privacy boundary. Verified official Gitleaks 8.30.1 Windows x64 release checksum;
+`gitleaks git . --log-opts=--all --redact --no-banner` scanned 67 commits and
+reported no leaks. No browser, MSX, TV, real server, production deployment,
+credential or trust-store action occurred for #27.
+
+GitHub CI on reviewed `9889adba11d24a22898eefa67ef83224b2b475e1` passed Linux
+CPython **3.12.15 and 3.13.17, 267 tests each**, Ruff/format, synthetic HTTP,
+offline wheel/source/license/template/canary manifests and isolated hash-checked
+installed-wheel smoke. Docker passed actual filtered-context export, pinned-image
+build, selected Caddy configuration validation, UID 10001, final filesystem/source
+manifest, `pip check`, installed Fernet/SQLite smoke and health/start/pair HTTP
+smoke. Full-history redacted secrets and Python/Actions CodeQL checks passed.
+Independent review accepted that source head, independently reran the preceding
+265-test suite/one skip and the final 10 affected tests/Ruff/format/diff checks,
+and resolved the diagnostic privacy finding. The reviewer did not run Docker;
+container evidence is CI. The final follow-up suppresses HTTP smoke response
+bodies so generated synthetic form fields are not printed, and records these
+results; its final-head checks must still pass before merge. None of this is an
+MSX integration, physical-device or production deployment pass.
+
 ## Cryptography dependency refresh — issue #27 / PR #44
 
 **Implemented / automated-tested locally / device-unverified:** the existing
@@ -20,9 +73,15 @@ skip**, known Starlette warning #30), Ruff check/format (**59 files**),
 smoke also passed against this environment: template/app construction, Fernet
 roundtrip/expiry/tamper denial and actual SQLite restart/rotation/replay denial,
 all synthetic/offline. This local smoke used the editable environment, not an
-isolated installed wheel. Cross-version old/new Fernet wire compatibility,
-final independent review, Linux CI and Docker checks are recorded separately
-before acceptance. No real account/database, MSX, TV or production action ran.
+isolated installed wheel. Independent review accepted exact head
+`43e4c5e85779e9e3233b902fa12ea4b7a5523a32`: 53 cryptography artifact URLs/hashes
+match official PyPI; 48.0.1 ↔ 50.0.2 Fernet wire/TTL/expiry/tamper/wrong-key
+compatibility passed both directions; the reviewer reran the full Windows suite
+and Ruff. Linux CPython 3.12/3.13 tests, wheel, Docker/proxy/health/start/pair,
+full-history secret scan and Python/Actions CodeQL checks all passed on that
+head. With no unresolved review threads and actual required checks passed,
+PR #44 was explicitly squash merged as `e30e1cd6f68e7652ba1d325ef175c9e398c09bf0`.
+No real account/database, MSX, TV or production action ran.
 
 ## Two-stage companion pairing milestone — issue #13
 

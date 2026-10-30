@@ -35,6 +35,10 @@ items. Mark Done only after acceptance; automation is not verification.
 
 ## Branches and review
 
+Use the [locked build and dependency-update procedure](build-supply-chain.md)
+for artifact changes. CI locks the backend environment as well as runtime
+dependencies and inspects wheel, filtered Docker context and final image manifests.
+
 The default `main` is maintained. Preserve the original upstream `master` and its
 license boundary. Use issue branches from `main` and PRs to this fork unless
 upstream contribution is separately requested. CI checks locked Python tests,
