@@ -90,7 +90,7 @@
           var operation = data && data.data && data.data.operation;
           if (["startup", "read", "write", "corrupt", "remove", "unavailable"].indexOf(operation) >= 0) {
             lastOperation = operation + ": " + operate(operation);
-            TVXInteractionPlugin.executeAction("reload:content");
+            TVXInteractionPlugin.executeAction(operation === "startup" ? "content:request:interaction:init" : "reload:content");
           }
         }
       });
