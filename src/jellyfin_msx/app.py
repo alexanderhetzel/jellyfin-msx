@@ -436,6 +436,8 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
         total = result.get("TotalRecordCount")
         if not isinstance(total, int):
             total = offset + len(entries)
+        if not entries:
+            entries.append(button("No items available", "info:This folder has no available items."))
         if offset + 24 < total:
             entries.append(
                 button(

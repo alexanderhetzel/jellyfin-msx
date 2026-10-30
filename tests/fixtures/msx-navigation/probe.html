@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Public synthetic series navigation probe</title></head>
+<body>
+<p>Public application-derived pages. Private URLs and video delivery are substituted.</p>
+<pre id="report">Loading public page map.</pre>
+<script src="https://msx.benzac.de/js/tvx-plugin.min.js"></script>
+<script>
+// Independently authored public-API adapter. No credentials, storage or backend.
+TVXPluginTools.onReady(function () {
+  fetch("pages.json").then(function (response) {
+    if (!response.ok) { throw new Error("Public fixture unavailable"); }
+    return response.json();
+  }).then(function (pages) {
+    var requests = [];
+    TVXInteractionPlugin.setupHandler({
+      init: function () {},
+      ready: function () {},
+      handleRequest: function (id, data, callback) {
+        if (!Object.prototype.hasOwnProperty.call(pages, id)) { callback(null); return; }
+        requests.push(id);
+        if (requests.length > 200) { requests.shift(); }
+        document.getElementById("report").textContent = JSON.stringify(requests);
+        callback(pages[id]);
+      }
+    });
+    TVXInteractionPlugin.init();
+  }).catch(function () {
+    document.getElementById("report").textContent = "Public fixture unavailable; no private request attempted.";
+  });
+});
+</script>
+</body></html>

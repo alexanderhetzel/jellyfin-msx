@@ -1,0 +1,2499 @@
+{
+  "init": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Jellyfin libraries",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Synthetic television",
+        "action": "content:request:interaction:page1"
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      },
+      {
+        "title": "Disconnect TV",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page1": {
+    "type": "pages",
+    "headline": "PUBLIC NAVIGATION / Library",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "separate",
+      "layout": "0,0,3,5"
+    },
+    "items": [
+      {
+        "title": "Synthetic series",
+        "action": "content:request:interaction:page2",
+        "titleFooter": "Series",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Libraries",
+        "action": "content:request:interaction:init"
+      }
+    ]
+  },
+  "page2": {
+    "type": "pages",
+    "headline": "PUBLIC NAVIGATION / Library",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "separate",
+      "layout": "0,0,3,5"
+    },
+    "items": [
+      {
+        "title": "Season 1 - fifty episodes",
+        "action": "content:request:interaction:page3",
+        "titleFooter": "Season",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Season 2 - empty",
+        "action": "content:request:interaction:page4",
+        "titleFooter": "Season",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Restricted season",
+        "action": "content:request:interaction:page5",
+        "titleFooter": "Season",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Libraries",
+        "action": "content:request:interaction:init"
+      }
+    ]
+  },
+  "page3": {
+    "type": "pages",
+    "headline": "PUBLIC NAVIGATION / Library",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "separate",
+      "layout": "0,0,3,5"
+    },
+    "items": [
+      {
+        "title": "Episode 01",
+        "action": "content:request:interaction:page6",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 02",
+        "action": "content:request:interaction:page7",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 03",
+        "action": "content:request:interaction:page8",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 04",
+        "action": "content:request:interaction:page9",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 05",
+        "action": "content:request:interaction:page10",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 06",
+        "action": "content:request:interaction:page11",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 07",
+        "action": "content:request:interaction:page12",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 08",
+        "action": "content:request:interaction:page13",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 09",
+        "action": "content:request:interaction:page14",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 10",
+        "action": "content:request:interaction:page15",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 11",
+        "action": "content:request:interaction:page16",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 12",
+        "action": "content:request:interaction:page17",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 13",
+        "action": "content:request:interaction:page18",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 14",
+        "action": "content:request:interaction:page19",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 15",
+        "action": "content:request:interaction:page20",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 16",
+        "action": "content:request:interaction:page21",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 17",
+        "action": "content:request:interaction:page22",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 18",
+        "action": "content:request:interaction:page23",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 19",
+        "action": "content:request:interaction:page24",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 20",
+        "action": "content:request:interaction:page25",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 21",
+        "action": "content:request:interaction:page26",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 22",
+        "action": "content:request:interaction:page27",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 23",
+        "action": "content:request:interaction:page28",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 24",
+        "action": "content:request:interaction:page29",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Next page",
+        "action": "content:request:interaction:page30"
+      },
+      {
+        "title": "Libraries",
+        "action": "content:request:interaction:init"
+      }
+    ]
+  },
+  "page4": {
+    "type": "pages",
+    "headline": "PUBLIC NAVIGATION / Library",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "separate",
+      "layout": "0,0,3,5"
+    },
+    "items": [
+      {
+        "title": "No items available",
+        "action": "info:This folder has no available items."
+      },
+      {
+        "title": "Libraries",
+        "action": "content:request:interaction:init"
+      }
+    ]
+  },
+  "page5": {
+    "response": {
+      "status": 401,
+      "text": "Error",
+      "message": "Jellyfin denied access. Check permissions or pair again.",
+      "data": null
+    }
+  },
+  "page6": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 01",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page7": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 02",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page8": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 03",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page9": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 04",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page10": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 05",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page11": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 06",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page12": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 07",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page13": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 08",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page14": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 09",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page15": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 10",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page16": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 11",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page17": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 12",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page18": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 13",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page19": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 14",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page20": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 15",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page21": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 16",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page22": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 17",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page23": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 18",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page24": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 19",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page25": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 20",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page26": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 21",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page27": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 22",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page28": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 23",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page29": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 24",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page30": {
+    "type": "pages",
+    "headline": "PUBLIC NAVIGATION / Library",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "separate",
+      "layout": "0,0,3,5"
+    },
+    "items": [
+      {
+        "title": "Episode 25",
+        "action": "content:request:interaction:page31",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 26",
+        "action": "content:request:interaction:page32",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 27",
+        "action": "content:request:interaction:page33",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 28",
+        "action": "content:request:interaction:page34",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 29",
+        "action": "content:request:interaction:page35",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 30",
+        "action": "content:request:interaction:page36",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 31",
+        "action": "content:request:interaction:page37",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 32",
+        "action": "content:request:interaction:page38",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 33",
+        "action": "content:request:interaction:page39",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 34",
+        "action": "content:request:interaction:page40",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 35",
+        "action": "content:request:interaction:page41",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 36",
+        "action": "content:request:interaction:page42",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 37",
+        "action": "content:request:interaction:page43",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 38",
+        "action": "content:request:interaction:page44",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 39",
+        "action": "content:request:interaction:page45",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 40",
+        "action": "content:request:interaction:page46",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 41",
+        "action": "content:request:interaction:page47",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 42",
+        "action": "content:request:interaction:page48",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 43",
+        "action": "content:request:interaction:page49",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 44",
+        "action": "content:request:interaction:page50",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 45",
+        "action": "content:request:interaction:page51",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 46",
+        "action": "content:request:interaction:page52",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 47",
+        "action": "content:request:interaction:page53",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 48",
+        "action": "content:request:interaction:page54",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Next page",
+        "action": "content:request:interaction:page55"
+      },
+      {
+        "title": "Previous page",
+        "action": "content:request:interaction:page56"
+      },
+      {
+        "title": "Libraries",
+        "action": "content:request:interaction:init"
+      }
+    ]
+  },
+  "page31": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 25",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page32": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 26",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page33": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 27",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page34": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 28",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page35": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 29",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page36": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 30",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page37": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 31",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page38": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 32",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page39": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 33",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page40": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 34",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page41": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 35",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page42": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 36",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page43": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 37",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page44": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 38",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page45": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 39",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page46": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 40",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page47": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 41",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page48": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 42",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page49": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 43",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page50": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 44",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page51": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 45",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page52": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 46",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page53": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 47",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page54": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 48",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page55": {
+    "type": "pages",
+    "headline": "PUBLIC NAVIGATION / Library",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "separate",
+      "layout": "0,0,3,5"
+    },
+    "items": [
+      {
+        "title": "Episode 49",
+        "action": "content:request:interaction:page57",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 50",
+        "action": "content:request:interaction:page58",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Previous page",
+        "action": "content:request:interaction:page30"
+      },
+      {
+        "title": "Libraries",
+        "action": "content:request:interaction:init"
+      }
+    ]
+  },
+  "page56": {
+    "type": "pages",
+    "headline": "PUBLIC NAVIGATION / Library",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "separate",
+      "layout": "0,0,3,5"
+    },
+    "items": [
+      {
+        "title": "Episode 01",
+        "action": "content:request:interaction:page6",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 02",
+        "action": "content:request:interaction:page7",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 03",
+        "action": "content:request:interaction:page8",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 04",
+        "action": "content:request:interaction:page9",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 05",
+        "action": "content:request:interaction:page10",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 06",
+        "action": "content:request:interaction:page11",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 07",
+        "action": "content:request:interaction:page12",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 08",
+        "action": "content:request:interaction:page13",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 09",
+        "action": "content:request:interaction:page14",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 10",
+        "action": "content:request:interaction:page15",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 11",
+        "action": "content:request:interaction:page16",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 12",
+        "action": "content:request:interaction:page17",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 13",
+        "action": "content:request:interaction:page18",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 14",
+        "action": "content:request:interaction:page19",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 15",
+        "action": "content:request:interaction:page20",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 16",
+        "action": "content:request:interaction:page21",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 17",
+        "action": "content:request:interaction:page22",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 18",
+        "action": "content:request:interaction:page23",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 19",
+        "action": "content:request:interaction:page24",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 20",
+        "action": "content:request:interaction:page25",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 21",
+        "action": "content:request:interaction:page26",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 22",
+        "action": "content:request:interaction:page27",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 23",
+        "action": "content:request:interaction:page28",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Episode 24",
+        "action": "content:request:interaction:page29",
+        "titleFooter": "2026",
+        "image": "https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/poster.png"
+      },
+      {
+        "title": "Next page",
+        "action": "content:request:interaction:page30"
+      },
+      {
+        "title": "Libraries",
+        "action": "content:request:interaction:init"
+      }
+    ]
+  },
+  "page57": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 49",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  },
+  "page58": {
+    "type": "list",
+    "headline": "PUBLIC NAVIGATION / Episode 50",
+    "cache": false,
+    "reuse": false,
+    "preload": "none",
+    "template": {
+      "type": "default",
+      "layout": "0,0,12,1",
+      "centration": "title",
+      "truncation": "title",
+      "color": "msx-glass"
+    },
+    "items": [
+      {
+        "title": "Try original (TV unverified)",
+        "action": "video:https://raw.githack.com/alexanderhetzel/jellyfin-msx/998bc0829b2df06db568443803a6fb4533e23f40/tests/fixtures/msx-public/synthetic.mp4",
+        "playerLabel": "Public synthetic episode / substituted video"
+      },
+      {
+        "title": "Philips 32PHS6605/12: documentation-based candidate",
+        "action": "info:MSX playback on this Philips model is not yet verified. Client policy permits up to 1920x1080; 4K playback/downscaling is not supported. Exact container/codec combinations and decoder limits remain unverified"
+      },
+      {
+        "title": "Independent synthetic episode; public clip substituted in renderer probe.",
+        "action": "info:Independent synthetic episode; public clip substituted in renderer probe."
+      },
+      {
+        "title": "Year: 2026   Type: Episode",
+        "action": "info:Metadata supplied by Jellyfin."
+      },
+      {
+        "title": "Diagnostics",
+        "action": "info:Public renderer only; private authentication and diagnostics are not exercised."
+      }
+    ]
+  }
+}
