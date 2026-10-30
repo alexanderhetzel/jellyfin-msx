@@ -42,6 +42,11 @@ tokens are user-scoped, not short-lived item-scoped tickets. Redacting URLs and
 dedicated least-privilege Jellyfin accounts are important. Removing this exposure
 would require a narrowly scoped media gateway, including HLS playlist rewriting;
 a redirect alone would not hide the token. That gateway is deferred.
+[The native media credential decision](media-token-security.md) records the
+reviewed primary header/ticket contracts, synthetic boundary regressions and
+the conditional gateway design. Initial URL validation does not constrain a
+native player's subsequent redirects or HLS descendants, and a portal JSON
+response's referrer policy does not establish the hosted player's request policy.
 
 Sessions last eight hours with an absolute expiry; restart requires re-pairing.
 M1 is single-process/single-worker. No SQLite/Redis or encryption key is needed

@@ -1,5 +1,37 @@
 # Verification status — 2026-10-30
 
+## Native media credential decision — issue #25
+
+**Implemented / automated-tested / device-unverified:**
+[security decision and threat trace](media-token-security.md), with synthetic
+direct/HLS URLs and primary MSX, HTML, Jellyfin authentication, HLS and referrer
+contracts. Direct delivery remains the default and exposes a user session token
+to the runtime/player. A scoped byte-serving gateway is required only when
+withholding that upstream token is a requirement; implementation is deferred.
+Redirects do not hide it. Initial URL validation cannot constrain native-player
+redirects/HLS descendants; portal response policy does not prove player referrers.
+No runtime behavior, production account or server configuration changed.
+
+Windows / Python 3.12.14: `uv sync --frozen --extra dev` passed with the bundled
+interpreter selected through `UV_PYTHON`; the first unqualified sync attempted
+uv-managed Python 3.15.2 and failed on its expected target-directory link, before
+the explicit interpreter resolved setup. `uv run pytest`: **217 passed**, known
+Starlette warning #30; `uv run ruff check .`: passed;
+`uv run ruff format --check .`: **54 files already formatted**;
+`uv build --wheel` and `git diff --check`: passed. New mocked checks cover five
+backend redirect statuses, initial HLS destination rejection, header/query
+credential boundaries and diagnostic/log marker exclusion. Existing base-path,
+token-replacement and redacted lab regressions also passed (51 focused tests).
+No real Jellyfin, credentials, native-player packet capture, browser/TV test,
+deployment log verification, TLS/trust change or production resource was used.
+This is research acceptance, not a new private-hosted integration/device pass.
+Independent source/security review checked the primary contracts and research
+acceptance and independently reran 217 tests, Ruff/format and diff checks. Its
+diagnostic-wording finding was corrected: only generated negotiation fields
+omit upstream credentials; arbitrary bounded platform/player labels are not a
+secret scrubber. The reviewer did not operate a browser, private server,
+deployment or physical device.
+
 ## Public MSX lifecycle research milestone — issue #17
 
 **Implemented / browser-tested / device-unverified:** independently authored
