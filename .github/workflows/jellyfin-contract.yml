@@ -12,6 +12,8 @@ jobs:
   real-api:
     runs-on: ubuntu-latest
     timeout-minutes: 12
+    env:
+      CONTRACT_OWNER: ${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.version }}
     strategy:
       fail-fast: false
       matrix:
@@ -30,3 +32,10 @@ jobs:
           uv sync --frozen --extra dev --group build --no-build-isolation
       - name: Real isolated API observations (root and base path)
         run: uv run --no-sync python -m tools.jellyfin_contract --version '${{ matrix.version }}'
+      - name: Cleanup this job's disposable resources after cancellation or failure
+        if: always()
+        run: |
+          docker ps -aq --filter "label=msx-contract.owner=$CONTRACT_OWNER" | xargs -r docker rm --force --volumes
+          docker network ls -q --filter "label=msx-contract.owner=$CONTRACT_OWNER" | xargs -r docker network rm
+          test -z "$(docker ps -aq --filter "label=msx-contract.owner=$CONTRACT_OWNER")"
+          test -z "$(docker network ls -q --filter "label=msx-contract.owner=$CONTRACT_OWNER")"

@@ -15,6 +15,7 @@ import subprocess
 import tempfile
 import time
 from pathlib import Path
+from urllib.parse import parse_qsl, urlsplit
 
 import httpx
 
@@ -38,7 +39,22 @@ def docker(*args, check=True):
     result = subprocess.run(
         ["docker", *args], capture_output=True, text=True, timeout=180, check=False
     )
-    require(not check or result.returncode == 0, "docker operation failed (output withheld)")
+    if check and result.returncode:
+        categories = {
+            "manifest unknown": "manifest unavailable",
+            "unauthorized": "registry authorization denied",
+            "toomanyrequests": "registry rate limit",
+            "not found": "resource unavailable",
+            "no matching manifest": "platform unavailable",
+            "network is internal": "internal network limitation",
+            "cannot assign requested address": "port binding unavailable",
+            "permission denied": "permission denied",
+        }
+        category = next(
+            (v for k, v in categories.items() if k in result.stderr.lower()),
+            "unclassified; output withheld",
+        )
+        raise RuntimeError(f"docker {args[0]} failed (exit {result.returncode}; {category})")
     return result.stdout.strip()
 
 
@@ -188,6 +204,18 @@ async def probe(base, version):
                 )
             stage = "Direct Play and canonical ApiKey"
             url, diagnostic = await resolve(jf, viewer, item_id, False, -1)
+            parsed = urlsplit(url)
+            base_path = urlsplit(base).path
+            require(
+                parsed.path == f"{base_path}/Videos/{item_id}/stream.mp4",
+                "generated media base path changed",
+            )
+            credentials = [
+                (k, v)
+                for k, v in parse_qsl(parsed.query)
+                if k.lower() in {"apikey", "api_key", "token"}
+            ]
+            require(credentials == [("ApiKey", viewer.token)], "canonical media credential changed")
             require(
                 diagnostic["mode"] == "DirectPlay" and not diagnostic["transcoding_allowed"],
                 "Direct Play not negotiated",
@@ -234,6 +262,7 @@ async def probe(base, version):
 def run(version):
     require(os.name == "posix" and shutil.which("docker"), "Linux and Docker are required")
     image = f"jellyfin/jellyfin:{version}@{VERSIONS[version]}"
+    owner = os.environ.get("CONTRACT_OWNER", secrets.token_hex(16))
     docker("pull", image)
     for base_path in ("", "/jellyfin"):
         name = "msx-contract-" + secrets.token_hex(8)
@@ -254,13 +283,17 @@ def run(version):
             (config / "config/network.xml").write_text(
                 f"<NetworkConfiguration><BaseUrl>{base_path}</BaseUrl><EnableUPnP>false</EnableUPnP><EnableIPv6>false</EnableIPv6></NetworkConfiguration>"
             )
-            docker("network", "create", "--internal", name)
+            docker(
+                "network", "create", "--internal", "--label", f"msx-contract.owner={owner}", name
+            )
             try:
                 docker(
                     "run",
                     "--detach",
                     "--name",
                     name,
+                    "--label",
+                    f"msx-contract.owner={owner}",
                     "--network",
                     name,
                     "--user",
@@ -290,8 +323,11 @@ def run(version):
                 ).hexdigest()
                 print(json.dumps(result), flush=True)
             finally:
-                docker("rm", "--force", "--volumes", name, check=False)
-                docker("network", "rm", name, check=False)
+                # Report failed cleanup as a failed check; never remove other resources.
+                try:
+                    docker("rm", "--force", "--volumes", name)
+                finally:
+                    docker("network", "rm", name)
 
 
 def main():
