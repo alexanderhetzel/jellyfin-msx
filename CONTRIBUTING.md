@@ -26,6 +26,11 @@ contributions to the current implementation are accepted under MIT.
 7. Merge by squash after required CI and review findings are resolved. Close only
    accepted work; a mock test cannot close a hardware acceptance issue.
 
+Agents have standing maintainer authorization to commit, push, open PRs and merge
+requested work after acceptance, independent review and required checks pass.
+There is no additional human merge-approval gate. Keep branch protection intact.
+For multi-ticket runs, follow [the master/ticket chat workflow](docs/agent-orchestration.md).
+
 ## Privacy and reports
 
 Use fictional servers under `example.com`, `.test` or `.invalid` in source/tests.

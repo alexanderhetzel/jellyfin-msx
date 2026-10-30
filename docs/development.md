@@ -43,6 +43,15 @@ checks and resolved conversations; use squash merges. A solo-maintainer setup
 must not require impossible self-approval. Obtain independent review as described
 in `CONTRIBUTING.md` and `AGENTS.md`.
 
+The maintainer authorizes agents to complete requested work through squash merge;
+do not stop merely to request merge approval. Independent review, acceptance and
+the required checks still apply, and protection must never be bypassed. Generic
+skills that end at a ready PR do not revoke this explicit project authorization.
+
+Use [master/ticket chat orchestration](agent-orchestration.md) for a requested
+multi-issue run. A ticket chat needing human input stops the entire run until the
+maintainer responds. Configuring this workflow does not start implementation.
+
 ## Live integration credentials
 
 Public CI uses synthetic accounts/servers. Local integration may use an explicitly
