@@ -325,7 +325,12 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
 
         def play_button(label, force=False, subtitle=-1):
             target = device_url(
-                secret, "play.json", item_id=item_id, force=str(force).lower(), subtitle=subtitle
+                secret,
+                "play.json",
+                item_id=item_id,
+                media_source_id=identifier(selected.get("Id")),
+                force=str(force).lower(),
+                subtitle=subtitle,
             )
             return button(
                 label,
@@ -409,6 +414,7 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
         item_id: ItemId,
         force: bool = False,
         subtitle: Annotated[int, Query(ge=-1, le=1024)] = -1,
+        media_source_id: ItemId | None = None,
         platform: str = "unknown",
         player: str = "unknown",
     ):
@@ -417,7 +423,9 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
         limit_key = "play:" + device.device_id
         state.limit(limit_key, 12)
         try:
-            stream_url, decision = await resolve(jellyfin, device, item_id, force, subtitle)
+            stream_url, decision = await resolve(
+                jellyfin, device, item_id, force, subtitle, media_source_id
+            )
         except PortalError as error:
             state.record(
                 device,
