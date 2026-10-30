@@ -92,6 +92,13 @@ a visible MSX response error. Player controls are MSX's standard controls.
 M1 records playback *decisions*, not proof that video started. Automatic fallback,
 watch progress, resume, stop reporting and active transcode cleanup are M3 work.
 
+[Lifecycle research](msx-lifecycle-research.md) records actual public MSX callbacks
+and requested state samples. Control events carry previous state; initial load,
+Back, natural completion and media failures do not imply a reliable Play/Stop
+pair. Its bounded authenticated telemetry/reconciliation contract is a design
+for #18, not an implemented collector. Genuine suspend/resume and physical
+Philips ordering remain unverified.
+
 Candidate sources are ranked to prefer AVC and a source fitting the panel, then
 the highest resolution within that size or smallest above it. This is a selection
 preference, not a maximum decoder resolution. Each detail playback action carries

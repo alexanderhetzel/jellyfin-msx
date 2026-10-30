@@ -1,0 +1,9 @@
+{
+  "name": "Synthetic MSX lifecycle research",
+  "headline": "Lifecycle synthetic launcher",
+  "template": {"type": "default", "layout": "0,0,12,1"},
+  "items": [{
+    "label": "Open lifecycle probe",
+    "action": "content:request:interaction:init@https://raw.githack.com/alexanderhetzel/jellyfin-msx/8608cde7d254267b0e1269d9439652194c214690/tools/msx_lifecycle_probe.html"
+  }]
+}
