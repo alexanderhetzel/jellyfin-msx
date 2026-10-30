@@ -34,8 +34,11 @@ def test_synthetic_poster_is_valid_rgb_png():
         chunks[kind] = data
         offset += 12 + length
     assert offset == len(POSTER)
-    assert chunks[b"IHDR"] == struct.pack(">IIBBBBB", 1, 1, 8, 2, 0, 0, 0)
-    assert zlib.decompress(chunks[b"IDAT"]) == b"\x00\x65\xb7\x41"
+    assert chunks[b"IHDR"] == struct.pack(">IIBBBBB", 240, 360, 8, 2, 0, 0, 0)
+    pixels = zlib.decompress(chunks[b"IDAT"])
+    assert len(pixels) == 360 * (1 + 240 * 3)
+    assert pixels[:4] == b"\x00\x28\xb7\x41"
+    assert pixels[-3:] == bytes((219, 183, 65))
     assert chunks[b"IEND"] == b""
 
 

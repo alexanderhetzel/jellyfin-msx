@@ -5,10 +5,11 @@ API contract; it is not a Jellyfin server compatibility test.
 """
 
 import argparse
-import base64
 import copy
 import json
 import secrets
+import struct
+import zlib
 from collections import Counter
 from pathlib import Path
 
@@ -24,9 +25,26 @@ USER, LIBRARY, MOVIE, DENIED, SOURCE = (str(n) * 32 for n in range(1, 6))
 USERNAME = "synthetic-viewer"
 PASSWORD = "synthetic-password"
 MEDIA = ROOT / ".lab/media/synthetic.mp4"
-POSTER = base64.b64decode(
-    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNI3e4IAALiAV5THtHnAAAAAElFTkSuQmCC"
-)
+
+
+def synthetic_poster():
+    """Independent 240x360 RGB bars, large enough for a visible poster check."""
+
+    def chunk(kind, data):
+        return (
+            struct.pack(">I", len(data)) + kind + data + struct.pack(">I", zlib.crc32(kind + data))
+        )
+
+    pixels = b"".join(b"\x00" + bytes((40 + y // 2, 183, 65)) * 240 for y in range(360))
+    return (
+        b"\x89PNG\r\n\x1a\n"
+        + chunk(b"IHDR", struct.pack(">IIBBBBB", 240, 360, 8, 2, 0, 0, 0))
+        + chunk(b"IDAT", zlib.compress(pixels))
+        + chunk(b"IEND", b"")
+    )
+
+
+POSTER = synthetic_poster()
 
 
 def source():
