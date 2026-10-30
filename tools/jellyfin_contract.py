@@ -10,6 +10,7 @@ import hashlib
 import ipaddress
 import json
 import os
+import re
 import secrets
 import shutil
 import subprocess
@@ -31,9 +32,13 @@ ROOT = Path(__file__).resolve().parents[1]
 VERSIONS = json.loads((ROOT / "tools/jellyfin_versions.json").read_text())
 
 
+class ContractFailure(Exception):
+    """Only fixed assertion messages and sanitized numeric diagnostics."""
+
+
 def require(condition, label):
     if not condition:
-        raise RuntimeError(label)
+        raise ContractFailure(label)
 
 
 def docker(*args, check=True):
@@ -55,7 +60,7 @@ def docker(*args, check=True):
             (v for k, v in categories.items() if k in result.stderr.lower()),
             "unclassified; output withheld",
         )
-        raise RuntimeError(f"docker {args[0]} failed (exit {result.returncode}; {category})")
+        raise ContractFailure(f"docker {args[0]} failed (exit {result.returncode}; {category})")
     return result.stdout.strip()
 
 
@@ -70,7 +75,9 @@ async def probe(base, version):
             response = await client.request(
                 method, base + path, headers=jf.headers(device), **kwargs
             )
-            require(response.status_code in expected, f"{stage}: unexpected HTTP status")
+            require(
+                response.status_code in expected, f"{stage}: unexpected HTTP {response.status_code}"
+            )
             return response
 
         try:
@@ -79,10 +86,17 @@ async def probe(base, version):
                 try:
                     response = await request("GET", "/System/Info/Public")
                     break
-                except (httpx.RequestError, RuntimeError):
+                except (httpx.RequestError, ContractFailure):
                     require(time.monotonic() < deadline, "readiness deadline exceeded")
                     await asyncio.sleep(1)
-            require(response.json()["Version"] == version + ".0", "unexpected server version")
+            observed_version = response.json()["Version"]
+            require(
+                isinstance(observed_version, str)
+                and re.fullmatch(r"[0-9.]{1,20}", observed_version),
+                "invalid server version",
+            )
+            print(json.dumps({"server_version": observed_version}), flush=True)
+            require(observed_version == version + ".0", "unexpected server version")
             stage = "regular startup wizard"
             await request("GET", "/Startup/User")
             password = secrets.token_urlsafe(32)
@@ -181,13 +195,13 @@ async def probe(base, version):
                 except PortalError as error:
                     require(error.status in (401, 403, 404), "unexpected item denial")
                 else:
-                    raise RuntimeError("private item authorization was not denied")
+                    raise ContractFailure("private item authorization was not denied")
             try:
                 await resolve(jf, denied, item_id, False, -1)
             except PortalError as error:
                 require(error.status in (401, 403, 404), "unexpected playback denial")
             else:
-                raise RuntimeError("restricted playback permitted")
+                raise ContractFailure("restricted playback permitted")
             stage = "authenticated portal images"
             state = State(settings)
             capability, paired = state.pair()
@@ -250,7 +264,7 @@ async def probe(base, version):
             except PortalError as error:
                 require(error.status == 401, "unexpected logout denial")
             else:
-                raise RuntimeError("logged-out session remained authorized")
+                raise ContractFailure("logged-out session remained authorized")
             async with client.stream("GET", url, headers={"Range": "bytes=0-1023"}) as media:
                 require(
                     media.status_code in (401, 403), "logged-out media token remained authorized"
@@ -271,9 +285,16 @@ async def probe(base, version):
                     "logout-revoked",
                 ],
             }
-        except Exception:
+        except Exception as error:
             # Exception strings, response bodies and tracebacks can contain credentials.
-            raise RuntimeError(f"contract failed at {stage}; details withheld") from None
+            detail = (
+                str(error)
+                if isinstance(error, ContractFailure)
+                else f"HTTP {error.status}"
+                if isinstance(error, PortalError)
+                else type(error).__name__
+            )
+            raise ContractFailure(f"contract failed at {stage}: {detail}") from None
         finally:
             await jf.client.aclose()
 
@@ -361,7 +382,7 @@ def main():
     except Exception as error:
         # Only our fixed messages are safe; never print arbitrary exception text.
         print("Isolated Jellyfin contract failed; credentials and responses withheld.", flush=True)
-        if type(error) is RuntimeError:
+        if isinstance(error, ContractFailure):
             print(str(error), flush=True)
         raise SystemExit(1) from None
 
