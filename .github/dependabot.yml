@@ -1,0 +1,18 @@
+version: 2
+updates:
+  - package-ecosystem: uv
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    labels: ["dependencies", "type:task"]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    labels: ["dependencies", "type:task"]
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+    labels: ["dependencies", "type:task"]

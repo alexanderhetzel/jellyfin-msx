@@ -1,0 +1,108 @@
+# Architecture and decisions
+
+## M1 data flow
+
+1. MSX loads `/msx/start.json` (also `/msx/start.json` under the MSX setup convention).
+   Its content action loads `/msx/pair.json`, which creates a five-minute pairing.
+2. TV displays a short code and companion address `/pair`. The operator enters
+   that code and Jellyfin credentials in a browser. A same-origin, CSRF-protected
+   POST authenticates against the single operator-configured Jellyfin server.
+3. TV selects “Continue” with the remote. Its random capability identifies the
+   paired session. No cookie support or third-party input plugin is required on TV.
+4. Backend requests user views/children/details from Jellyfin. Private posters
+   are fetched through an authenticated, size-bounded image endpoint.
+5. `video:resolve:` requests PlaybackInfo on demand. Backend returns an authenticated
+   Jellyfin stream URL; video travels directly from TV to Jellyfin. HLS is available
+   only on an explicitly opted-in deployment outside the operator's no-transcoding setup.
+
+Source boundaries: `config.py` (validated environment), `state.py` (bounded,
+expiring in-memory state and rate limits), `jellyfin.py` (isolated HTTP requests),
+`playback.py` (profile/selection), `msx.py` (JSON), `app.py` (routes).
+
+## Security and operational limits
+
+TV capability URLs are bearer credentials, even though they are not Jellyfin
+tokens. Use HTTPS and disable access logs on the backend and reverse proxy.
+Never share a raw MSX JSON response or browser/network capture. Private endpoints
+are no-store, including images. CORS permits read-only MSX requests without cookies;
+knowing an opaque capability is still necessary. Browser pairing uses CSRF and
+same-origin checks. Passwords are neither persisted nor sent through query strings.
+Authenticated REST requests use the standard MediaBrowser Authorization header
+with its Token parameter. Native video URLs use canonical `ApiKey`, replacing
+any previous token query variants. Legacy `X-Emby-Token` and `api_key` are not
+accepted by Jellyfin 12 and must not be used.
+The companion `/pair` page uses `Referrer-Policy: same-origin` so native Chromium
+form submissions preserve their Origin for validation; off-site referrers are
+still suppressed. Private capability routes retain `no-referrer`. A blanket
+`no-referrer` on the form would turn native POST Origin into null and reject sign-in.
+
+Jellyfin tokens exist in backend RAM and in the resolved video URL: native media
+players cannot be assumed to attach custom Authorization headers. Those upstream
+tokens are user-scoped, not short-lived item-scoped tickets. Redacting URLs and
+dedicated least-privilege Jellyfin accounts are important. Removing this exposure
+would require a narrowly scoped media gateway, including HLS playlist rewriting;
+a redirect alone would not hide the token. That gateway is deferred.
+
+Sessions last eight hours with an absolute expiry; restart requires re-pairing.
+M1 is single-process/single-worker. No SQLite/Redis or encryption key is needed
+because credentials are not written to disk. Logout locally invalidates immediately
+and attempts upstream logout; expiry/restart do not guarantee upstream revocation.
+Jellyfin administrators can revoke sessions. This limits M1 production readiness.
+
+Jellyfin API calls have a total deadline below MSX's documented 30-second timeout.
+Upstream redirects are not followed; returned playback URLs must remain under the
+configured HTTPS server/base path. No arbitrary request-supplied server addresses.
+The TV must reach Jellyfin directly, including its reverse-proxy base path and
+HLS segments. NAT, certificates and server transcode permissions remain operator concerns.
+
+## Playback contract
+
+The current profile is `philips-32phs6605-12-hd-policy-v2`, based on exact-model
+multimedia documentation and qualified platform streaming evidence. Its candidate
+containers/codecs and conditional Dolby/DTS warnings are defined in
+`device_profile.py`; evidence and limits are in `philips-32phs6605-12.md`.
+Candidates are not physical MSX passes. A conservative client admission policy
+enforces at most 1920x1080 encoded video: 4K playback/downscaling is excluded.
+This is not an asserted silicon decoder maximum. Selection, PlaybackInfo codec
+conditions and returned-source validation all enforce it. No undocumented H.264
+level, frame-rate, bit-depth or channel ceiling is asserted. The former 720p/AAC-stereo
+rule was an assumption, not a device limit, and is superseded. An optional bitrate
+budget limits operator/network policy, not TV capability, and is unset by default.
+Missing essential container/codec/dimension/audio metadata and unsupported source
+opening mechanisms still block negotiation. PlaybackInfo support flags are checked
+but do not prove successful decoding. `MSX_ALLOW_TRANSCODING=false` is the default:
+no transcoding/subtitle-encode profile is advertised, forced/burn-in requests are
+rejected before contacting Jellyfin, and an upstream HLS URL is never used.
+No DirectStream/remux path is advertised. Optional HLS and burn-in remain available
+only when an operator explicitly enables transcoding on a suitable host.
+
+“Try original” selects by server response and local policy. It cannot detect a decoder
+failure inside SAPHI. With transcoding disabled the only fallback is a compatible
+stored version. Force-HLS and subtitle-burn controls are hidden by default.
+PlaybackInfo error, unsupported source, off-origin URL or denied transcoding returns
+a visible MSX response error. Player controls are MSX's standard controls.
+
+M1 records playback *decisions*, not proof that video started. Automatic fallback,
+watch progress, resume, stop reporting and active transcode cleanup are M3 work.
+
+Candidate sources are ranked to prefer AVC and a source fitting the panel, then
+the highest resolution within that size or smallest above it. This is a selection
+preference, not a maximum decoder resolution. The selected source is pinned in
+details and PlaybackInfo; original-container URLs retain MKV/AVI/etc. rather than
+labelling every file MP4. If no source qualifies,
+direct-only mode reports that condition instead of converting media. This also
+avoids ambiguous subtitle indices across files; Jellyfin applies stream indices
+to a matching MediaSourceId. Nullable collections normalize to empty, and invalid collection
+shapes become visible upstream errors (`jellyfin.normalize_contract`). Pairing
+request bodies are bounded to 8 KiB before form parsing (`middleware.PairBodyLimit`).
+
+## Agent-operated development loop
+
+`tools/lab.py` starts the real portal on loopback and connects to an operator-selected
+real Jellyfin server. No test-specific authentication bypass or stored credentials
+are added. A separate local dashboard launches the official hosted MSX web client
+and exposes redacted endpoint counts, negotiation flags and playback decisions.
+Actual browser actions and media state must corroborate those observations.
+The lab refuses non-loopback origins and transcoding. It does not change OS
+certificate trust automatically. Expired local certificates require explicit renewal
+and trust; `.lab/` is excluded from both Git and Docker build context.

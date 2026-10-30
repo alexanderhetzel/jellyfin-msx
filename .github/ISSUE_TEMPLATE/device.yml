@@ -1,0 +1,25 @@
+name: Device compatibility report
+description: Record an actual device result without exposing private media.
+labels: ["type:research", "area:testing", "needs-device"]
+body:
+  - type: textarea
+    id: environment
+    attributes:
+      label: Device environment
+      description: Exact device model, firmware, MSX version/platform/player, portal revision and Jellyfin version. No private server address.
+    validations:
+      required: true
+  - type: textarea
+    id: media
+    attributes:
+      label: Media properties and audio output
+      description: Container, codecs/profile/level, dimensions/fps, bitrate, audio channels, subtitle format and speakers/ARC. No title, file path or media ID.
+    validations:
+      required: true
+  - type: textarea
+    id: observations
+    attributes:
+      label: Reproduction and observed results
+      description: Record start, audible sound/sync, pause, seek, stop, duration and redacted diagnostics. A browser or USB pass is not an MSX-on-TV pass.
+    validations:
+      required: true

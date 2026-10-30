@@ -1,0 +1,271 @@
+# Verification status — 2026-10-30
+
+Development is now tracked in [repository Issues](https://github.com/alexanderhetzel/jellyfin-msx/issues)
+and the [Jellyfin MSX Project](https://github.com/users/alexanderhetzel/projects/5).
+The current publication/setup work is [issue #2](https://github.com/alexanderhetzel/jellyfin-msx/issues/2).
+This file preserves dated evidence; it is not a parallel backlog. See
+`development.md` and `agentic-testing.md` for workflow and check selection.
+
+Local publication checks passed: 169 tests, Ruff, locked package validation,
+MIT/NOTICE/template presence in the built wheel, Compose validation, a Docker
+image build, isolated container health/start/pair smoke checks as UID 10001,
+and validation with the actual Caddy image. Caddy reported a formatting warning;
+actual certificate issuance and failure-path log redaction remain deployment
+work. Gitleaks found no leaks in the reviewed source and inherited Git history.
+Remote Actions and main protection are verified separately during publication;
+local checks alone do not establish them.
+
+Routine agent pairing was also exercised with an operator-authorized test account:
+credentials loaded only inside the test process from the local OS secret store,
+normal GET/CSRF-protected POST to the companion form returned success, and actual
+MSX Continue opened authenticated libraries. No password, token, account value or
+activation code was written to source/reports. Credential submission in this run
+used the normal HTTP form path, not native browser typing. No authentication
+bypass or new product feature was introduced.
+
+## Current M2a status: application testing in progress
+
+### First real Jellyfin playback in official MSX web — 2026-10-30
+
+**Browser video path passed:** fresh human pairing, real private-library access,
+posters, details, PlaybackInfo, original-file playback, pause/resume, forward/back
+seeking, Stop and replay. This used the integrated browser and official MSX
+0.1.167 with the running `philips-32phs6605-12-hd-policy-v2` profile. The selected
+source was an existing MKV with H.264 1280x720/8-bit and two E-AC-3 6-channel audio
+streams. No file, account policy or real Jellyfin setting was changed.
+
+Video observations: an actual frame rendered, time advanced from 4.3748 to
+29.4338 seconds with readyState=4 and no media error. Pause held at 73.2087 across
+separate observations; Play resumed. A forward jump landed at 116 seconds and
+continued to 132.3544 with readyState=4. Rewind moved 136.2956 to 107, then resumed
+to 121.5698 with readyState=4. Stop returned to details and left the video paused
+at zero/readyState=0. Replay reached 9.0322 seconds at 1280x720/readyState=4 with
+no error. Controls were operated through actual MSX DOM clicks, never by setting
+video currentTime/play state from script.
+
+Redacted lab observations corroborate two PlaybackInfo requests, both HTTP 200,
+both Direct Play, EnableDirectStream=false, EnableTranscoding=false and subtitles
+off. A separate existing oversized source displayed the 1920x1080 rejection and
+no play control; PlaybackInfo count remained two. Back returned to the poster
+list retaining the selected item's focus. The sanitized report is retained under
+ignored `.lab/reports/msx-real-playback-2026-10-30.json`; it contains no library
+titles/IDs, capability paths, media URLs or credentials.
+
+**Still open:** audible audio was not independently verified by the available
+browser tooling (the video was not muted). Physical Philips playback/audio,
+remote arrows/OK, 1080p/HEVC variants, near-end and long playback, subtitle
+delivery and populated series navigation remain unverified. A body ArrowLeft
+automation action failed in the browser-control API; this is not evidence of an
+MSX keyboard/TV-remote failure. Initial stale browser handles were recovered by
+resetting only the automation binding; no service restart/re-pair was needed.
+The paired MSX session and backend are retained for continuation.
+
+### Current source profile — 2026-10-30
+
+The user's device-specific research request supersedes the original assumed
+720p/MP4/AAC-stereo gate. Current source uses
+`philips-32phs6605-12-hd-policy-v2`, with cited exact-model and qualified
+platform evidence in `philips-32phs6605-12.md`. It offers original-file candidate
+trials, labels MSX verification as pending, warns about conditional Dolby/DTS
+audio and preserves original-container stream URLs. It now enforces an explicit
+HD-only client admission policy: width <=1920 and height <=1080. 4K playback and
+downscaling are excluded; an eligible stored HD copy is required on Ultra. This
+boundary is not presented as a proven MT9288 decoder maximum. The earlier
+unrestricted-resolution candidate decision is superseded. No level, frame-rate,
+stereo or default bitrate ceiling is invented. An explicit operator bitrate
+budget is separate. Ultra conversion remains disabled.
+
+The 4K correction passed **169 automated tests**, Ruff and format checks. Cases
+cover oversized width/height across all advertised video codecs, cropped UHD,
+4K-only detail/play routes making no PlaybackInfo request, and a returned 4K
+source failing validation after an HD selection. The limit also applies with
+optional transcoding enabled: the independent reviewer identified that fallback
+bypass and verified its correction. Missing dimensions cannot bypass the policy
+via HLS. The reviewer independently reran all 169 tests and Ruff/format checks
+and found no open blockers. No reviewer browser/server interaction occurred.
+The manufacturer service manual
+identifies this model as TPM20.7E LA / MTK9288; the official TPV bulletin confirms
+the chipset mapping. These sources establish identity, not an MSX 4K decode pass.
+The actual FastAPI 4K-only detail response, with mock Jellyfin and harmless
+replacement diagnostics action, was rendered in official MSX 0.1.167 in the
+integrated browser. Clicking the rejection row displayed the HD limit, stored-copy
+instruction and disabled-transcoding message, visually readable across two lines
+at 1280x720. No play control was present. An initial incorrect inline launch
+format produced a 404; switching to the documented `content:json:` start loaded
+the fixture successfully. This is a renderer check, not upstream/video/hardware
+verification. The existing real-server process was not restarted.
+
+Before the 4K correction, **124 automated tests passed**, Ruff clean and 33 Python files formatted. New
+tests cover the actual 720p MKV/H.264/E-AC-3/5.1 metadata shape, no conversion
+flags, original `.mkv` URL, unknown numeric decoder limits, operator budgets,
+conditional warnings and diagnostic redaction. An initial independent review
+identified unsupported inferred container/audio mappings; these were removed.
+Final follow-up review found no open blockers and independently reran all 123
+tests and Ruff. A final huge-number metadata guard then passed the primary
+agent's full 124-test run and the reviewer's seven focused tests. No reviewer
+UI/server/hardware interaction was performed. Updated wheel build and Compose
+syntax validation also passed.
+
+The new detail JSON was generated through real FastAPI routes with mocked
+Jellyfin data, with media/private actions replaced by harmless rendering notices,
+then opened in official MSX 0.1.167 in the integrated browser. The model-specific
+candidate row, trial label and clickable conditional-audio warning rendered.
+This is a renderer check, not real Jellyfin playback or a physical-TV pass.
+
+After the operator requested the next step, the real-server lab was restarted
+on 2026-10-30 to load `philips-32phs6605-12-hd-policy-v2`.
+Only the old companion success tab remained; no authenticated MSX tab was open.
+The restart discarded old RAM sessions as designed. A fresh official MSX session
+was opened in the integrated browser with a fresh companion GET and
+pre-filled TV code. Human sign-in succeeded and the real playback run above
+followed. The MSX tab must not be reloaded to preserve its active pairing.
+Earlier policy denials below do
+not establish incompatibility of the TV or of the operator's media.
+
+### Historical runtime observations before the profile correction
+
+The operator supplied and authorized their real Ultra.cc Jellyfin endpoint.
+Its public API is reachable. Real companion sign-in succeeded and Arc showed
+the success page, corroborated by redacted backend observations. The first actual
+MSX library request returned 401: the old token header is removed in Jellyfin 12.
+The client now uses MediaBrowser Authorization Token and canonical ApiKey for
+native video URLs; strict mocked tests and independent review passed. Fresh real
+sign-in after restart succeeded. The operator's screenshot now confirms the actual
+Jellyfin libraries menu with movie/series entries and focus rectangle; a fresh
+agent AX observation also read it. Library overview access is confirmed.
+The earlier black agent capture was a capture/control limitation, not a confirmed
+application failure. Direct DOM browser control subsequently traversed movies,
+two detail pages, Back, library chooser and the empty series library. Two real
+posters loaded and rendered. Both existing movies were rejected by the conservative
+profile; the visible message explained the stored-version requirement and disabled
+transcoding. No PlaybackInfo request was observed for these denials. The operator
+was preparing a 720p test file. At that earlier stage no actual Jellyfin playback
+pass had been observed and the then-active session was retained.
+The initial form retry made no upstream authentication request. Real browser
+reproduction identified a no-referrer/Origin:null conflict in native form POSTs.
+The /pair page now uses same-origin referrer policy; private routes keep
+no-referrer. A repeat native form submission passed CSRF and reached code
+validation, without contacting Jellyfin. Pairing also has
+explicit failure recovery and a separate success page. The local lab gives codes
+30 minutes; the production default is still five minutes.
+
+The official MSX 0.1.167 web runtime has actually been operated. It exposed a list
+layout defect that was corrected and visually rechecked. Arc loaded the local
+HTTPS pairing JSON after the operator approved localhost network access. In the
+isolated browser, keyboard navigation started the official MSX sample video;
+picture, advancing video time and pause were observed. Seek, actual Jellyfin
+playback and all SAPHI decoding remain unverified. Details are recorded in
+`msx-test-results.md`; the repeatable lab runbook is `msx-testing.md`.
+
+Ultra transcoding and burn-in are disabled by default, including PlaybackInfo
+flags and advertised profiles. Source selection searches all versions for a
+compatible stored copy. The local lab refuses transcoding and non-loopback
+origins, retains only redacted policy evidence, and excludes TLS files from Git
+and Docker. Automated tests mock Jellyfin and cannot certify real MSX playback.
+
+Checks at that earlier revision: `.venv/bin/pytest -q`: **113 passed** (one upstream Starlette
+deprecation warning); `.venv/bin/ruff check .`: passed;
+`.venv/bin/ruff format --check .`: 29 files formatted. Independent reviews of
+pairing recovery and the subsequent referrer-policy fix found no blockers;
+the reviewer reran all 113 tests and Ruff. Browser verification was performed
+by the primary agent, not independently repeated by the reviewer.
+The Jellyfin 12 header/URL fix also passed independent review and all 113 tests.
+The later redacted HTTP-status counters passed an independent review and six
+focused lab tests; they were not loaded into the process active at that earlier
+stage. The current restarted run includes these counters, as shown above.
+Updated wheel build (`UV_CACHE_DIR=/tmp/jellyfin-msx-uv-cache uv build --wheel`)
+and Compose validation (`docker compose --env-file .env.example config --quiet`)
+both passed on 2026-10-30.
+
+Docker is now running and the official Jellyfin image was pulled; no local
+Jellyfin container was started. Docker application build/start and Caddy TLS
+runtime are still unverified. A temporary localhost leaf certificate was trusted
+with the operator's approval for this active test; its trust must be removed
+when testing finishes.
+The earlier automation limitation was concrete: native Arc captures/AX could disagree,
+AX reads sometimes omit content, and coordinate input returns no available window.
+The operator confirmed a visible library menu, resolving the apparent black-screen
+application failure. A separate paired browser tab with direct DOM clicks now
+provides a working application test loop. Movie browsing, details, posters,
+negative compatibility and Back cases passed. A 1366x768 viewport also rendered
+the two posters, focus rectangle and metadata; the temporary override was reset.
+At that stage eligible test media was the blocker. The current real browser run
+above supersedes that blocker; no physical-device playback claim follows.
+
+## Historical M1 verification — 2026-10-29
+
+**M1 software milestone is implemented and automated-tested. It is not a
+production-ready or hardware-verified Jellyfin client.** No real Jellyfin
+server, credentials or physical Philips TV were available.
+
+### Implemented and tested at M1
+
+| Capability | Evidence |
+| --- | --- |
+| MSX start, pairing, home, paginated browsing, details, resolve, diagnostics | Actual FastAPI route integration tests with httpx.MockTransport |
+| Companion browser authentication and one-time TV code | POST/CSRF/origin/code-expiry/rate-limit tests; password not persisted |
+| Expiring bearer sessions, separation, logout during upstream failure | `test_portal.py` and `test_regressions.py` |
+| Private poster retrieval and explicit user-item authorization | Denied item/image, image type/size and unknown capability tests |
+| Movie → detail and series → season → episode links | Browser-independent navigation integration test |
+| PlaybackInfo profile and Direct Play candidate | Body assertions and codec/resolution/bitrate/null metadata tests |
+| HLS fallback including second negotiation and forced mode | Full route tests with real-server-style no-URL-until-forced fixture |
+| Subtitle burn-in, no-subtitle source pinning, multi-version consistency | PlaybackInfo source/index assertions and detail-label regression |
+| Malformed upstream/error/timeout handling, base paths and URL restrictions | Unit and endpoint tests, no external server calls |
+| Request body protection | Actual/chunked requests and ASGI test proving early stop before parser |
+| Redacted diagnostics, no-store, CORS without TV cookies | Route response assertions |
+
+Executed on macOS arm64, Python 3.13.3:
+
+```text
+.venv/bin/pytest -q                 96 passed
+.venv/bin/ruff check .              All checks passed
+.venv/bin/ruff format --check .     24 files already formatted
+uv build --wheel                   Passed; pairing template packaged
+docker compose --env-file .env.example config --quiet   Passed
+```
+
+The suite currently emits one upstream Starlette deprecation warning about its
+httpx-based TestClient. Tests pass; no warning is suppressed. `uv sync --extra dev`
+installed locked dependencies. The sandbox blocked uv cache access, then `uv run`
+hit a macOS system-configuration panic; checks ran directly from `.venv` instead.
+Building the wheel required the permitted non-sandboxed execution path.
+
+Browser verification used the actual localhost service with a deliberately
+nonexistent Jellyfin domain and no credentials. Pairing form rendered at desktop
+1280x720 and mobile 390x844. Mobile document width equaled viewport width (390),
+all visible inputs/button were 352 px wide; no horizontal overflow, clipping or
+console warnings/errors observed. These are form-layout checks only.
+
+An independent review found and verified corrections for shared-state threadpool
+access, nullable metadata, source/subtitle consistency, oversized form bodies,
+protocol-relative media URLs, blank passwords and Caddy error-URI logging. Final
+review: no open M1 code blockers; 96 tests and Ruff independently rerun.
+
+### Unverified at the historical M1 checkpoint
+
+- Actual MSX rendering, setup HTTPS discovery, focus/Back behavior and native player.
+- Jellyfin authentication, REST shape and transcoding against an actual server release.
+- H.264/AAC MP4, MPEG-TS HLS, subtitle burn-in, seeking and long playback on SAPHI.
+- Docker image build/start and Caddy configuration/runtime/TLS issuance. Docker CLI
+  exists, but daemon is not running. Compose syntax passed; Caddy runtime is untested.
+- Proxy log exclusion in error paths: configured and reviewed against official docs;
+  fake-marker outage test must run against the chosen Caddy image before deployment.
+- Python 3.12 and Linux: CI matrix defined, not executed locally or remotely.
+
+### Deferred at M1 (later profile/runtime work described above)
+
+Automatic retry after a native decoder failure, audio/alternate-version selection,
+native/external subtitles, HEVC Direct Play, watch progress/history, playback
+resume, lifecycle event reporting, abandoned-transcode cleanup, automatic upstream
+revocation on expiry/restart, persistent sessions and multiple workers/replicas.
+
+Resolved video URLs expose the user's Jellyfin token to the TV player. A media
+gateway is needed if that tradeoff is unacceptable. The backend does not proxy
+video in M1. This is documented behavior, not a claim of item-scoped stream tokens.
+
+Next gate: deploy to a controlled HTTPS host with the operator's server and run
+`device-test-checklist.md`, recording results in `device-test-results.md`.
+No production-compatibility claim is justified until those results exist.
+
+No Git repository or remote existed at kickoff. No branch, commit, push, issue,
+PR or external deployment was created; `git diff --check` is not available here.

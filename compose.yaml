@@ -1,0 +1,37 @@
+services:
+  portal:
+    build: .
+    environment:
+      MSX_PUBLIC_URL: ${MSX_PUBLIC_URL:?Set MSX_PUBLIC_URL in .env}
+      JELLYFIN_URL: ${JELLYFIN_URL:?Set JELLYFIN_URL in .env}
+      MSX_ALLOW_HTTP: ${MSX_ALLOW_HTTP:-false}
+      MSX_MAX_BITRATE: ${MSX_MAX_BITRATE:-}
+      MSX_ALLOW_TRANSCODING: ${MSX_ALLOW_TRANSCODING:-false}
+    restart: unless-stopped
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    tmpfs:
+      - /tmp:size=16m
+    expose:
+      - "8090"
+  https:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      MSX_DOMAIN: ${MSX_DOMAIN:?Set MSX_DOMAIN in .env}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      portal:
+        condition: service_healthy
+volumes:
+  caddy_data:
+  caddy_config:

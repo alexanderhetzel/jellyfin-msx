@@ -1,0 +1,14 @@
+{
+    log default {
+        # Proxy errors otherwise include request URIs even with access logging off.
+        exclude http.log.error
+    }
+}
+
+{$MSX_DOMAIN} {
+    # Deliberately no access-log directive: paths contain bearer capabilities.
+    request_body {
+        max_size 8KB
+    }
+    reverse_proxy portal:8090
+}

@@ -1,0 +1,27 @@
+name: Bug report
+description: Report reproducible incorrect behavior with redacted evidence.
+labels: ["type:bug"]
+body:
+  - type: markdown
+    attributes:
+      value: "Use synthetic examples. Never include credentials, pairing codes, media/capability URLs or private library information. Report vulnerabilities privately."
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      description: Include the source revision and redacted environment details.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Redacted evidence and proposed acceptance criteria
+      description: Distinguish mocked, browser and physical-device observations.
+    validations:
+      required: true
