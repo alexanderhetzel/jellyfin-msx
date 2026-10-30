@@ -1,4 +1,31 @@
-# Verification status — 2026-10-30
+# Verification status — 2026-10-31
+
+## Connected Chrome pairing assertions — issue #9
+
+**Implemented / automated-tested / device-unverified:** the reusable
+[pairing connector command and actual results](browser-pairing-check.md) use
+supported connected-Chrome Tab APIs, read-only DOM checks and real normal forms
+in the official hosted MSX runtime. Final positive execution passed ten stages:
+synthetic identity, runtime startup, stale-CSRF/wrong-code/wrong-credential denial,
+code and clean sign-in recovery, normal pairing, MSX Continue and own disconnect.
+Deliberately broken positive CSRF and login paths each failed at normal-pairing
+with the matching fresh denial category; neither reached authenticated Continue.
+These are actual browser assertions, separate from local guard/HTTP tests.
+
+The driver suppresses raw errors/body text, retains codes only in its closure and
+closes only owned tabs. Dedicated origins avoid expiring a user's pending form via
+the deliberately rotated shared cookie. Independent review found and resolved a
+stale-error attribution flaw; an earlier outgoing-scene screenshot and failed
+settled-frame trial are recorded. The corrected disconnected screenshot was
+inspected. Local Node guards **5 passed**, syntax/diff passed; `uv run pytest -W
+error` **394 passed / 1 POSIX skip**, Ruff passed and format **85 files** passed.
+The dedicated approved relay stopped within its original 900-second lifetime;
+exit 0, absent listener/control directory and all exact owned helpers were verified.
+No production code, dependencies, authentication policy, operator data or security
+settings changed. The command requires the browser connector; it is not an
+unattended public-CI or standalone shell E2E driver. Expiry, JSON/playback/network
+faults, series/source/resource-isolation coverage remain open in #9; audio and
+physical Philips behavior remain unverified.
 
 ## Partial hosted synthetic HTTPS browser observations — issue #9
 
