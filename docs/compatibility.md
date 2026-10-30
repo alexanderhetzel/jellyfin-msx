@@ -25,3 +25,8 @@ platform/player strings cannot grant additional playback permissions. Request
 device work through GitHub Issues with firmware, MSX/player version and sanitized
 media properties. Never include real servers, credentials, activation/capability
 URLs, private media titles or file paths.
+
+The [profile contract](playback-profile-contract.md) defines evidence levels,
+trusted explicit selection and configuration/diagnostic/UI requirements before
+another device is exposed. Two synthetic profiles test helper isolation only;
+they do not add production profiles or hardware compatibility.
