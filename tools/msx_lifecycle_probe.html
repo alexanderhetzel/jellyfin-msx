@@ -45,7 +45,11 @@
           template: {type: "default", layout: "0,0,12,1"}, items: [
             {label: "Play synthetic 30-second clip", action: "video:" + media},
             {label: "Read received events and snapshots", action: "content:request:interaction:records"},
-            {label: "Play deliberately missing synthetic media", action: "video:" + media + ".missing"},
+            {label: "Open missing-media scenario", action: "content:data", data: {
+              headline: "Missing synthetic media - separate playlist",
+              template: {type: "default", layout: "0,0,12,1"},
+              items: [{label: "Play deliberately missing synthetic media", action: "video:" + media + ".missing"}]
+            }},
             {label: "Exit probe content", action: "back"}
           ]};
       }
@@ -53,12 +57,17 @@
         init: function () {},
         ready: function () {
           record("probe", "ready");
-          setInterval(function () {
+          var interval = setInterval(function () {
+            if (Date.now() - started > 600000) { clearInterval(interval); record("probe", "sampling-finished"); return; }
             if (pending) { return; }
             pending = true;
-            var timeout = setTimeout(function () { pending = false; record("probe", "snapshot-timeout"); }, 5000);
+            var active = true;
+            var timeout = setTimeout(function () {
+              active = false; pending = false; record("probe", "snapshot-timeout");
+            }, 5000);
             TVXInteractionPlugin.requestData("video", function (result) {
-              clearTimeout(timeout); pending = false;
+              if (!active) { return; }
+              active = false; clearTimeout(timeout); pending = false;
               record("snapshot", "video", result && result.video && result.video.data);
             });
           }, 2000);
@@ -72,8 +81,13 @@
           if (id === "records") {
             callback({type: "list", cache: false, headline: "Received callbacks (event) / requested samples (snapshot)",
               template: {type: "default", layout: "0,0,12,1"},
-              items: records.slice(-40).map(function (row) {
-                return {label: JSON.stringify(row), action: "info:Sanitized synthetic record; commands do not prove decoding."};
+              items: records.slice(-18).map(function (row) {
+                var value = row.data;
+                return {label: "#" + row.seq + " " + row.kind + " " + row.name +
+                  " @" + row.ms + "ms | state=" + value.state + " pos=" + value.position +
+                  " dur=" + value.duration + " ended=" + value.ended +
+                  (row.target === undefined ? "" : " target=" + row.target),
+                  action: "info:Sanitized synthetic record; commands do not prove decoding."};
               })});
           } else { callback(id === "init" ? page() : null); }
         }
