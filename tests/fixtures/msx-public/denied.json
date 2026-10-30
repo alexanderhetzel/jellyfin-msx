@@ -1,0 +1,40 @@
+{
+  "type": "list",
+  "headline": "PUBLIC FIXTURE / Synthetic clip",
+  "cache": false,
+  "reuse": false,
+  "preload": "none",
+  "template": {
+    "type": "default",
+    "layout": "0,0,12,1",
+    "centration": "title",
+    "truncation": "title",
+    "color": "msx-glass"
+  },
+  "items": [
+    {
+      "title": "Outside documented candidate profile",
+      "action": "info:No eligible stored version for this Philips profile. Video must be at most 1920x1080; 4K playback/downscaling is not supported by this client. Use a matching 720p/1080p copy. Transcoding is disabled."
+    },
+    {
+      "title": "Compatibility details",
+      "action": "info:Version 1: Video exceeds the 1920x1080 client limit; 4K playback/downscaling is disabled"
+    },
+    {
+      "title": "Generated test pattern and tone; no operator media.",
+      "action": "info:Generated test pattern and tone; no operator media."
+    },
+    {
+      "title": "Year: unknown   Type: Movie",
+      "action": "info:Metadata supplied by Jellyfin."
+    },
+    {
+      "title": "Diagnostics",
+      "action": "info:Dynamic authentication and diagnostics are not covered by this public fixture."
+    },
+    {
+      "title": "Public fixture scope",
+      "action": "info:Rendering and player only. Normal hosted pairing, private delivery and dynamic recovery remain untested."
+    }
+  ]
+}

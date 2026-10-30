@@ -14,6 +14,7 @@ __pycache__/
 *.db-*
 *.sqlite*
 *.mp4
+!/tests/fixtures/msx-public/synthetic.mp4
 *.mkv
 *.mp3
 *.wav
