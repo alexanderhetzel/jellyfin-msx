@@ -3,10 +3,14 @@
 <head>
   <meta charset="utf-8">
   <title>Jellyfin MSX synthetic storage probe</title>
+</head>
+<body>
+  <p id="probe-status">Waiting for the official plugin API readiness callback.</p>
   <script src="https://msx.benzac.de/js/tvx-plugin.min.js"></script>
   <script>
     // Independently authored API client. Never use this probe with credentials.
     TVXPluginTools.onReady(function () {
+      document.getElementById("probe-status").textContent = "Official plugin API ready; waiting for MSX.";
       var key = "jellyfin-msx.research.issue11.marker.v1";
       var marker = '{"schema":1,"marker":"synthetic-issue11"}';
       var starts = 0;
@@ -69,7 +73,12 @@
       }
 
       TVXInteractionPlugin.setupHandler({
+        init: function () {},
+        ready: function () {
+          document.getElementById("probe-status").textContent = "MSX interaction handler ready.";
+        },
         handleRequest: function (id, data, callback) {
+          document.getElementById("probe-status").textContent = "MSX request: " + id;
           callback(id === "init" ? page(operate("read")) : null);
         },
         handleData: function (data) {
@@ -83,6 +92,6 @@
       TVXInteractionPlugin.init();
     });
   </script>
-</head>
-<body><p>Interaction probe: use the MSX controls. Synthetic values only.</p></body>
+  <p>Interaction probe: use the MSX controls. Synthetic values only.</p>
+</body>
 </html>
