@@ -15,3 +15,12 @@ do not establish application authentication, source delivery or device support.
 Generated MSX fixture pages replace every private action with public inline
 navigation and public media; their scope notice is deliberate. No proprietary
 MSX runtime code is included. Only the official hosted runtime renders/plays them.
+
+## Visual-design extension
+
+Issue #15 regenerates the production-derived pages with the shared surface and
+native product label. `waiting.json` is exported from the normal pending home
+route; its private actions become harmless public scope notices. No pairing
+response, code or capability is published. The index links to this static waiting
+preview; it cannot pair a TV or create a code. See `docs/visual-design.md` for
+the final source pin, actual viewport/screenshots and hardware limits.
