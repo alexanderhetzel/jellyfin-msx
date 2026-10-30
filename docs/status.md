@@ -25,8 +25,13 @@ folder-item poster authorization and the real twelve-resolver rate budget; addin
 the fixture item contract and sampling six boundary negotiations fixed preparation.
 One metadata assertion incorrectly expected a stripped separator and was corrected.
 Independent publication review passed 52 affected tests/Ruff/wheel/allowlist and
-accepted the public source boundary. Final evidence/head review and CI are recorded
-in the PR before merge. No real server, credential, trust-store, production resource,
+accepted the public source boundary. Independent source/evidence review also reran
+269 tests/one skip and Ruff/format, inspecting the saved focus, paused-frame, empty,
+negative-denial, recovery and settled-poster evidence. A narrow final iframe-only
+visibility fix removes the probe diagnostics from behind MSX. Its first launch timed
+out; one ordinary reload succeeded, and affected series/poster/empty/denial/Back
+screens were rechecked. Final-head approval and CI are recorded in the PR before
+merge. No real server, credential, trust-store, production resource,
 proprietary-runtime change or physical-device action occurred.
 
 ## Reproducible build-input milestone — issue #27
