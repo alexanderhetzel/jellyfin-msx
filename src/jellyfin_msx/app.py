@@ -188,7 +188,9 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
         else:
             if activation:
                 # Clean the credential form URL before rendering under same-origin policy.
-                return activation_redirect(activation, max(1, int(device.expires - state.clock())))
+                return activation_redirect(
+                    device.activation, max(1, int(device.expires - state.clock()))
+                )
             response = form(device=device)
         response.delete_cookie(
             "pair_activation",
