@@ -37,7 +37,7 @@ function fixture(initial = hash) {
 function start(f, correlate = true, id = "p".repeat(32)) {
     let result;
     f.telemetry.start(value => { result = value; });
-    f.requests.at(-1).respond(200, { grant: "g".repeat(43), playback_id: id, url: "https://media.test/original?ApiKey=synthetic", expires_in: 28800 });
+    f.requests.at(-1).respond(200, { grant: "g".repeat(43), playback_id: id, url: "https://media.test/original?ApiKey=synthetic", expires_in: 28800, duration: 30, start_position: 0 });
     assert.equal(result.url, "https://media.test/original?ApiKey=synthetic");
     assert.equal(result.properties["portal:playback"], id);
     if (correlate) {
@@ -59,8 +59,39 @@ test("start authenticates fixed endpoint and keeps credentials out of body", () 
     const req = f.requests[0];
     assert.equal(req.url, "/api/playback/start"); assert.equal(req.method, "POST");
     assert.equal(req.headers.Authorization, "Bearer " + "s".repeat(43));
-    assert.deepEqual(req.body, { item_id: "2".repeat(32), media_source_id: "3".repeat(32), force: false, subtitle: -1 });
+    assert.deepEqual(req.body, { item_id: "2".repeat(32), media_source_id: "3".repeat(32), force: false, subtitle: -1, resume: false });
     assert.equal(f.requests.length, 2);
+});
+
+test("saved Resume returns documented fixed native position without fabricating samples", () => {
+    const f = fixture(hash + "/0/-1/resume"); let result;
+    f.telemetry.start(value => { result = value; });
+    assert.equal(f.requests[0].body.resume, true);
+    f.requests[0].respond(200, { grant: "g".repeat(43), playback_id: "p".repeat(32), url: "https://media.test/original", expires_in: 900, duration: 30, start_position: 8.25 });
+    assert.equal(result.properties["resume:position"], "8.25");
+    assert.equal(result.properties["portal:playback"], "p".repeat(32));
+    assert.equal(f.requests.length, 1);
+    let page; f.handler.handleRequest("init", null, value => { page = value; });
+    assert.equal(page.items[0].title, "Resume saved progress");
+});
+
+test("Start over always emits explicit zero and rejects a nonzero backend result", () => {
+    const f = fixture(hash + "/0/-1/start"); start(f);
+    assert.equal(f.requests[0].body.resume, false);
+    let result;
+    f.telemetry.start(value => { result = value; });
+    f.requests.at(-1).respond(200, { grant: "g".repeat(43), playback_id: "q".repeat(32), url: "https://media.test/original", expires_in: 900, duration: 30, start_position: 8 });
+    assert.equal(result, null);
+});
+
+test("untrusted native positions fail closed and do not start sampling", () => {
+    for (const position of [undefined, null, "8", true, -1, 30, 864001, Infinity, NaN]) {
+        const f = fixture(hash + "/0/-1/resume"); let result;
+        f.telemetry.start(value => { result = value; });
+        f.requests[0].respond(200, { grant: "g".repeat(43), playback_id: "p".repeat(32), url: "https://media.test/original", expires_in: 900, duration: 30, start_position: position });
+        assert.equal(result, null); f.tick(10000);
+        assert.equal(f.samples.length, 0);
+    }
 });
 test("simultaneous resolution single-flights; changed context drops response", () => {
     const f = fixture(); let calls = 0;

@@ -9,6 +9,8 @@ from tools.synthetic_lab import MOVIE, SOURCE, SyntheticJellyfin
 
 
 class LifecycleJellyfin(SyntheticJellyfin):
+    item_ids = (MOVIE,)
+
     def __init__(self, origin):
         super().__init__(origin)
         self.reports = Counter()
@@ -29,7 +31,7 @@ class LifecycleJellyfin(SyntheticJellyfin):
                 return httpx.Response(401)
             body = json.loads(request.content)
             if (
-                body.get("ItemId") != MOVIE
+                body.get("ItemId") not in self.item_ids
                 or body.get("MediaSourceId") != SOURCE
                 or not isinstance(body.get("PlaySessionId"), str)
                 or type(body.get("PositionTicks")) is not int
