@@ -13,6 +13,8 @@
         xhr.timeout = 18000;
         var settled = false;
         function finish(value) {
+            var current = context();
+            if (!current || current.secret !== ctx.secret || current.item !== ctx.item || current.source !== ctx.source) { value = null; }
             if (!settled) { settled = true; callback(value); }
         }
         function failure() {
@@ -29,7 +31,15 @@
                 if (xhr.status !== 200 || xhr.responseText.length > (index !== undefined ? 1048576 : 100000)) { failure(); return; }
                 if (index !== undefined) {
                     if ((xhr.getResponseHeader("Content-Type") || "").split(";")[0].toLowerCase() !== "text/vtt") { failure(); return; }
-                    finish({ url: window.location.origin + resource });
+                    if (typeof FileReader !== "function" || typeof Blob !== "function") { failure(); return; }
+                    var reader = new FileReader();
+                    reader.onerror = failure;
+                    reader.onabort = failure;
+                    reader.onload = function () {
+                        if (typeof reader.result !== "string" || reader.result.indexOf("data:text/vtt;") !== 0 || reader.result.length > 1400000) { failure(); return; }
+                        finish({ url: reader.result });
+                    };
+                    reader.readAsDataURL(new Blob([xhr.responseText], { type: "text/vtt;charset=utf-8" }));
                     return;
                 }
                 var value = JSON.parse(xhr.responseText);

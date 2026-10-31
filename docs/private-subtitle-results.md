@@ -10,13 +10,17 @@ expiry, failure recovery and Stop/completion acceptance is still pending.
 
 The resumed candidate uses HTML5X's documented non-HTTP subtitle IDs. On a subtitle
 resolver request, the first-party bridge validates the existing authenticated
-resource through same-origin XHR, then returns only that fixed own-origin resource
-URL. Fresh denial/missing/type/size failures show a fixed Off/Stop recovery notice;
+resource through same-origin XHR, then supplies its already-authorized bytes as an
+in-memory `text/vtt` data URL. Fresh denial/missing/type/size failures show a fixed Off/Stop recovery notice;
 no timer, renewal, persistence, arbitrary URL or online proxy is introduced.
-This callback behavior and the native player's load timing must be tested, not
-inferred from Node guards. A failure after callback validation may still race the
-native fetch; strict resource denial is preserved. Already delivered captions
-cannot be recalled. Only the trusted synthetic subtitles scenario has a fixed
+This callback/data-URL behavior must be tested, not inferred from Node guards.
+The data URL avoids a second native bearer fetch after validation. FileReader/Blob
+support is feature-detected; unsupported clients get the fixed failure without a
+bearer-URL fallback. One-MiB server output expands to at most1,400,000 data-URL
+characters, with another context check after asynchronous conversion. Strict
+resource denial is preserved. Already delivered captions cannot be recalled.
+There is no persistence; decoded player tracks are ordinary delivered cue data.
+Only the trusted synthetic subtitles scenario has a fixed
 240-second session lifetime to exercise natural expiry within a 900-second run;
 production settings and other scenarios are unchanged.
 

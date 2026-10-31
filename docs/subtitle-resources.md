@@ -22,8 +22,12 @@ original-playback row, and disables next/previous mode changes. These published
 extended properties also remain browser-unverified.
 Track properties now carry only bounded opaque IDs. The transient bridge checks
 the authenticated subtitle resource when HTML5X requests its URL, with a fixed
-recovery notice for fresh denial/failure. Actual resolver timing and any later
-native-fetch failure remain browser gates.
+recovery notice for fresh denial/failure. It delivers validated bytes through an
+in-memory text/vtt data URL, avoiding a second native bearer fetch. UTF-8 Blob/
+FileReader support is feature-detected with no unsafe URL fallback; URI expansion
+is bounded at1,400,000 characters and stale asynchronous context is rejected.
+No persistence/renewal is added; already delivered cues cannot be recalled.
+Actual resolver/data-URL behavior remains a browser gate.
 
 An independently authored transient interaction bridge uses only the published
 [interaction interface](https://msx.benzac.de/wiki/index.php?title=Interaction_Plugin)
