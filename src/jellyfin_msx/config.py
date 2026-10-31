@@ -21,6 +21,7 @@ class Settings:
     authorization_db: str | None = None
     authorization_key: str | None = field(default=None, repr=False)
     authorization_ttl: int = 30 * 86400
+    remember_devices: bool = False
 
     def __post_init__(self):
         for name in ("public_url", "jellyfin_url"):
@@ -90,6 +91,8 @@ class Settings:
             or not self.public_url.startswith("https://")
         ):
             raise ValueError("Durable authorization requires an absolute database path and HTTPS")
+        if self.remember_devices and not self.authorization_db:
+            raise ValueError("Remembered devices require configured durable authorization")
 
     @classmethod
     def from_env(cls):
@@ -109,4 +112,5 @@ class Settings:
             authorization_db=os.getenv("MSX_AUTHORIZATION_DB") or None,
             authorization_key=os.getenv("MSX_AUTHORIZATION_KEY") or None,
             authorization_ttl=int(os.getenv("MSX_AUTHORIZATION_TTL", str(30 * 86400))),
+            remember_devices=os.getenv("MSX_REMEMBER_DEVICES", "false").lower() == "true",
         )

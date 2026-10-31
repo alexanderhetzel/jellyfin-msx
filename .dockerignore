@@ -14,6 +14,7 @@ src/jellyfin_msx/templates/**
 !src/jellyfin_msx/templates/*.html
 !src/jellyfin_msx/templates/subtitle-bridge.js
 !src/jellyfin_msx/templates/lifecycle.js
+!src/jellyfin_msx/templates/remember.js
 !tools/
 tools/**
 !tools/requirements.txt
