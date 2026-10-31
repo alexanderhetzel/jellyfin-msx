@@ -26,13 +26,14 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from jellyfin_msx.app import create_app
 from jellyfin_msx.config import Settings
+from jellyfin_msx.original_file import MODE
 from tools.lab import ROOT, TrafficRecorder, attach_observations
 from tools.navigation_fixture import EPISODES, NavigationJellyfin
 from tools.synthetic_failures import FailureJellyfin
 from tools.synthetic_lab import SyntheticJellyfin, attach_fixture_media
 from tools.synthetic_lifecycle import RECOVERY_BAD_SOURCE, LifecycleJellyfin, RecoveryJellyfin
 from tools.synthetic_resume import ITEMS as RESUME_ITEMS
-from tools.synthetic_resume import ResumeJellyfin
+from tools.synthetic_resume import CandidateResumeJellyfin, ResumeJellyfin
 from tools.synthetic_subtitles import ITEMS as SUBTITLE_ITEMS
 from tools.synthetic_subtitles import SubtitleJellyfin
 from tools.windows_job import enter_kill_on_close_job
@@ -59,9 +60,36 @@ def validate_origin(origin):
     return origin
 
 
-def build_public_synthetic_lab(origin, *, allow_public_synthetic=False, scenario="baseline"):
+def candidate_option(scenario, authenticated_file_candidate):
+    if type(authenticated_file_candidate) is not bool:
+        raise PreparationError("invalid-candidate-option")
+    if authenticated_file_candidate and scenario != "resume":
+        raise PreparationError("candidate-requires-resume")
+
+
+def delivery_marker(authenticated_file_candidate):
+    candidate_option("resume", authenticated_file_candidate)
+    return {"original_delivery": MODE} if authenticated_file_candidate else {}
+
+
+def ready_payload(authenticated_file_candidate):
+    return {
+        "mode": "public-synthetic",
+        "configured": True,
+        **delivery_marker(authenticated_file_candidate),
+    }
+
+
+def build_public_synthetic_lab(
+    origin,
+    *,
+    allow_public_synthetic=False,
+    scenario="baseline",
+    authenticated_file_candidate=False,
+):
     if allow_public_synthetic is not True:
         raise PreparationError("public-synthetic-opt-in-required")
+    candidate_option(scenario, authenticated_file_candidate)
     origin = validate_origin(origin)
     if scenario not in {
         "baseline",
@@ -82,6 +110,15 @@ def build_public_synthetic_lab(origin, *, allow_public_synthetic=False, scenario
         session_ttl=240 if scenario == "subtitles" else 900,
         max_states=32,
         enable_subtitle_resources=scenario == "subtitles",
+        **(
+            {
+                "original_delivery": MODE,
+                "original_server_contract": "stock-static-private-origin-v1",
+                "original_server_version": "12.4.0",
+            }
+            if authenticated_file_candidate
+            else {}
+        ),
     )
     fixture_type = {
         "baseline": SyntheticJellyfin,
@@ -92,7 +129,11 @@ def build_public_synthetic_lab(origin, *, allow_public_synthetic=False, scenario
         "resume": ResumeJellyfin,
         "recovery": RecoveryJellyfin,
     }[scenario]
-    fixture = fixture_type(origin)
+    fixture = (
+        CandidateResumeJellyfin(origin, raw)
+        if authenticated_file_candidate
+        else fixture_type(origin)
+    )
     recorder = TrafficRecorder(httpx.MockTransport(fixture.handle))
     app = create_app(settings, transport=recorder)
     app, launch = attach_observations(app, settings, recorder)
@@ -101,7 +142,14 @@ def build_public_synthetic_lab(origin, *, allow_public_synthetic=False, scenario
     elif scenario == "subtitles":
         attach_fixture_media(app, fixture, raw, None, item_ids=SUBTITLE_ITEMS)
     elif scenario == "resume":
-        attach_fixture_media(app, fixture, raw, None, item_ids=RESUME_ITEMS)
+        attach_fixture_media(
+            app,
+            fixture,
+            raw,
+            None,
+            item_ids=RESUME_ITEMS,
+            **({"files": fixture.files} if authenticated_file_candidate else {}),
+        )
     elif scenario == "recovery":
         attach_fixture_media(
             app,
@@ -120,7 +168,8 @@ def build_public_synthetic_lab(origin, *, allow_public_synthetic=False, scenario
 
     @app.get("/__synthetic/ready")
     def ready():
-        return {"mode": "public-synthetic", "configured": True}
+        # Configuration evidence only; this cannot attest to media/native playback.
+        return ready_payload(authenticated_file_candidate)
 
     if scenario in {"lifecycle", "resume", "recovery"}:
 
@@ -274,7 +323,8 @@ def tunnel_helper(binary, directory, seconds):
         stop_process(process)
 
 
-def backend_helper(seconds, scenario="baseline"):
+def backend_helper(seconds, scenario="baseline", *, authenticated_file_candidate=False):
+    candidate_option(scenario, authenticated_file_candidate)
     # Reserve our exclusive listener BEFORE the tunnel can start: never expose an
     # unrelated existing listener. Keep ownership while waiting for fixed IPC config.
     with socket.socket() as listener:
@@ -285,7 +335,10 @@ def backend_helper(seconds, scenario="baseline"):
         print("RESERVED", flush=True)
         origin = sys.stdin.buffer.readline(256).decode("ascii").strip()
         app, _, _ = build_public_synthetic_lab(
-            origin, allow_public_synthetic=True, scenario=scenario
+            origin,
+            allow_public_synthetic=True,
+            scenario=scenario,
+            **({"authenticated_file_candidate": True} if authenticated_file_candidate else {}),
         )
         logging.getLogger("uvicorn.error").disabled = True
         logging.getLogger("uvicorn.access").disabled = True
@@ -322,34 +375,33 @@ def await_value(process, values, deadline, stop_file):
     raise PreparationError("startup-timeout")
 
 
-def ready_local():
+def ready_local(*, authenticated_file_candidate=False):
+    expected = ready_payload(authenticated_file_candidate)
     try:
         with httpx.Client(trust_env=False, follow_redirects=False, timeout=0.5) as client:
             response = client.get(f"http://127.0.0.1:{PORT}/__synthetic/ready")
-            return response.status_code == 200 and response.json() == {
-                "mode": "public-synthetic",
-                "configured": True,
-            }
+            return response.status_code == 200 and response.json() == expected
     except (httpx.HTTPError, ValueError):
         return False
 
 
-def ready_public(origin):
+def ready_public(origin, *, authenticated_file_candidate=False):
+    expected = ready_payload(authenticated_file_candidate)
     origin = validate_origin(origin)
     try:
         with httpx.Client(
             trust_env=False, follow_redirects=False, verify=True, timeout=2
         ) as client:
             response = client.get(origin + "/__synthetic/ready")
-            return response.status_code == 200 and response.json() == {
-                "mode": "public-synthetic",
-                "configured": True,
-            }
+            return response.status_code == 200 and response.json() == expected
     except (httpx.HTTPError, ValueError):
         return False
 
 
-def activate(binary, seconds=MAX_SECONDS, scenario="baseline"):
+def activate(
+    binary, seconds=MAX_SECONDS, scenario="baseline", *, authenticated_file_candidate=False
+):
+    candidate_option(scenario, authenticated_file_candidate)
     if not 1 <= seconds <= MAX_SECONDS:
         raise PreparationError("invalid-lifetime")
     if scenario not in {
@@ -377,7 +429,19 @@ def activate(binary, seconds=MAX_SECONDS, scenario="baseline"):
             try:
                 base = [sys.executable, "-m", "tools.synthetic_https", "--seconds", str(seconds)]
                 backend = spawn(
-                    [*base, "--backend-helper", "--scenario", scenario], directory, output=True
+                    [
+                        *base,
+                        "--backend-helper",
+                        "--scenario",
+                        scenario,
+                        *(
+                            ["--authenticated-file-candidate"]
+                            if authenticated_file_candidate
+                            else []
+                        ),
+                    ],
+                    directory,
+                    output=True,
                 )
                 processes.append(backend)
                 reserved = queue.Queue(maxsize=1)
@@ -421,7 +485,14 @@ def activate(binary, seconds=MAX_SECONDS, scenario="baseline"):
                         raise PreparationError("relay-readiness-timeout")
                     if any(p.poll() is not None for p in processes) or stop_file.exists():
                         raise PreparationError("startup-stopped")
-                    if ready_local() and ready_public(origin):
+                    readiness_options = (
+                        {"authenticated_file_candidate": True}
+                        if authenticated_file_candidate
+                        else {}
+                    )
+                    if ready_local(**readiness_options) and ready_public(
+                        origin, **readiness_options
+                    ):
                         if time.monotonic() >= startup:
                             raise PreparationError("relay-readiness-timeout")
                         break
@@ -442,6 +513,7 @@ def activate(binary, seconds=MAX_SECONDS, scenario="baseline"):
                             "public_origin": origin,
                             "maximum_seconds": seconds,
                             "scenario": scenario,
+                            **delivery_marker(authenticated_file_candidate),
                         }
                     ),
                     flush=True,
@@ -490,12 +562,24 @@ def main():
         default="baseline",
     )
     parser.add_argument("--directory", type=Path, help=argparse.SUPPRESS)
+    parser.add_argument(
+        "--authenticated-file-candidate",
+        action="store_true",
+        help="Default-off synthetic File model, only with --scenario resume; "
+        "not activation approval",
+    )
     args = parser.parse_args()
     try:
+        candidate_option(args.scenario, args.authenticated_file_candidate)
+        if args.authenticated_file_candidate and (args.stop or args.tunnel_helper):
+            raise PreparationError("candidate-incompatible-mode")
+        candidate_options = (
+            {"authenticated_file_candidate": True} if args.authenticated_file_candidate else {}
+        )
         if not 1 <= args.seconds <= MAX_SECONDS:
             raise PreparationError("invalid-lifetime")
         if args.backend_helper:
-            backend_helper(args.seconds, args.scenario)
+            backend_helper(args.seconds, args.scenario, **candidate_options)
         elif args.tunnel_helper:
             _owned_job = enter_kill_on_close_job()
             tunnel_helper(args.cloudflared.resolve(), args.directory, args.seconds)
@@ -507,7 +591,7 @@ def main():
         elif args.activate_public_synthetic:
             if os.name != "nt":
                 raise PreparationError("activation-requires-reviewed-windows-supervision")
-            activate(args.cloudflared.resolve(), args.seconds, args.scenario)
+            activate(args.cloudflared.resolve(), args.seconds, args.scenario, **candidate_options)
             print('{"status":"stopped"}')
         else:
             verify_binary(args.cloudflared)
@@ -524,6 +608,7 @@ def main():
                         "approval_required": True,
                         "tunnel_started": False,
                         "scenario": args.scenario,
+                        **delivery_marker(args.authenticated_file_candidate),
                     }
                 )
             )

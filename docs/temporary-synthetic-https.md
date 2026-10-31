@@ -98,6 +98,52 @@ If abrupt supervisor termination leaves stale PID state, verify those exact owne
 processes are gone before removing that local stale control directory. A new run
 refuses an existing directory rather than replacing another run's state.
 
+## Default-off authenticated-file option in the existing resume scenario — #32
+
+**Implemented / automated-tested with mocks / native and device-unverified.** The
+existing `resume` scenario can select the authored File model with the explicit
+startup flag `--authenticated-file-candidate`. It is false by default and rejects
+every other scenario, stop/tunnel-helper combinations and non-boolean programmatic
+values before side effects. No new scenario, listener, service, control endpoint
+or production configuration is introduced. The public factory first requires
+synthetic opt-in, validates the assigned origin and hashes the original sample,
+then constructs fixed candidate Settings internally. It cannot accept a real
+Jellyfin URL, external Settings, request-selected mode or operator environment.
+The contract and `12.4.0` declaration belong to this **authored fixture only**.
+
+Offline preflight, with the already reviewed binary present:
+
+```sh
+uv run python -m tools.synthetic_https --check --scenario resume --authenticated-file-candidate
+```
+
+Preflight still reports `approval_required: true` and `tunnel_started: false`.
+Its fixed `original_delivery: authenticated-file-candidate` marker is delivery
+**configuration evidence only**, not a playback result. The trusted option reaches
+only the owned backend's arguments. The existing origin-only private pipe,
+tunnel arguments, pinned binary, sanitized environment, exclusive reservation,
+900-second total/180-second startup ceilings and owned cleanup stay unchanged.
+The backend's first stdout line remains exactly `RESERVED`. Candidate local and
+verified-public readiness require the same extra marker in the existing ready
+payload; a lost flag cannot silently declare legacy mode candidate-ready. Legacy
+readiness payloads remain unchanged. There are no extra secrets or token types.
+
+This preparation did **not** activate a candidate backend, relay, browser or real
+server. New helper/supervisor tests fake processes, sockets, server, threads and
+HTTP; the preflight test uses a synthetic fake pinned binary. They do not attest
+to a fresh execution of the real binary. Existing baseline process/listener tests
+remain separate. Source review, CI and merge confer no new activation grant.
+
+For a later separately authorized official-MS​​X run, the existing activation
+command would combine `--scenario resume` with this flag. Use normal synthetic
+pairing, then measure the actual native extensionless File URL playback, advancing
+time after an eight-second resume, visible/audible generated clip, pause/resume,
+seek/Stop and re-entry from reported progress. Correlate sanitized existing
+lifecycle counters with actual player observations. Health/readiness, media GETs
+and authored snapshots cannot pass that gate. Synthetic File token denial remains
+modeled behavior, not Jellyfin revocation evidence. Real-server/version and
+physical Philips acceptance remain separate under #32.
+
 ## Isolation and supervision
 
 - The existing operator `build_lab` loopback/transcoding guards remain intact.
