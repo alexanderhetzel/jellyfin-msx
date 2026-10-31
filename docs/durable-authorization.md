@@ -1,5 +1,269 @@
 # Durable server authorization — issue #12
 
+## Opt-in MSX client — 2026-10-31
+
+**Implemented / automated-tested / device-unverified:** `MSX_REMEMBER_DEVICES=true`
+requires the external key/database configuration below and selects a public
+`/msx/remember.json` startup document. The default remains ordinary RAM pairing.
+The independently authored plugin shell/script live on the portal's own HTTPS
+origin. Only its exact HTML route permits framing by the official MSX web origins;
+other pages retain frame denial. Script policy allows our own script and the
+vendor-hosted public API library; connect policy is same-origin. No proprietary
+runtime is copied, and no inline/eval exception or cross-origin POST is added.
+
+The startup document now uses the published
+[content reference request contract](https://msx.benzac.de/wiki/index.php?title=Content_Root_Object):
+`reference: request:interaction:init@` followed by our public plugin URL.
+`handler.ready` only signals readiness. One accepted `init` request waits for
+storage, ordinary pairing or renewal, exact save/readback and authenticated home,
+then returns one terminal page through its callback. Progress pages are not pushed
+against the foreground request. Explicit later controls still use `showContent`.
+Unknown or simultaneous requests receive null without starting another renewal;
+a later sequential explicit init refreshes authority rather than serving an old
+cached library forever. There is no hidden background renewal.
+
+Storage polling retains its five-second bound and each XHR its fifteen-second
+bound. An aggregate 25-second init deadline also covers delayed SDK/storage and
+sequential requests. Timeout returns recovery, blocks silent renewal replay and
+invalidates the attempt's late callbacks, preventing delayed save/navigation.
+Absolute deadline checks at readiness, dispatch, completion and rendering also
+reject late work if the timer callback itself has not run. The deadline uses the
+monotonic performance clock where available, otherwise the local wall clock.
+An upstream renewal may already have committed; uncertain authority requires
+explicit re-pairing. A plugin that never loads cannot run this deadline: normal
+runtime request error/retry is the delivery boundary. The reference ignores most
+root content items, so the old two-button fallback is not promised on delivery
+failure. Actual automatic entry/reload/reopen/restart acceptance remains separate;
+this callback-contract correction does not prove a fix for paused transport.
+
+The first actual request-contract run at `cb0f162` failed normal automatic entry:
+MSX displayed Data Load Error and existing sanitized runtime logs reported init
+request/plugin-load attempt followed by Request timed out. No pairing/enrollment
+was reached. Body-marker reads timed out. One HTML request and matching ExtraInfo
+HTTP 200 were observed, without established document completion or child-target
+coverage; no own-JS/SDK events were captured. Network cleanup explicitly reported
+a Browser Use paused document response. The owned tab closed and explicit stop
+at 12:27 Vienna time left all nine recorded PIDs/listener/control/helpers absent.
+The run stopped at this first functional block, without Retry, credentials,
+restart or a source change. Callback unit tests and CI remain software evidence;
+they do not override this failed actual automatic-start result.
+
+The next narrow observation variant normalizes the empty plugin body to ordinary
+markup, matching the published plugin example and subtitle bridge. Hidden-body
+causation is unproven; this changes no script, CSP, authentication or scheduling.
+The body stays empty and the fixed lifecycle marker stays on the root. Actual
+startup and observation outcomes must be attributed to the tested variant.
+At exact `cde5574`, ordinary automatic startup again failed with Data Load Error /
+Request timed out before pairing. The body-marker read stayed unknown. One HTML
+request and ExtraInfo HTTP 200 were observed, without established document
+completion/child coverage; no own-JS/SDK events appeared. Cleanup commands reported
+a paused document response, then the owned tab closed. Explicit stop at 12:35
+Vienna time left all nine PIDs/listener/control/helpers absent. The blank capture
+is excluded; settled DOM/runtime-error/category evidence is retained. No Retry,
+credentials, restart or matrix ran. This comparison ends without another source
+variant, a successful startup claim or a proven external/product root cause.
+Retained run-2 actions show healthz and a top-level public plugin-shell visit
+before normal MSX startup, which still left fallback. A later shell visit plus
+explicit Retry correlated with manual renewal. Thus prior top-level visit was
+not sufficient in that run; the subtitle workflow's earlier companion visit is
+only a correlation, not a warm-up prerequisite or source-fix justification.
+Run-6 cleanup was verified at 11:35:24 UTC / 12:35:24 Vienna.
+
+Normal current companion QR/manual two-stage CSRF pairing is unchanged. The
+plugin uses same-origin body-only pair/status endpoints and keeps the pending
+session in RAM. Pending Continue redisplays the normal waiting instructions;
+authenticated Continue enrolls, verifies the exact newly stored renewal value and
+generation, and only then opens private libraries. Storage contains only version,
+renewal secret, absolute expiry and generation. User-scoped Jellyfin tokens and
+short RAM sessions never enter this storage record.
+
+Before each replacement write, the client checks that the complete prior record
+is unchanged. It then reads back and privately compares the exact new serialized
+value/generation. Silent no-op writes cannot pass on mere key presence. A losing
+or uncertain request does not overwrite another context's newer record. Timeout
+preserves local state and blocks automatic retry; a definitive 401 may remove
+only the exact unchanged stale record. An early losing context can safely force
+both contexts to re-pair; no successful durable client winner is guaranteed by
+storage lacking atomic compare-and-swap. Failed verification prevents library
+navigation and attempts authenticated cleanup of the just-issued RAM grant.
+
+Only one key, `jellyfin-msx.authorization.v1`, is read/written/removed through the
+public API. No enumeration/global clear or direct localStorage is used. Explicit
+Create new code may clear that owned record and start normal pairing; unavailable
+storage has an explicit Pair without remembering path. Missing/corrupt/expired
+records never authorize a library. Clearing a lost record alone cannot revoke an
+unknown server credential; bounded expiry and normal authenticated Disconnect
+remain the server authority boundary.
+
+The plugin owns startup/enrollment transiently. It has no timer, observer or
+background renewal after entering libraries. Another explicit feature may replace
+the interaction plugin; normal Back/private navigation does not reload bootstrap.
+Public startup reload rotates the renewal and replaces old sessions, so it must
+not run while another resolver still needs the old grant. Normal server
+Disconnect/Confirm works independently of current interaction ownership. Any
+remaining local renewal is denied and exact-record cleaned on next bootstrap.
+
+The same portal origin/top-level MSX site/profile/partition shares a remembered
+credential, as a browser device context. A second tab is not cryptographic device
+isolation. Normal independently pending pairing grants remain separated; a copied
+renewal is still a bearer credential. Physical installed-app framing, retention,
+standby and remote behavior remain device-unverified in #4.
+
+### Isolated synthetic restart verification
+
+The startup-only `remember` scenario in `tools.synthetic_https` uses only
+normal synthetic login, MockTransport, a private temporary directory, an external
+synthetic Fernet key generated in supervisor RAM and SQLite synthetic upstream
+token verifiers. It never reads operator configuration/environment secrets or an
+OS credential store, and has no real-network Jellyfin fallback. The key travels
+only through private owned stdin pipes, never argv/files/output. The fixture's
+hashed upstream sessions survive a fresh backend process, modeling a separately
+running Jellyfin without bypassing its synthetic authentication.
+
+The local-only `--restart-backend` signal replaces the owned backend under the
+same original relay lifetime (at most 900 seconds including 180-second startup).
+The supervisor continuously holds the exclusive loopback listener; private Windows
+socket descriptors are duplicated to exact owned child PIDs. The vendor wrapper
+also holds a duplicate until its tunnel stops, including parent-EOF cleanup.
+Restart never exposes a free relay port, changes the origin, extends the original
+deadline or adds a public mutation endpoint. Replacement readiness is bounded by
+30 seconds and the remaining original deadline. JobObject/EOF/PID cleanup and
+verified-TLS/no-redirect/no-host-config safeguards remain.
+
+Independent pre-launch security review identified and corrected an initial
+released-listener gap. Actual Windows ephemeral-port tests deny competing binds
+through two child-process lifecycles and the interval between them; mock tests
+check vendor-stop-before-reservation-release and unchanged RAM key/deadline.
+These are containment/source tests, not actual hosted MSX restoration evidence.
+
+### First actual Chrome run and local restart correction — 2026-10-31
+
+The later maintainer instruction explicitly selects connected Chrome for all
+browser tests. One approved 900-second synthetic run reached verified HTTPS
+readiness. Normal startup without `init=1` displayed the public Opening Jellyfin
+fallback; only the visible Retry control loaded normal pairing. Continue then
+displayed Waiting for pairing. This is **not** automatic-startup acceptance.
+No credentials were submitted and no enrollment/renewal occurred in that run.
+
+A screenshot mask initially missed the synthetic pending code's whitespace form.
+The saved capture was overwritten with a conservative whole-panel mask and visually
+verified; no QR/code value is retained in the report. An approved backend restart
+was immediately requested to invalidate the pending session, but hit its fixed
+restart-readiness timeout. The supervisor destroyed its backend, synthetic key and
+temporary state and exited; all nine recorded owned PIDs, listener and control
+directory were absent. Both owned tabs closed. Main-tab CDP cleanup was blocked
+by a Browser Use paused-document response; closing the owned tab cleared its
+tab-scoped observations/viewport. No real credentials/server or TV was involved.
+
+A bounded local-only ephemeral-port diagnosis reproduced first Uvicorn health
+success followed by restart health failure while exclusive reservation remained.
+Uvicorn's installed Windows default uses Proactor/IOCP. The
+[Windows IOCP contract](https://learn.microsoft.com/en-us/windows/win32/api/ioapiset/nf-ioapiset-createiocompletionport)
+ties completion-port association to a process and warns about sharing associated
+handles. The inference was checked by selecting the standard SelectorEventLoop
+through Uvicorn's custom loop factory **only in the synthetic remember backend**.
+Two actual fresh Uvicorn processes then both served health, exited zero and denied
+competitor binds throughout. No global event-loop/security policy or reservation,
+TLS, EOF, JobObject or original lifetime guard changed. Independent affected
+source review repeated six focused loop/socket/EOF/deadline tests successfully.
+The following slotted run exercised the corrected real backend restart.
+
+### Second actual Chrome run — 2026-10-31
+
+The later focused diagnostic adds only a RAM DOM bitmask on the own plugin's
+`html` element, `data-jellyfin-msx-lifecycle`: 1 = document root parsed,
+2 = own adapter script entered, 4 = SDK onReady callback entered,
+8 = handler registered, 16 = handler.ready entered, 32 = boot entered,
+64 = showContent requested. Flags accumulate; 127 means all boundaries were
+entered, not that MSX displayed the requested content. The marker has no secrets,
+context, URLs, storage, logging or telemetry. It resets with each document and
+does not change startup scheduling/authentication. A delayed-SDK adapter guard
+checks the boundary progression.
+With request/response startup, automatic content is returned through the callback;
+63 can therefore cover parsed/script/SDK/handler/boot without a `showContent`
+call. Bit 64 still means an actual later `showContent` request, not callback delivery.
+
+The focused run at `fecdc4e` displayed the original fallback and one iframe with
+our public HTML source. The documented own-frame/test-ID attribute query failed
+with a Playwright selector deadline; no marker value was measured. The frame's
+`contentDocument` was unavailable across origins. This is **unknown**, not zero,
+and does not locate document loading, adapter execution or content delivery.
+No HTML/JS/vendor-SDK request/response categories were captured; no Network
+observation or new server telemetry was enabled. No credentials, Retry, restart
+or broad matrix were exercised. The known binary's pinned hash and exclusive
+bind passed after correcting a missing default binary path; one retry retained
+the original startup/total limits. Explicit cleanup at 11:57 Vienna time reported
+session exit zero/stopped and all nine owned PIDs/listener/control/helpers absent;
+the one owned tab closed. No speculative scheduling fix is inferred.
+
+A further focused run at unchanged source `fecdc4e` used the documented generic
+own-frame body evaluation to read the same root attribute; that also hit a
+selector deadline. Network was enabled before normal startup navigation.
+Its untruncated main category buffer observed one HTML request but no
+responseReceived/completion/failure and no own-JS/SDK events. A matching
+responseReceivedExtraInfo event reported HTTP 200 in a historical buffer marked
+truncated. That proves an observed response-header status, not document completion.
+Parent/OOPIF event coverage was not established, so absent events do not establish
+absent execution. The root fallback remained and no lifecycle value was obtained.
+Network.disable explicitly reported Browser Use resolving a paused document
+response; body reads themselves reported selector deadlines. No interception or
+security/scheduling change was used. The owned tab closed; explicit stop at
+12:10 Vienna time exited zero/stopped with all nine PIDs/listener/control/helpers
+absent. Only safe category/status evidence was retained. No credentials, Retry,
+backend restart or broad matrix ran; no own-code root cause follows yet.
+
+At source `95f1405`, official hosted MSX in connected Chrome used normal startup
+without `init=1`. Automatic startup displayed Opening Jellyfin. Ordinary Retry
+opened pairing; normal two-stage companion login with the synthetic account and
+Continue reached private Jellyfin libraries at 1920x1080. The readonly encrypted
+store aggregate was one record/generation zero. No raw renewal, key, token or
+private capability was inspected or printed.
+
+Normal reload again left the fallback. Ordinary Retry and a normal navigation to
+the public plugin shell eventually reached libraries without a second credential
+submission. The aggregate advanced to one record/generation one. Together with
+the source's exact-save/readback navigation gate, this supports a manual renewal
+observation. The settled DOM showed libraries; its blank/outgoing screenshot is
+excluded. It does not establish automatic restoration. The enrollment library,
+masked pairing and separate pending-context screenshots were visually inspected.
+
+A normal close/reopen again left the fallback. The local supervised backend
+restart succeeded with a fresh process, same origin/key/state/reserved listener
+and original deadline. Subsequent Retry did not restore libraries and the
+aggregate remained generation one. Several CDP/key operations reported Browser
+Use resolving a paused-document response. The cause remains unresolved; no
+runtime interception, trust/security bypass or bootstrap scheduling workaround
+was used. Backend restart readiness is established; post-restart MSX restoration
+is not. Normal Disconnect/re-pair was not exercised.
+
+A third owned tab with an independently pending RAM pairing capability displayed
+Waiting for pairing without inheriting access. This is capability separation in
+the same Chrome profile, not independent remembered-storage/device attestation.
+The relay was explicitly stopped around 09:55 UTC within its original 900-second
+budget. Session exit was zero/stopped; all twelve recorded original/replacement
+PIDs, port 18092 listener, control directory and own relay helpers were absent.
+All three owned tabs closed and the second-tab viewport override was reset.
+No operator state, real Jellyfin, media playback or physical TV was involved.
+
+### Earlier browser-availability limitation — 2026-10-31
+
+**Historical:** an earlier maintainer instruction required the integrated browser
+for application verification. Fresh inventory exposed only the Chrome extension.
+The documented `cua.createBrowserTab("iab", "about:blank")` call returned
+**Browser is not available: iab**. No tab or public relay was created. The browser
+slot was released without a Chrome fallback, permission change or repeated call.
+
+At that earlier stage automatic startup, actual exact-generation storage, normal
+reload/reopen, MSX restoration after backend-process restart, second pending-context
+denial and visible revoke/re-pair were **not accepted** for this client. API restart/
+isolation and real ephemeral Windows socket/process tests are not MSX passes.
+The later instruction requires connected Chrome for all browser verification;
+the unavailable IAB surface is no longer a blocker. Keep the client in a draft PR
+and #12 open until the required actual MSX evidence exists.
+Older marker retention/QR evidence remains attributed to its original revisions.
+
+## Server authorization milestone — 2026-10-30 (historical)
+
 **Implemented / automated-tested / device-unverified — 2026-10-30.** This opt-in
 backend milestone does not yet remember a TV. The default MSX UI still uses RAM
 sessions and does not call these APIs. Issue #12 stays open for controlled-origin
@@ -90,7 +354,7 @@ paths or arbitrary upstream messages.
 
 ## Client and actual browser limits
 
-No production plugin is included. A future plugin must use a stable controlled
+The opt-in plugin above still requires runtime acceptance. Any deployment must use a stable controlled
 HTTPS origin, published MSX storage API, and privately compare the **exact newly
 saved renewal value and generation**. Presence alone is insufficient. Never log
 that record, put it in startup/query URLs or store Jellyfin passwords/tokens in

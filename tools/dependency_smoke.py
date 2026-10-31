@@ -24,6 +24,8 @@ def main() -> None:
         else:
             raise AssertionError("Invalid Fernet token accepted")
     assert files("jellyfin_msx").joinpath("templates/pair.html").read_text(encoding="utf-8")
+    assert files("jellyfin_msx").joinpath("templates/remember.html").read_text(encoding="utf-8")
+    assert files("jellyfin_msx").joinpath("templates/remember.js").read_text(encoding="utf-8")
     # App construction is offline; normal HTTP/security routes remain in the mocked suite.
     settings = Settings(
         public_url="https://portal.invalid", jellyfin_url="https://jellyfin.invalid"

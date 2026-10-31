@@ -16,10 +16,11 @@ examples, but prohibits hosting/copying/modifying the runtime itself. The lab
 therefore launches `https://msx.benzac.de/` and supplies our portal as its start
 parameter. No firmware or proprietary runtime is downloaded into this project.
 
-The user requires one consistent test browser: use the integrated browser for
-MSX, companion pairing and Jellyfin media inspection. Native Arc automation below
-is historical failure analysis, not the current workflow. Never label integrated
-browser results as SAPHI decoder verification.
+The user requires the connected Chrome extension for all browser testing:
+MSX, companion pairing and Jellyfin media inspection. Do not use the integrated
+browser, native Chrome app automation or Arc. Native Arc/isolated-browser notes
+below are historical failure analysis, not the current workflow. Never label
+desktop browser results as SAPHI decoder verification.
 
 ## Start against the operator's real Jellyfin
 
@@ -54,6 +55,8 @@ recognize the tested rule with an additional policy-string constraint; trusting
 the same non-CA leaf for SSL worked. Its hostname validity remains localhost only.
 Never bypass a browser's TLS warning or disable browser security to make a test pass.
 
+### Historical native-browser troubleshooting
+
 Arc/Chromium can additionally prompt to allow `msx.benzac.de` access to the loopback
 network. Obtain explicit approval for that permission. Without it, MSX can remain
 on its loading screen and no JSON request reaches the backend.
@@ -84,7 +87,7 @@ properly hosted HTTPS preview rather than repeated one-day certificate approvals
 
 ## Actual application loop
 
-1. Open the dashboard in the integrated browser and select **Open Media Station X**. Verify MSX's
+1. Open the dashboard through the connected Chrome extension and select **Open Media Station X**. Verify MSX's
    version and a real **Pair this TV** screen. Record a screenshot/AX observation.
 2. Use arrows/Enter to select Continue before pairing. Verify **Waiting for pairing**,
    then return to the current code. Check the report's endpoint counts.

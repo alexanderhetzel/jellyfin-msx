@@ -36,6 +36,221 @@ succeeded and both tabs closed. Session naturally expired during cleanup Back;
 no logout claim. Original600-second bound preserved. No operator/Ultra, vendor
 code, renewal/cache, security or deployment changes.
 
+## Remembered-device client preparation — issue #12
+
+**Request/response startup correction — implemented / automated-tested /
+runtime acceptance pending:** rebased onto subtitle milestone `1594bf63`, keeping
+its bridge, policies, packaging and synthetic scenario. Startup now uses the
+published content-reference interaction request. SDK readiness alone does not
+renew; one init callback waits for the terminal pair/recovery/library page after
+exact save/readback. Intermediate progress is not pushed against that request.
+Duplicate/unknown init is bounded, later explicit init refreshes authority, and
+the aggregate 25-second deadline blocks late replies and uncertain replay.
+The old fallback items are ignored for a startup reference; runtime delivery-error
+handling must be observed separately. No paused-transport fix is inferred.
+
+Five new contract regressions failed on the old premature callback, then passed
+after the correction. Independent review then found a delayed-timer ordering gap;
+an absolute deadline check at readiness/dispatch/completion/render boundaries
+corrected it, with a new red-to-green late-renewal/late-home regression.
+All **21 Node client guards**, **45 affected Python tests**,
+full `uv run --no-sync pytest -W error` **437 passed / 1 POSIX skip**, Ruff
+check/format **97 files**, diff check and offline wheel/exact **24-member**
+allowlist passed. No dependency/lock change. An initial affected-test command
+named a nonexistent file and ran no tests; the corrected command above passed.
+Earlier runtime observations below belong to their recorded source, not this
+new request contract. Independent affected review precedes the next actual run.
+
+**Actual request-contract run at `cb0f162`: not accepted.** Normal startup without
+ForceInit reached a visible Data Load Error. Sanitized existing runtime logs
+confirmed Data ready, an init content request, plugin-load attempt and Request
+timed out. No pairing page or credentials/enrollment step was reached; the run
+stopped at that first functional block. Generic own-frame body evaluation yielded
+only a selector deadline, not a lifecycle value. Main Network categories were
+untruncated: one HTML request, no responseReceived/completion/failure, no observed
+own-JS/SDK events. Matching ExtraInfo reported HTTP 200 in a historical buffer
+marked truncated; parent/OOPIF coverage was not established. This is no proof of
+script nonexecution or an authorization failure. Network.disable and viewport
+reset explicitly reported Browser Use resolving a paused document response;
+closing the owned tab removed those scopes. At 12:27 Vienna time explicit stop
+exited zero/stopped; all nine recorded PIDs, listener/control/own helpers were
+absent. The readable 1920x1080 public error capture was inspected. No Retry,
+login, restart, source variant or remaining acceptance matrix was attempted.
+
+**Observation normalization — actual entry still fails:** the plugin now has an
+ordinary empty body, matching the published plugin template and subtitle bridge.
+The prior hidden body was a concrete markup difference, not a proven cause of
+the timeout or selector failure. Scripts, fixed marker, CSP, authentication and
+scheduling are unchanged; guards protect the empty body and exact script policy.
+No successful startup is claimed from this markup change. At exact `cde5574`,
+one normal automatic comparison again reached Data Load Error / Request timed
+out before pairing. Generic body reads still timed out; lifecycle remained
+unknown. Main category capture was untruncated: HTML requested once with no
+responseReceived/completion/failure, no observed own-JS/SDK. Matching ExtraInfo
+showed HTTP 200 in a historical buffer marked truncated; child event coverage
+remained unknown. Network.disable/viewport reset explicitly reported paused
+document response, then the one owned tab closed. At 12:35 Vienna time explicit
+stop exited zero/stopped; all nine recorded PIDs/listener/control/helpers were
+absent. Settled DOM/runtime errors and safe categories are the evidence; the
+blank/outgoing screenshot is excluded. No credentials, Retry, restart or full
+matrix ran. This ends the body comparison without another markup/script/CSP
+variant; it does not identify a product cause or establish an external cause.
+
+Retained run-2 action history also rules out the simple claim that every failed
+automatic run lacked a prior top-level origin visit: healthz, then the public
+plugin shell with ready/script-count inspection, preceded its normal MSX launch;
+that automatic start still showed fallback. A later public-shell visit followed
+by explicit Retry correlated with manual generation-one renewal. The subtitle
+flow's prior companion-page visit is a workflow difference, not a demonstrated
+cause. These visits are not equivalent tests of necessity; no warm-up requirement
+or further variant follows. Final run-6 cleanup was 11:35:24 UTC / 12:35:24 Vienna.
+
+**Focused diagnostic preparation:** a fixed RAM-only numeric bitmask on the own
+plugin document now records parsed/script/SDK/handler/boot/content-call boundaries
+without values, logging, telemetry, storage, timers or scheduling/auth changes.
+The focused automatic-iframe read did not yield a value (details below). A new delayed-SDK guard failed
+before implementation and now passes with all **13 Node client guards**;
+`uv run --no-sync pytest tests/test_remembered_client.py -q` passed **3 tests**,
+Ruff check/format **94 files** and diff check passed. Earlier full-suite results
+below are reused, not recounted as a new integration pass.
+
+**Focused Chrome observation, source `fecdc4e`:** normal automatic startup again
+displayed the original two-control Opening Jellyfin fallback. DOM inspection
+confirmed one iframe whose public source matched our remember HTML. The
+documented own-frame/test-ID attribute query failed with Playwright selector
+deadline exceeded; no numeric lifecycle value was obtained. A DOM-only check
+reported that the frame's `contentDocument` was unavailable across origins.
+These facts cannot distinguish missing document/script execution from inaccessible
+inspection or content delivery. **The result is unknown, not stage zero.** No
+request/response categories for remember HTML/JS or vendor SDK were captured;
+the existing server counter allowlist does not cover those files. No Network
+observation, console changes, credentials, Retry, restart or full matrix ran.
+
+The first local preparation failed because the default vendor-binary path was
+absent. The known external binary passed the pinned hash check and exclusive-bind
+preflight; one retry used 830 seconds, retaining the original total deadline.
+Verified HTTPS readiness occurred within the original 180-second startup window.
+At 11:57 Vienna time the relay explicitly stopped, session exit zero/stopped;
+all nine recorded PIDs, listener/control and own helpers were absent. The one
+owned Chrome tab closed. The public fallback capture was inspected. No source
+fix follows from this unsuccessful observation; startup cause remains unresolved.
+
+**Next focused observation, unchanged source `fecdc4e` / docs `74c1577`:**
+Network observation started before normal navigation from the official public
+info page. The generic own-frame body evaluation also failed with a selector
+deadline after ordinary settling; no lifecycle value was obtained. The main
+filtered buffer was not truncated: one HTML request, no responseReceived,
+loadingFinished or loadingFailed; no own-script/SDK events were observed.
+A matching HTML responseReceivedExtraInfo event reported HTTP 200; its historical
+buffer was flagged truncated. This establishes observed response headers, not
+completed document delivery. Parent/OOPIF event coverage was not established;
+absent events cannot prove scripts did not run. The unchanged fallback remained.
+
+Network.disable explicitly reported Browser Use resolving a paused document
+response; earlier body reads reported only selector deadlines. No interception,
+override or source scheduling change was attempted. Closing the owned tab removed
+the observation scope. At 12:10 Vienna time explicit stop exited zero/stopped;
+all nine recorded PIDs, listener/control/own helpers were absent. No credentials,
+Retry, restart or full matrix ran. Only category counts/statuses and a public
+fallback capture were retained, without raw URLs/IDs. Root cause and acceptance
+remain unresolved; these observations do not justify an authentication-code fix.
+
+**Current Chrome follow-up:** the maintainer now requires connected Chrome for
+all browser tests. The first bounded synthetic HTTPS run displayed normal startup's
+Opening Jellyfin fallback; ordinary Retry loaded pairing and Continue displayed
+Waiting. No credentials, enrollment or renewal were exercised, and automatic
+startup is not accepted. An initial synthetic-code screenshot mask miss was
+contained: the retained capture was overwritten with a whole private-panel mask,
+visually verified, and the approved restart request ultimately destroyed the
+pending server/key/temp state on fixed readiness timeout. Nine recorded owned
+PIDs, listener/control and own Python relay helpers were absent; both test tabs
+closed. No operator state, real Jellyfin or TV action occurred.
+
+A local-only ephemeral-port test reproduced Windows Proactor shared-socket
+restart failure. A remember-synthetic-only SelectorEventLoop factory fixes it:
+two actual Uvicorn processes now serve health, exit zero and preserve exclusive
+reservation across restart. Independent source/security review passed six
+targeted tests; guards and default/other-scenario loop selection remain unchanged.
+After this correction, full Windows `uv run --no-sync pytest -W error` passed
+**423 tests / 1 POSIX skip**, and Ruff/format passed **94 files**.
+This is a local server restart correction, not an MSX restoration pass. The actual
+browser matrix was partially exercised in a second master-granted slot below.
+
+**Second Chrome run, source `95f1405`:** official hosted MSX with normal startup
+parameters again stayed on Opening Jellyfin. Ordinary Retry reached pairing;
+the normal two-stage synthetic companion login and Continue reached Jellyfin
+libraries at 1920x1080. The encrypted-store aggregate was one record/generation
+zero. After normal reload, startup again remained on the fallback. Ordinary Retry
+and a normal public-plugin-shell load eventually reached libraries without another
+credential submission; the aggregate advanced to one record/generation one.
+This supports manual renewal through the exact-save/readback gate, not automatic
+startup. Its DOM observation is retained; the blank/outgoing renewal screenshot
+is excluded from visual evidence. The enrollment library capture is usable.
+
+Closing/reopening the MSX tab again left the fallback. The actual supervised
+backend-process restart then succeeded under the same origin, key, reserved port
+and original deadline. Post-restart Retry did not reach libraries; generation
+remained one. Browser Use reported a paused-document condition on several CDP/key
+operations. Its cause is unresolved; no runtime interception, security override or
+product scheduling workaround was applied. A separately pending pairing tab
+displayed Waiting without inheriting authorization; same-profile tabs are not
+independent device storage. Normal Disconnect/re-pair was not exercised.
+
+At 09:55 UTC the relay was explicitly stopped before its original 900-second
+deadline; session exited zero/stopped. All twelve recorded original/replacement
+PIDs, listener 18092, control directory and own relay helpers were absent. All
+three owned Chrome tabs closed; the second-tab viewport override was reset.
+Only synthetic fixture state was used. **Runtime acceptance remains incomplete:**
+automatic startup/reload/reopen, post-restart UI restoration and visible
+Disconnect/re-pair are outstanding. No real-server, playback or device pass follows.
+
+**Implemented / automated-tested / device-unverified; runtime acceptance deferred:**
+the explicit `MSX_REMEMBER_DEVICES` option requires the existing external key and
+encrypted store. Its own-origin public-MS​​X client performs ordinary pending
+pairing, body-only enrollment/renewal, exact new secret/generation readback and
+bounded storage polling after plugin readiness and bounded requests, with one
+in-flight operation. Timeout/conflict/save
+failure gives recovery without automatic replay or overwriting a newer context
+record. Normal server Disconnect is independent of transient interaction ownership.
+Default pairing, CSRF, strict generation/revocation and single-worker policy remain.
+See [client/security/recovery details](durable-authorization.md).
+
+The startup-only synthetic `remember` scenario uses only a supervisor-RAM key,
+private temporary encrypted state, hashed synthetic upstream sessions and strict
+MockTransport. Its local restart signal retains the original 900-second bound
+including startup, verified TLS and no operator state. Independent review caught
+a draft restart listener gap; retaining exclusive sockets in the supervisor and
+vendor wrapper corrected it before any relay run. Actual Windows ephemeral-port
+child restarts deny competing binds; mock EOF cleanup stops the vendor before
+releasing its reservation. At that pre-launch stage no public relay had been
+launched for this client; the later Chrome run is recorded above.
+
+Earlier preparation checks on Windows/Python 3.12.14, rebased onto `3bfc60b`: frozen dev/build
+sync passed; full `uv run --no-sync pytest -W error` with isolated temp/cache
+**421 passed / 1 POSIX skip**, no warnings; Ruff check/format **94 files**,
+**12 Node client guards** and diff checks passed. Offline wheel build and exact
+**22-member** source/license/template/script allowlist passed. No dependency or
+lock versions changed. An initial strict descriptor decoder rejected its newline;
+stripping the owned IPC line and closing test pipes fixed the new test harness.
+Final review also tightened the post-probe restart readiness deadline; a new
+crossing-deadline regression verifies denial and cleanup without extending lifetime.
+
+Independent pre-launch source/security review found no blockers for bounded
+synthetic verification and independently ran 65 affected Python tests/one POSIX
+skip, 12 Node guards and Ruff/format/diff checks, including actual Windows
+socket/process and EOF-ordering cases. It ran no relay/browser and established
+no application acceptance.
+
+**Earlier availability history / issue remains open:** integrated-browser-only verification was
+required by the maintainer. Inventory exposed only Chrome, and the documented
+IAB creation call returned Browser is not available: iab. No tab, supervisor,
+shared listener or control directory was created; the slot was released. No Chrome
+fallback, trust/security change, operator/Jellyfin access or TV action occurred
+in that earlier attempt. The later Chrome-for-all instruction removes the IAB
+availability blocker. Keep the client PR a draft until actual automatic startup, exact-save/readback,
+normal reload/reopen, backend restart, second-device denial and visible
+disconnect/re-pair pass. Tests and older storage/QR evidence do not satisfy them.
+
 ## Authenticated hosted series navigation — issue #7
 
 **Implemented / automated-tested / browser-tested / device-unverified:** the

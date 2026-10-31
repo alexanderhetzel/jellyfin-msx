@@ -146,7 +146,7 @@ capability; `/msx/pair.json` does, so do not print or archive that response.
 The official [MSX setup API](https://msx.benzac.de/wiki/index.php?title=Setup_Start_Parameter)
 defines discovery at `https://{SERVER}/msx/start.json` with the security lock on
 (HTTPS supported since MSX 0.1.88). Use the official installed application on the
-TV; use the official hosted runtime in the integrated browser for desktop checks.
+TV; use the official hosted runtime through the connected Chrome extension for desktop checks.
 Never copy or host MSX runtime code.
 
 1. Open **Settings → Start Parameter → Setup** in MSX.
