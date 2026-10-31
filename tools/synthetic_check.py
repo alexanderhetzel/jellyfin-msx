@@ -39,7 +39,7 @@ def content(client, target):
 
 def pair(client, origin, fault=None):
     page = client.get("/msx/pair.json").json()
-    code = re.search(r"TV code: ([A-Z0-9 ]+) \(valid", page["pages"][0]["items"][1]["title"])
+    code = re.fullmatch(r"([0-9]{4} [0-9]{4})", page["pages"][0]["items"][1]["title"])
     require(code is not None, "pairing-contract")
     home_action = action(page, "Continue after pairing")
     require(content(client, home_action).get("headline") == "Waiting for pairing", "pending")
@@ -64,7 +64,7 @@ def pair(client, origin, fault=None):
         headers={"Origin": origin},
     )
     require(result.status_code == 200 and "Sign-in succeeded" in result.text, "pairing")
-    return home_action
+    return home_action.replace("/pairing.json", "/home.json")
 
 
 def check(fault=None):

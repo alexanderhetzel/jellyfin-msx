@@ -1,5 +1,44 @@
 # Verification status — 2026-10-31
 
+## QR-first activation layout — issue #16
+
+**Implemented / automated-tested / browser-tested / device-unverified:** the
+native pairing page gives the local QR its own area, explicit "or" companion
+address, grouped code/validity and brief sign-in guidance. Only Continue after
+pairing and Create new code take focus. The capability-bound pairing status
+retains activation instructions while waiting, opens authenticated libraries
+after sign-in and gives expired/unknown grants only public new-code recovery.
+Private home/library denial, pending-only QR, CSRF and privacy headers remain.
+The historical public waiting export stays code-free; no private QR is published.
+
+[Actual layout actions, captures and limitations](qr-pairing.md) distinguish
+official MSX 0.1.167 / connected Chrome at measured 1920x1080 from physical TV
+acceptance. Rendered QR decode/activation, scan-only waiting, normal synthetic
+sign-in/Continue, confirmed disconnect, grouped manual entry and the two-control
+native focus were exercised. Natural expiry at 313 seconds showed one-button
+TV recovery and credential-free QR rejection. A changed grouped code, normal
+manual entry/sign-in and Continue reached settled private libraries. Actual
+rendering exposed disabled-teaser dimming;
+the final nonselectable native space restores full-opacity code text. Codes,
+activation links and raw QR images stayed in RAM; retained images are masked.
+Physical Philips/phone scan/readability/overscan/remote checks stay unchecked in #4.
+
+Windows/Python 3.12.14: locked dev/build sync passed; full `uv run pytest -W error`
+with isolated `--basetemp` / `cache_dir` **411 passed / 1 POSIX skip**, no warnings;
+`uv run ruff check .` and `uv run ruff format --check .` **92 files** passed;
+five existing Node browser-driver guards and `git diff --check` passed. Offline
+wheel build and exact **20-member** source/license/template allowlist passed.
+The first full run found an outdated synthetic code-format assumption (14 helper
+failures, 397 passes / 1 skip); adapting that existing helper restored the full
+suite. No dependency, operator/Ultra, media/audio or physical-device change/pass.
+Two sanitized browser response observations record only the pairing-status route
+category, 200 and JSON MIME type, separately from screenshots and mocked headers.
+Both own paired sessions disconnected normally; own tabs closed and viewport
+restored. The final supervisor exited 0/stopped; seven recorded owned helper PIDs,
+vendor process, listener/control directory were absent at 08:30 UTC. Independent
+review/required CI are recorded against the final PR head; review of masked images
+does not independently decode hidden QR/code pixels or repeat live browser actions.
+
 ## QR companion pairing — issue #14
 
 **Implemented / automated-tested / device-unverified:** native MSX pairing now

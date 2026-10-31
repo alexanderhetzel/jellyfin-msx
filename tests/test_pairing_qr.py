@@ -111,8 +111,8 @@ def test_qr_cannot_retarget_an_existing_stage_and_other_tv_stays_pending(portal)
 
 def test_qr_rate_limit_and_manual_fallback(portal):
     page, image, _, _ = rendered_qr(portal)
-    assert portal.settings.public_url + "/pair" in page["items"][0]["title"]
-    assert "TV code:" in page["items"][1]["title"]
+    assert "portal.test/pair" == page["items"][0]["title"]
+    assert "TV code:" == page["items"][1]["titleHeader"]
     assert "Create new code" == page["items"][3]["title"]
     for _ in range(29):
         assert portal.client.get(image).status_code == 200

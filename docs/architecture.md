@@ -13,8 +13,11 @@
    and authenticate against the single operator-configured Jellyfin server.
    See [the companion pairing contract](companion-pairing.md) for activation links,
    expiry, single-use grants and tab/retry recovery.
-3. TV selects “Continue” with the remote. Its random capability identifies the
-   paired session. No cookie support or third-party input plugin is required on TV.
+3. TV selects “Continue after pairing” with the remote. Its random capability
+   identifies the session through `pairing.json`: waiting retains the QR/code,
+   expiry offers public new-code recovery, and authenticated success opens
+   libraries. Private `home.json` keeps its authenticated denial contract.
+   No cookie support or third-party input plugin is required on TV.
 4. Backend requests user views/children/details from Jellyfin. Private posters
    are fetched through an authenticated, size-bounded image endpoint.
 5. `video:resolve:` requests PlaybackInfo on demand. Backend returns an authenticated

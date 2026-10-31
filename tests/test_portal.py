@@ -27,7 +27,7 @@ def test_public_start_and_pairing_do_not_disclose_library(portal):
     start = portal.client.get("/msx/start.json?v=0.1.167&t=123")
     assert start.json()["parameter"] == "content:https://portal.test/msx/pair.json"
     page = portal.client.get("/msx/pair.json").json()["pages"][0]
-    assert "TV code:" in page["items"][1]["title"]
+    assert "TV code:" == page["items"][1]["titleHeader"]
     assert "Test Movie" not in json.dumps(page)
     assert TOKEN not in json.dumps(page)
     target = page["items"][2]["action"].removeprefix("content:")

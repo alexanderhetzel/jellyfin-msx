@@ -5,7 +5,9 @@ The browser software milestone presents Jellyfin MSX consistently across native
 MSX content and the companion code/sign-in/success pages. Physical Philips
 viewing-distance readability, overscan and remote behavior remain unchecked in
 final hardware issue #4. This does not complete the hosted private integration
-work in #7/#9/#12/#13 or the pairing layout/QR work in #14/#16.
+work in #7/#9/#12/#13 or, at that checkpoint, the pairing layout/QR work in #14/#16.
+The later [QR-first activation layout and actual software evidence](qr-pairing.md)
+record the completed pairing presentation separately from physical checks.
 
 ## Presentation contract
 
