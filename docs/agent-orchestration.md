@@ -36,8 +36,8 @@ retrieve it without a cross-chat message.
    workers or merge a PR merely because it exists.
 2. Select the highest-priority dependency-ready issue in the authorized scope.
    Run up to three independent ticket chats at a time. Respect native dependencies
-   and reuse idle issue chats in their existing worktrees. Use the app's project and chat tools to
-   create a separate chat in a worktree. Resolve pending creation before using its
+   and reuse idle issue chats in their existing worktrees. Use the app's project
+   and chat tools to create a separate chat in a worktree. Resolve pending creation before using its
    final chat ID. Record the issue/chat mapping in the master's context; keep public
    issue updates free of local paths, credentials and private operational details.
 3. Pass the issue and all required context. The ticket chat reads `AGENTS.md` and
