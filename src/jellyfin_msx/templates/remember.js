@@ -223,7 +223,7 @@
     mark(2);
     TVXPluginTools.onReady(function () {
         mark(4);
-        var pending = null, sdkReady = false, starting = false, epoch = 0;
+        var pending = null, starting = false, epoch = 0;
         function deadlineNow() {
             return typeof performance !== "undefined" && typeof performance.now === "function" ?
                 performance.now() : Date.now();
@@ -274,7 +274,7 @@
             }});
         function begin() {
             if (expire()) { return; }
-            if (!sdkReady || !pending || starting) { return; }
+            if (!pending || starting) { return; }
             starting = true;
             var attempts = 0, attemptEpoch = epoch;
             function start() {
@@ -292,8 +292,6 @@
             init: function () {},
             ready: function () {
                 mark(16);
-                sdkReady = true;
-                begin();
             },
             handleData: function (data) {
                 if (!pending) { client.run(data && data.data && data.data.operation); }

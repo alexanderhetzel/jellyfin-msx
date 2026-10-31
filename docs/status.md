@@ -465,6 +465,26 @@ code, renewal/cache, security or deployment changes.
 
 ## Remembered-device client preparation — issue #12
 
+**Bounded source-comparison milestone — implemented / automated-tested /
+device-unverified, runtime still unaccepted:** main `e21d103` now includes accepted
+#18/#19. Comparing their registered request handler with #12 identified an extra
+handler-ready ordering dependency after outer SDK readiness. A delivered init now
+starts the existing actual-storage readiness checks directly; no background work
+is triggered by either readiness callback. The new regression failed on the old
+gate and now completes pairing or exact-save/renewal/home without a handler-ready
+notification; later notifications do not repeat work. Deadline/epoch/singleflight,
+authentication, storage and failure boundaries are unchanged. See the
+[source comparison and limits](durable-authorization.md).
+
+Rebase preserved lifecycle/resume/subtitle resources, body limits, policies and
+all startup-only synthetic scenarios. Windows `uv run --no-sync pytest -W error`:
+**527 passed / 1 POSIX skip**; **22 Node remembered-client guards**, Ruff
+check/format **107 files**, diff check and offline wheel/exact **27-member**
+allowlist passed. No dependency/lock change. No browser/relay or new source
+environment variant ran. This repair does not identify the previous transport
+failure's cause; original automatic entry/reload/restart/re-pair acceptance and
+all negative runtime evidence below remain outstanding.
+
 **Request/response startup correction — implemented / automated-tested /
 runtime acceptance pending:** rebased onto subtitle milestone `1594bf63`, keeping
 its bridge, policies, packaging and synthetic scenario. Startup now uses the

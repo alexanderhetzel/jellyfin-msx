@@ -142,18 +142,26 @@ test("init returns one terminal page only after renewal save and home, never pro
 
 test("SDK-registered init is handled without a separate handler-ready notification",()=>{
     for(const initial of [null,raw()]){
-        const x=browserLab(initial);x.sdk();x.init();
+        const x=browserLab(initial);x.sdk();assert.equal(x.requests.length,0);x.init();
         assert.equal(x.requests.length,1);
         assert.equal(x.requests[0].path,initial===null?
             "/api/device-authorization/pair":"/api/device-authorization/renew");
         assert.equal(x.replies.length,0);assert.equal(x.pages.length,0);
-        x.ready();x.ready();assert.equal(x.requests.length,1);
+        if(initial===null)x.reply({session,page:{headline:"Pair this TV",items:[]}});
+        else{
+            x.reply({renewal:next,generation:3,expires:2000,session});
+            assert.equal(x.value,raw(next,3));assert.equal(x.replies.length,0);
+            x.reply({headline:"Jellyfin libraries",items:[]});
+        }
+        assert.equal(x.replies.length,1);
+        assert.equal(x.replies[0].headline,initial===null?"Pair this TV":"Jellyfin libraries");
+        x.ready();x.ready();assert.equal(x.requests.length,0);assert.equal(x.pages.length,0);
     }
 });
 
-test("delayed SDK readiness and concurrent init cannot dispatch duplicate renewal",()=>{
+test("concurrent init and later ready notifications cannot dispatch duplicate renewal",()=>{
     const x=browserLab(); x.sdk(); x.init(); x.init();
-    assert.equal(x.requests.length,0); assert.equal(x.replies.length,1);assert.equal(x.replies[0],null);
+    assert.equal(x.requests.length,1); assert.equal(x.replies.length,1);assert.equal(x.replies[0],null);
     x.ready(); x.ready(); assert.equal(x.requests.length,1);
 });
 
@@ -195,14 +203,13 @@ test("delayed timer delivery cannot admit late renewal or home responses",()=>{
     }
 });
 
-test("missing SDK or storage readiness cannot leave init hanging or start late renewal",()=>{
-    for(const missing of ["sdk","storage"]){
-        const x=browserLab();x.sdk();if(missing==="storage"){x.storageReady=false;x.ready();}
-        x.init();x.control("pair");assert.equal(x.requests.length,0);
-        x.tick(missing==="sdk"?25000:5000);
-        assert.equal(x.replies.length,1);assert.equal(x.replies[0].headline,"Remembered sign-in unavailable");
-        x.storageReady=true;x.ready();assert.equal(x.requests.length,0);
-    }
+test("unready storage recovers within its bound and later ready does not retry",()=>{
+    const x=browserLab();x.sdk();x.storageReady=false;
+    x.init();x.control("pair");assert.equal(x.requests.length,0);
+    x.tick(5000);
+    assert.equal(x.replies.length,1);assert.equal(x.replies[0].headline,"Remembered sign-in unavailable");
+    x.storageReady=true;x.ready();assert.equal(x.requests.length,0);
+    x.init();assert.equal(x.requests.length,1);
 });
 
 test("later explicit init refreshes authority while controls still render normally",()=>{

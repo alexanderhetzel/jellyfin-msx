@@ -2,6 +2,35 @@
 
 ## Opt-in MSX client — 2026-10-31
 
+### Source comparison with accepted lifecycle/resume — 2026-10-31
+
+**Implemented / automated-tested / device-unverified; actual startup unaccepted.**
+The bounded audit compares this client with accepted #18/#19 at main `e21d103`:
+
+| Boundary | Comparison and result |
+| --- | --- |
+| Startup | #12 uses the documented public content-root reference; #18/#19 enter a private content-request action after normal pairing. Their acceptance does not validate automatic remembered startup. |
+| SDK registration | Both register inside `TVXPluginTools.onReady`, then call `TVXInteractionPlugin.init`, using the same vendor SDK tag and deferred own script. |
+| Delivered init | Lifecycle handles it directly with an empty `ready` callback. #12 unnecessarily waited for a separate handler-ready notification after SDK registration. That extra event-order dependency is removed. |
+| Storage | Only #12 requires renewal storage. Its actual `storage.isReady` check and bounded polling remain; handler notification is not a substitute for this check. |
+| Completion | Lifecycle init returns a page; its resolver completes asynchronously. #12 still returns only its terminal pair/recovery/library page after exact-save/readback and authenticated home. Absolute deadline, epoch and singleflight guards remain. |
+| Authority/policy | Lifecycle playback generations/leases are separate from durable authorization. No lifecycle lease/background renewal, URL context, CSP allowance or timing variant is copied. |
+
+The public [handler contract](https://msx.benzac.de/wiki/index.php?title=Interaction_Plugin)
+defines request and readiness callbacks without promising their ordering. A
+delivered request is already inside the registered SDK handler. The regression
+first failed on the old extra gate, then completed both missing-record pairing
+and stored-record renewal/home without invoking handler.ready. Later/repeated
+ready notifications start no work. Unavailable storage still returns bounded
+recovery; an explicit later request may retry storage without replaying an
+uncertain renewal. The earlier test called outer SDK readiness but mislabeled a
+missing handler notification as missing SDK; that test is corrected.
+
+This is a robust request-contract repair, **not** proof that the earlier init
+reached our handler or that this gate caused the HTTP-200/paused-document failure.
+All failed runs, unknown lifecycle values and the prior-visit counterexample
+below remain valid. No browser/relay or environment variant was used in this audit.
+
 **Implemented / automated-tested / device-unverified:** `MSX_REMEMBER_DEVICES=true`
 requires the external key/database configuration below and selects a public
 `/msx/remember.json` startup document. The default remains ordinary RAM pairing.
@@ -14,8 +43,9 @@ runtime is copied, and no inline/eval exception or cross-origin POST is added.
 The startup document now uses the published
 [content reference request contract](https://msx.benzac.de/wiki/index.php?title=Content_Root_Object):
 `reference: request:interaction:init@` followed by our public plugin URL.
-`handler.ready` only signals readiness. One accepted `init` request waits for
-storage, ordinary pairing or renewal, exact save/readback and authenticated home,
+The handler is registered after outer SDK readiness; `handler.ready` is
+diagnostic-only. One accepted `init` request waits for actual storage readiness,
+ordinary pairing or renewal, exact save/readback and authenticated home,
 then returns one terminal page through its callback. Progress pages are not pushed
 against the foreground request. Explicit later controls still use `showContent`.
 Unknown or simultaneous requests receive null without starting another renewal;
