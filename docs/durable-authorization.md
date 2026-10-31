@@ -36,6 +36,18 @@ root content items, so the old two-button fallback is not promised on delivery
 failure. Actual automatic entry/reload/reopen/restart acceptance remains separate;
 this callback-contract correction does not prove a fix for paused transport.
 
+The first actual request-contract run at `cb0f162` failed normal automatic entry:
+MSX displayed Data Load Error and existing sanitized runtime logs reported init
+request/plugin-load attempt followed by Request timed out. No pairing/enrollment
+was reached. Body-marker reads timed out. One HTML request and matching ExtraInfo
+HTTP 200 were observed, without established document completion or child-target
+coverage; no own-JS/SDK events were captured. Network cleanup explicitly reported
+a Browser Use paused document response. The owned tab closed and explicit stop
+at 12:27 Vienna time left all nine recorded PIDs/listener/control/helpers absent.
+The run stopped at this first functional block, without Retry, credentials,
+restart or a source change. Callback unit tests and CI remain software evidence;
+they do not override this failed actual automatic-start result.
+
 Normal current companion QR/manual two-stage CSRF pairing is unchanged. The
 plugin uses same-origin body-only pair/status endpoints and keeps the pending
 session in RAM. Pending Continue redisplays the normal waiting instructions;

@@ -488,6 +488,22 @@ named a nonexistent file and ran no tests; the corrected command above passed.
 Earlier runtime observations below belong to their recorded source, not this
 new request contract. Independent affected review precedes the next actual run.
 
+**Actual request-contract run at `cb0f162`: not accepted.** Normal startup without
+ForceInit reached a visible Data Load Error. Sanitized existing runtime logs
+confirmed Data ready, an init content request, plugin-load attempt and Request
+timed out. No pairing page or credentials/enrollment step was reached; the run
+stopped at that first functional block. Generic own-frame body evaluation yielded
+only a selector deadline, not a lifecycle value. Main Network categories were
+untruncated: one HTML request, no responseReceived/completion/failure, no observed
+own-JS/SDK events. Matching ExtraInfo reported HTTP 200 in a historical buffer
+marked truncated; parent/OOPIF coverage was not established. This is no proof of
+script nonexecution or an authorization failure. Network.disable and viewport
+reset explicitly reported Browser Use resolving a paused document response;
+closing the owned tab removed those scopes. At 12:27 Vienna time explicit stop
+exited zero/stopped; all nine recorded PIDs, listener/control/own helpers were
+absent. The readable 1920x1080 public error capture was inspected. No Retry,
+login, restart, source variant or remaining acceptance matrix was attempted.
+
 **Focused diagnostic preparation:** a fixed RAM-only numeric bitmask on the own
 plugin document now records parsed/script/SDK/handler/boot/content-call boundaries
 without values, logging, telemetry, storage, timers or scheduling/auth changes.
