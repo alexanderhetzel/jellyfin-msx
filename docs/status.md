@@ -1,5 +1,34 @@
 # Verification status — 2026-10-31
 
+## Two-stage pairing software acceptance — issue #13
+
+**Implemented / automated-tested / device-unverified:** the remaining normal
+official hosted-MS​​X pairing-to-private-libraries criterion is supported by the
+already reviewed #9 HTTPS runs. The [acceptance mapping and provenance](companion-pairing.md#software-acceptance-evidence--2026-10-31)
+combine PR #45's receiving protocol/security regressions with PR #57's actual
+manual pairing → Continue → libraries and PR #58's corrected ten-stage positive
+connector execution, fresh CSRF/login denials and settled own disconnect.
+PR #59 repeats normal pairing before authenticated recovery. Source baseline:
+`31aeeb4c0cf300daa2172cd7b6be81692dba7902`; the pairing security/state protocol is
+unchanged, and the current presentation was already exercised by those runs.
+
+This follow-up reconciles existing evidence; it changes no runtime, helper,
+dependency or authentication policy and starts no new public relay. The local
+fixed-field positive/fault reports and sanitized settled disconnected screenshot
+were inspected. That screenshot proves the final screen only; earlier browser
+actions remain attributed to their original worker and durable results. The old
+loopback Data Load Error below is historical, not a remaining #13 software gate.
+QR rendering is #14, pairing layout #16, the broader browser matrix stays #9,
+and real-server/mobile/physical-TV acceptance remains unverified or deferred.
+
+Current Windows/Python 3.12.14 audit: `uv sync --locked --extra dev --group build`
+passed; `uv run pytest -W error` **398 passed / 1 POSIX skip**, no warnings;
+`uv run ruff check .` passed; `uv run ruff format --check .` **88 files** passed;
+`node --test tools/browser_pairing_check.test.mjs` **5 passed**; Node syntax and
+`git diff --check` passed. These are current automated regression/guard checks,
+separate from the reused actual browser results. No new browser or wheel-build
+pass is claimed by this documentation-only follow-up.
+
 ## Hosted JSON/playback/access recovery — issue #9
 
 **Implemented / automated-tested / device-unverified:** a trusted startup-only
@@ -406,7 +435,7 @@ head. With no unresolved review threads and actual required checks passed,
 PR #44 was explicitly squash merged as `e30e1cd6f68e7652ba1d325ef175c9e398c09bf0`.
 No real account/database, MSX, TV or production action ran.
 
-## Two-stage companion pairing milestone — issue #13
+## Initial two-stage companion pairing milestone — issue #13
 
 **Implemented / automated-tested / device-unverified:** manual code validation
 precedes credentials, with bounded single-use device/CSRF-bound RAM grants,
@@ -428,7 +457,7 @@ focus/full-heading screenshots inspected. No `browser-verify` skill/tool was
 available; the supported Chrome API supplied these observations. A phone viewport
 override did not apply and was reset; no mobile-layout pass is claimed.
 
-**Deferred / issue remains open:** the actual normal official-MS​​X launcher showed
+**Historical blocker at that milestone (superseded above):** the actual normal official-MS​​X launcher showed
 Data Load Error / Start Error before pairing UI. Final-run sanitized counts show
 no pair.json request, one mock authentication/200 and one paired session from the
 separate companion activation check. Source JSON and the explicit activation
