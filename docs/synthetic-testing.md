@@ -1,5 +1,11 @@
 # Synthetic integration lab
 
+For source-prepared hosted A/B pairing, retained-resource denial, surviving B and
+A re-pairing, see [the hosted session check](hosted-session-check.md). Its mocked
+observer guards and authorized-target counterexample are automated-tested; an
+exclusive browser/relay grant and per-origin platform authorization are still
+required before any actual hosted acceptance can be claimed.
+
 For deterministic normal-auth A/B disconnect isolation and the explicit native
 token expiry boundary, see [the two-session contract](session-boundary-check.md).
 Its expected nonrevocation detector failure and source-pinned coverage audit are

@@ -318,6 +318,33 @@ explicit squash merge are recorded in PR #47 before merge.
 No browser/relay, real Jellyfin, credentials, production, trust-store or physical
 device action/pass is part of this tooling update.
 
+## Hosted two-session command preparation — issue #9
+
+**Implemented / automated-tested with mocks / hosted-runtime-unverified /
+device-unverified.** The [hosted session command](hosted-session-check.md)
+prepares normal A/B pairing, confirmed A Disconnect, fresh retained-resource
+denial, B survival and re-pairing in A's original tab. Private URL plans remain
+opaque. Its strict own-origin observer distinguishes raw HTTP from wrapped MSX
+status, requires explicit fresh-response evidence and bounds conditional bodies.
+The authorized-B native positive control fails the unchanged A denial predicate
+at actual mocked HTTP 200 without buffering a video. This is detector evidence,
+not a real logout leak or hosted pass.
+
+`uv run --no-sync pytest -q -W error`: **544 passed / 1 POSIX skip**;
+`node --test tools/*.test.mjs`: **51 passed**, including 32 new mocked observer
+and command guards. Ruff check and format check passed (**113 files**).
+Syntax and `git diff --check` passed. CI now runs mocked Node guards separately
+from the Python suite; it launches no browser or public service. Independent
+source review identified and corrected rejection of production's DeviceId and
+PlaySessionId query fields; malformed/foreign/duplicate targets remain rejected.
+
+The installed Cua wrapper reference was read without browser actions; no new
+runtime, listener, relay, tab navigation or CDP command was run for this milestone.
+Per-origin platform authorization, fresh root Document events and bounded body
+access remain conditional runtime prerequisites. A source-ready command is not
+an unattended authorization guarantee. Existing expiry/native limitations, #32's
+real-server gap and #8/#12/#23 ownership remain unchanged; #9 stays open.
+
 ## Revocation source evidence and mocked observer subset — issue #32
 
 **Source-reviewed / automated-tested in part / device-unverified.**
