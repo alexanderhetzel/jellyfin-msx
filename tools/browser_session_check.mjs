@@ -5,33 +5,74 @@ import { captureFailure, createResourceProbe } from "./browser_resource_probe.mj
 const ORIGIN = /^https:\/\/[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.trycloudflare\.com$/;
 const CATEGORIES = ["home", "browse", "detail", "poster", "resolver", "media"];
 
-// Self-contained read-only DOM function: no browser constructor dependency.
-export function collectRenderedImages() {
-  const elements = Array.from(document.querySelectorAll("*"));
-  if (elements.length > 4000) return null;
+// Only documented locator/attribute reads; no DOM proxy properties or globals.
+export async function collectRenderedImages(msx) {
+  const deadline = Date.now() + 15000;
+  const read = async operation => {
+    const remaining = deadline - Date.now();
+    if (remaining <= 0) throw null;
+    let timer;
+    try {
+      return await Promise.race([operation(), new Promise((_, reject) => { timer = setTimeout(() => reject(null), Math.min(2000, remaining)); })]);
+    } finally { clearTimeout(timer); }
+  };
+  try {
   const values = [];
-  for (const element of elements) {
-    if (element.tagName === "IMG" && typeof element.src === "string" && element.src) values.push(element.src);
-    const background = getComputedStyle(element).backgroundImage;
-    const match = background.match(/^url\(["']?([^"')]+)["']?\)$/);
-    if (match) values.push(match[1]);
-    if (values.length > 128 || values.some(value => value.length > 4096)) return null;
+  const counts = { img_elements: 0, background_elements: 0, background_unavailable: 0 };
+  for (const [selector, attribute, key] of [["img", "src", "img_elements"], ['[style*="url(" i]', "style", "background_elements"]]) {
+    const group = msx.playwright.locator(selector);
+    const count = await read(() => group.count());
+    if (!Number.isInteger(count) || count < 0 || count > 128) return null;
+    const elements = await read(() => group.all());
+    if (elements.length !== count) return null; // A changing DOM is unknown.
+    counts[key] = count;
+    for (const element of elements) {
+      const value = await read(() => element.getAttribute(attribute, { timeoutMs: 2000 }));
+      if (value === null || value === "") continue;
+      if (typeof value !== "string" || value.length > 4096) return null;
+      if (attribute === "src") values.push(value);
+      else {
+        // Parse only ordinary inline background declarations. No vendor data/cache.
+        if (value.includes("\\") || value.includes("/*") || value.includes("*/") || /(?:^|;)\s*all\s*:/i.test(value)) { counts.background_unavailable++; continue; }
+        const declarations = value.split(";").filter(part => /^\s*background(?:-image)?\s*:/i.test(part));
+        if (declarations.length === 0) continue;
+        // Do not guess CSS cascade or select a URL an overriding value hides.
+        if (declarations.length !== 1) { counts.background_unavailable++; continue; }
+        const match = declarations[0].match(/^\s*background(?:-image)?\s*:\s*url\(\s*(?:"([^"\\]*)"|'([^'\\]*)'|([^()'"\\\s]+))\s*\)\s*(?:!important)?\s*$/i);
+        if (match) values.push(match[1] ?? match[2] ?? match[3]);
+        else counts.background_unavailable++;
+      }
+      if (values.length > 128) return null;
+    }
   }
-  return values;
+  return { images: values, counts }; // Private values never enter the report.
+  } catch { return null; } // No new read follows a timeout/refusal; owner closes tab.
 }
 
-export function selectOwnPoster(origin, images) {
-  if (!Array.isArray(images) || images.length > 128) return null;
-  const candidates = [...new Set(images.filter(value => {
-    if (typeof value !== "string" || value.length > 4096) return false;
+export function inspectOwnPosters(origin, images) {
+  const counts = { supplied: 0, transformed: 0, foreign: 0, pending_grant: 0, decorated: 0, noncanonical: 0, wrong_shape_or_item: 0, exact: 0, distinct: 0 };
+  if (!ORIGIN.test(origin ?? "") || !Array.isArray(images) || images.length > 128 || images.some(value => typeof value !== "string" || value.length > 4096)) return { poster: null, summary: { status: "invalid", ...counts } };
+  const candidates = new Set();
+  counts.supplied = images.length;
+  for (const value of images) {
     try {
+      if (/^(?:blob|data):/i.test(value)) { counts.transformed++; continue; }
       const url = new URL(value);
-      // Public baseline MOVIE ID; never a QR's pending activation authority.
-      return url.origin === origin && !url.username && !url.password && !url.search && !url.hash && /^\/msx\/device\/[A-Za-z0-9_-]{43}\/image\/33333333333333333333333333333333$/.test(url.pathname);
-    } catch { return false; }
-  }))];
-  return candidates.length === 1 ? candidates[0] : null;
+      if (url.origin !== origin) { counts.foreign++; continue; }
+      if (url.pathname.startsWith("/msx/pair/image/")) { counts.pending_grant++; continue; }
+      if (url.username || url.password || value.includes("?") || value.includes("#")) { counts.decorated++; continue; }
+      if (value !== url.href || /[\\\x00-\x20]/.test(value)) { counts.noncanonical++; continue; }
+      // Exact public baseline MOVIE ID; no rewritten URLs or guessed authority.
+      if (!/^\/msx\/device\/[A-Za-z0-9_-]{43}\/image\/33333333333333333333333333333333$/.test(url.pathname)) { counts.wrong_shape_or_item++; continue; }
+      counts.exact++;
+      candidates.add(value);
+    } catch { counts.wrong_shape_or_item++; }
+  }
+  counts.distinct = candidates.size;
+  return { poster: candidates.size === 1 ? [...candidates][0] : null, summary: { status: candidates.size === 1 ? "selected" : candidates.size ? "ambiguous" : "unavailable", ...counts } };
 }
+
+export function selectOwnPoster(origin, images) { return inspectOwnPosters(origin, images).poster; }
 
 export async function disconnectSession(session) {
   const visible = async pattern => session.msx.playwright.getByText(pattern).waitFor({ state: "visible", timeoutMs: 15000 });
@@ -98,10 +139,12 @@ export async function checkSessions({ origin, newTab, fault = "none" } = {}) {
     await visible(msx, /Synthetic clip/i);
     report.stage = role + "-poster-DOM-collection";
     // Read standard DOM rendering only, never vendor caches, QR grants or AX.
-    const images = await msx.playwright.evaluate(collectRenderedImages);
-    if (!Array.isArray(images)) throw null;
+    const collection = await collectRenderedImages(msx);
+    if (!collection || !Array.isArray(collection.images)) throw null;
     report.stage = role + "-poster-target-selection";
-    const poster = selectOwnPoster(origin, images);
+    const { poster, summary } = inspectOwnPosters(origin, collection.images);
+    report.poster_selections ??= [];
+    report.poster_selections.push({ role, attributes: collection.counts, ...summary });
     if (!poster) throw null;
     report.stage = role + "-opaque-capture";
     let handle;

@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import vm from "node:vm";
 import test from "node:test";
 import { captureFailure, createResourceProbe } from "./browser_resource_probe.mjs";
-import { checkSessions, collectRenderedImages, disconnectSession, selectOwnPoster } from "./browser_session_check.mjs";
+import { checkSessions, collectRenderedImages, disconnectSession, inspectOwnPosters, selectOwnPoster } from "./browser_session_check.mjs";
 
 // Non-live authorities made entirely in this mocked test; no browser or HTTP.
 const origin = "https://synthetic-only.trycloudflare.com";
@@ -262,24 +262,97 @@ test("external or forged capture diagnostics cannot serialize arbitrary text", (
   assert.deepEqual(captureFailure({ captureStage: "https://private-secret", problem: "private-secret" }), { stage: "unknown", problem: "unknown" });
 });
 
-test("public DOM shape needs no HTMLImageElement constructor; old predicate throws", () => {
+function attributeTab({ images = [], styles = [] } = {}) {
+  const reads = [];
+  return {
+    reads,
+    playwright: { locator: selector => {
+      assert.ok(["img", '[style*="url(" i]'].includes(selector));
+      const items = selector === "img" ? images : styles;
+      return {
+        count: async () => items.length,
+        all: async () => items.map(value => ({ getAttribute: async (name, options) => {
+          assert.equal(name, selector === "img" ? "src" : "style");
+          assert.equal(options.timeoutMs, 2000);
+          reads.push(name);
+          return value;
+        } })),
+      };
+    } },
+  };
+}
+
+test("documented attributes work without DOM constructor/tagName/src proxy globals", async () => {
   const f = fixture();
-  const image = { tagName: "IMG", src: f.poster("A"), background: "none" };
-  const background = { tagName: "DIV", background: `url("${f.poster("A")}")` };
-  const context = { document: { querySelectorAll: () => [image, background] }, getComputedStyle: element => ({ backgroundImage: element.background }) };
+  const image = { getAttribute: name => name === "src" ? f.poster("A") : null };
+  const context = { document: { querySelectorAll: () => [image] } };
   assert.throws(() => vm.runInNewContext("document.querySelectorAll('*')[0] instanceof HTMLImageElement", context), /HTMLImageElement/);
-  const values = vm.runInNewContext(`(${collectRenderedImages.toString()})()`, context);
-  assert.equal(selectOwnPoster(origin, Array.from(values)), f.poster("A"));
-  // This is a public mock counterexample, never a diagnosis of the live failure.
+  assert.equal(vm.runInNewContext("document.querySelectorAll('*')[0].tagName === 'IMG'", context), false);
+  const tab = attributeTab({ images: [image.getAttribute("src")], styles: [`background-image: url("${f.poster("A")}")`] });
+  const result = await collectRenderedImages(tab);
+  assert.equal(selectOwnPoster(origin, result.images), f.poster("A"));
+  assert.deepEqual(result.counts, { img_elements: 1, background_elements: 1, background_unavailable: 0 });
+  assert.deepEqual(tab.reads, ["src", "style"]);
+  // Public adapter counterexample only: original live cause remains unknown.
 });
 
-test("DOM bounds and absent/ambiguous/QR/foreign poster selections fail closed", () => {
+test("DOM bounds and absent/ambiguous/QR/foreign poster selections fail closed", async () => {
   const f = fixture();
-  for (const elements of [Array(4001).fill({}), Array(129).fill({ tagName: "IMG", src: f.poster("A") }), [{ tagName: "IMG", src: "x".repeat(4097) }]]) {
-    const values = vm.runInNewContext(`(${collectRenderedImages.toString()})()`, { document: { querySelectorAll: () => elements }, getComputedStyle: () => ({ backgroundImage: "none" }) });
-    assert.equal(values, null);
-  }
+  for (const values of [Array(129).fill(f.poster("A")), ["x".repeat(4097)]]) assert.equal(await collectRenderedImages(attributeTab({ images: values })), null);
   for (const values of [null, [], [f.poster("A"), f.poster("B")], [origin + "/msx/pair/image/fake.png"], [f.poster("A").replace(origin, "https://foreign.invalid")], [f.poster("A").replace("https://", "https://user:pass@")]]) assert.equal(selectOwnPoster(origin, values), null);
+});
+
+test("standard single CSS URL parsing preserves strict targets and ignores unsupported values", async () => {
+  const f = fixture();
+  for (const style of [`background-image: url( '${f.poster("A")}' ) !important`, `color:red; BACKGROUND:URL(${f.poster("A")});opacity:1`]) {
+    const result = await collectRenderedImages(attributeTab({ styles: [style] }));
+    assert.equal(selectOwnPoster(origin, result.images), f.poster("A"));
+  }
+  for (const style of [`content: url("${f.poster("A")}")`, `background-image: "text url(${f.poster("A")})"`, `background-image:url("${f.poster("A")}"),url("${f.poster("B")}")`, `background:url("${f.poster("A")}") center / cover`, `background-image: image-set(url("${f.poster("A")}") 1x)`]) {
+    const result = await collectRenderedImages(attributeTab({ styles: [style] }));
+    assert.deepEqual(result.images, []);
+  }
+});
+
+test("overridden or competing background declarations cannot expose a selected authority", async () => {
+  const f = fixture();
+  for (const style of [`background-image:url("${f.poster("A")}");background-image:none`, `background:url("${f.poster("A")}") !important;background-image:url("${f.poster("B")}")`, `background-image:url("${f.poster("A")}");background: red`, `background:none;background-image:url("${f.poster("A")}")`, `background-image:url("${f.poster("A")}");background-image:image-set(url("${f.poster("B")}") 1x)`, `background-image:url("${f.poster("A")}");/**/background-image:none`, `background-image:url("${f.poster("A")}");back\\67round-image:none`, `background-image:url("${f.poster("A")}");all:unset`]) {
+    const result = await collectRenderedImages(attributeTab({ styles: [style] }));
+    assert.deepEqual(result.images, []);
+    assert.equal(result.counts.background_unavailable, 1);
+    assert.equal(inspectOwnPosters(origin, result.images).summary.status, "unavailable");
+  }
+});
+
+test("only finite rejection counts escape selection, never malformed attribute values", () => {
+  const f = fixture();
+  const images = ["blob:https://private-secret.invalid/id", "data:image/png,private-secret", "https://foreign.invalid/private-secret", origin + "/msx/pair/image/private-secret.png", f.poster("A") + "?private-secret", f.poster("A") + "#private-secret", f.poster("A").replace("/msx/", "/before/../msx/"), f.poster("A").replace(item, "4".repeat(32)), "private-secret", f.poster("A"), f.poster("A")];
+  const selected = inspectOwnPosters(origin, images);
+  assert.equal(selected.poster, f.poster("A"));
+  assert.deepEqual(selected.summary, { status: "selected", supplied: 11, transformed: 2, foreign: 1, pending_grant: 1, decorated: 2, noncanonical: 1, wrong_shape_or_item: 2, exact: 2, distinct: 1 });
+  assert.doesNotMatch(JSON.stringify(selected.summary), /private-secret|https|ApiKey|333333/);
+  assert.equal(inspectOwnPosters(origin, []).summary.status, "unavailable");
+  assert.equal(inspectOwnPosters(origin, [f.poster("A"), f.poster("B")]).summary.status, "ambiguous");
+  assert.equal(inspectOwnPosters(origin, ["x".repeat(4097)]).summary.status, "invalid");
+  for (const value of ["blob:https://private-secret.invalid/id", f.poster("A") + "?any", f.poster("A") + "#any", f.poster("A") + "?", f.poster("A") + "#"]) assert.equal(inspectOwnPosters(origin, [value]).poster, null);
+});
+
+test("changing or malformed locator groups cannot produce an authority", async () => {
+  for (const count of [-1, 129, 0.5, "1", 1]) {
+    const tab = { playwright: { locator: () => ({ count: async () => count, all: async () => [] }) } };
+    assert.equal(await collectRenderedImages(tab), null);
+  }
+  const tab = attributeTab({ images: [null, ""] });
+  assert.deepEqual((await collectRenderedImages(tab)).images, []);
+});
+
+test("one stalled attribute lookup times out without issuing another read", async () => {
+  let countCalls = 0;
+  let allCalls = 0;
+  const tab = { playwright: { locator: () => ({ count: () => { countCalls++; return new Promise(() => {}); }, all: async () => { allCalls++; return []; } }) } };
+  assert.equal(await collectRenderedImages(tab), null);
+  assert.equal(countCalls, 1);
+  assert.equal(allCalls, 0);
 });
 
 function catalogSession() {
@@ -327,9 +400,9 @@ for (const mode of ["DOM", "selection", "capture"]) test("entry preserves fixed 
   const msx = { ...ui.session.msx, goto: async () => {}, close: async () => { closed++; } };
   msx.playwright.evaluate = async fn => {
     if (fn.name === "readPairingCode") return "12345678"; // Non-live mocked form value.
-    if (mode === "DOM") throw new Error("https://private-secret.invalid/");
-    return mode === "selection" ? [] : [f.poster("A")];
+    assert.fail("undocumented DOM evaluation");
   };
+  msx.playwright.locator = mode === "DOM" ? () => { throw new Error("https://private-secret.invalid/"); } : attributeTab({ images: mode === "selection" ? [] : [f.poster("A")] }).playwright.locator;
   const companion = { goto: async () => {}, close: async () => { closed++; }, playwright: { getByText: () => ({ waitFor: async () => {} }), getByLabel: () => ({ fill: async () => {} }), getByRole: () => ({ click: async () => {} }) } };
   f.tab.close = async () => { closed++; };
   if (mode === "capture") f.body({ body: "https://private-secret.invalid/", base64Encoded: false });

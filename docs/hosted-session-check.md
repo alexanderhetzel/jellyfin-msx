@@ -199,3 +199,95 @@ reran all 69 Node tests and found no remaining source blocker. No new browser,
 relay, CDP command, runtime retry or replacement budget was used to verify these
 changes. They improve failure location and cleanup coherence; they do not prove
 the previous runtime cause is fixed or establish any retained-resource denial.
+
+## Second bounded hosted attempt — 2026-10-31
+
+**Executed / failed at target selection / normal cleanup observed /
+device-unverified.** The master separately granted exact source
+`8ed9e147fe10b99e1a7dcc95ec9ba36e5f0c9d77`, still based on `e46a4de`.
+One baseline supervisor started at 15:59:23 UTC with its own single 900-second
+total deadline (16:14:23 UTC), including at-most-180-second startup. Health became
+ready within the bound. This was a new explicit grant, not a reset of run one's
+budget or a retry within its released slot.
+
+Scoped observer initialization, normal A sign-in, Continue and movies preceded
+fixed failure `A-poster-target-selection`. DOM collection returned an array;
+selection did not yield exactly one accepted own-poster candidate. No count,
+underlying URI shape or particular rejection cause was emitted, so absence,
+ambiguity and disallowed target shapes are not distinguished. This localizes the
+boundary beyond run one's broad stage without establishing its original cause.
+No opaque resource capture or per-resource HTTP/body observation was reached.
+The command returned checks=[] and observations=[], with browser/device flags
+false. B, retained A denial, B survival, re-pairing and the negative control were
+not run. No approval prompt was surfaced.
+
+The catalog-aware cleanup followed normal Libraries/Disconnect/Confirm controls
+and completed without a deferred-cleanup flag. Separate fixed server counters
+before shutdown were paired_sessions=0, logout204=1, authentication=1, poster=1
+and PlaybackInfo=0. This corroborates a normal UI logout for A; it does not prove
+the six retained resources were denied or establish two-session independence.
+
+The service then stopped with retained supervisor exit0. All three owned Chrome
+extension tabs were confirmed closed, all nine exact owned PIDs were absent, and
+listener18092/control directory were absent at 16:01:39 UTC. Fixed entry,
+counter, tab and cleanup reports were saved locally. The slot was released after
+the first functional blocker without a source variant, matrix replay, budget
+extension, screenshot/AX capture or raw private data output. PR #73 remains
+draft and overall #9 acceptance remains open.
+
+## Source-only attribute adapter and exact image contract
+
+**Implemented / automated-tested with mocks / hosted-runtime-unverified.**
+The production audit found that `app.py`'s `url`/`device_url` helpers and browse
+image assignment emit an absolute own-origin private image route with a 43-character
+URL-safe capability, exact item ID and no query. The baseline fixture movie ID
+is fixed. There is no source basis to strip query strings, decode a rewritten
+foreign/blob URL, substitute a nearby item or infer a TV capability from QR data.
+
+The official [Content Item Object reference, revision 3816](https://msx.benzac.de/wiki/index.php?title=Content_Item_Object&oldid=3816)
+describes the JSON image URL and presentation properties. That reference does not
+specify a stable DOM tag, source property or computed-style representation.
+Consequently, the former collector's DOM proxy/global assumptions were not a
+documented browser-wrapper contract. This is a source-observer limitation; run
+two's empty-versus-ambiguous target set remains unknown.
+
+The current collector instead uses documented locator `count`, `all` and
+`getAttribute` calls for IMG `src` and inline style attributes. It requires
+stable group counts, at most 128 elements per group, at most 4096 characters per
+attribute and 128 extracted values. Reads have a 15-second collection budget and
+at-most-two-second wait each. A refusal or timeout returns unavailable without
+issuing another read; one already-started read may still settle, and the owner
+closes its tab during cleanup. No alternate transport or security override runs.
+
+Inline CSS supports only one relevant background/background-image declaration
+whose entire value is a single ordinary `url(...)`, optionally important. Multiple
+or overriding declarations, comments, escapes, all-reset declarations, layers,
+shorthand positioning and other
+unsupported values do not expose a candidate. Independent review reproduced an
+earlier source draft incorrectly selecting a URL overridden by a later `none`;
+the adapter now rejects that whole element's background candidate. Separate
+regressions cover competing declarations and unsupported CSS values.
+
+The selector still requires the exact canonical own-origin/capability/item path.
+Even bare query/fragment delimiters are rejected. Blob/data targets, foreign
+origins, pending activation images, credentials, decorations, noncanonical paths
+and other item IDs never become authority. Equal exact declarations deduplicate;
+distinct exact authorities remain ambiguous. It does not inspect vendor caches,
+undocumented data attributes, rewritten image internals or proprietary source.
+If ordinary attributes cannot safely expose the own image, acceptance remains
+unavailable. An attribute declaration is not proof of painted poster fidelity.
+
+Only fixed status and bounded classification counts enter the report: attribute
+element counts, unsupported backgrounds, supplied/transformed/foreign/pending/
+decorated/noncanonical/wrong-shape values and exact/distinct candidate counts.
+Actual values remain private, so unavailable versus ambiguous can be distinguished
+without exposing them. These new fields cannot retroactively diagnose run two.
+
+A public proxy-shaped mock lacking tagName/src properties and browser globals
+but supporting the documented attribute API demonstrates the adapter correction.
+Other guards cover strict CSS, unchanged authority restrictions, finite redaction,
+changing groups, bounds and a stalled read issuing no subsequent request.
+Local checks passed **74 Node tests** (55 observer/session guards), **586 Python
+tests / 1 POSIX skip**, Ruff check/format (**117 files**), syntax and diff checks.
+No runtime retry tested this adapter; it is not a proven fix for either live
+capture failure, and retained-resource/two-session acceptance remains open.

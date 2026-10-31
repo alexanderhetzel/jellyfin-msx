@@ -377,6 +377,33 @@ passed. Independent review reran all 69 Node tests with no source blocker.
 No live retry or new budget verified this follow-up; the old capture cause and
 hosted acceptance remain unresolved. See the runbook's source-only follow-up.
 
+**Second separately granted execution failed at a narrower boundary:** exact
+`8ed9e14` reached fixed `A-poster-target-selection`. DOM collection returned an
+array, but no unique accepted own-poster was selected; the rejection reason is
+not known. Checks/observations stayed empty, and B/resource denial/re-pairing/
+negative control were not run. Normal catalog-aware UI cleanup completed:
+separate counters showed paired_sessions=0 and logout204=1, with one login,
+one poster and no PlaybackInfo request. This is a cleanup observation, not a
+retained-resource denial pass. All three owned tabs and nine owned PIDs were
+gone, supervisor exit0/stopped and listener/control absent at 16:01:39 UTC.
+The slot was released at the first blocker; no source variant or budget reset
+ran. The [second attempt record](hosted-session-check.md#second-bounded-hosted-attempt--2026-10-31)
+keeps the unresolved target-shape/ambiguity question explicit; #9 stays open.
+
+**Later source-only attribute adapter / automated-tested / runtime-unverified:**
+source confirms the exact absolute own poster path and no query. Documented
+locator count/all/getAttribute reads replace DOM proxy/global assumptions;
+bounded strict single-URL CSS parsing rejects overriding or unsupported
+declarations. Review's concrete overridden-background counterexample prompted
+that rejection. Exact own origin, capability/item shape and canonical query-free
+targets remain mandatory; no blob/foreign/QR authority is inferred. Fixed bounded
+classification counts distinguish unavailable/ambiguous without values. Public
+attribute/proxy mocks and stalled-read guards are evidence of the observer
+contract correction, not the previous live cause. **74 Node tests**, **586 Python
+tests / 1 POSIX skip**, Ruff check/format (**117 files**), syntax and diff passed.
+No new runtime verified this adapter. The [source audit and limits](hosted-session-check.md#source-only-attribute-adapter-and-exact-image-contract)
+retain the possibility that ordinary DOM attributes expose no safe authority.
+
 ## Revocation source evidence and mocked observer subset — issue #32
 
 **Source-reviewed / automated-tested in part / device-unverified.**
