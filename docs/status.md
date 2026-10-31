@@ -1,5 +1,64 @@
 # Verification status — 2026-10-31
 
+## Corrected native procedure: pairing observation incomplete — #32
+
+**Actual browser subset / device-unverified / native acceptance deferred:** a
+separately granted corrected run used the same unchanged product main `e1a6bcd`.
+The explicit two-step procedure was independently reviewed before the new grant.
+Fresh pin/preflight and exact candidate readiness passed. Normal code checking
+reached visible sign-in fields; one completed visible-form submit was observed.
+The next required browser confirmation failed with a sanitized coarse `other`
+result before its first safe output. The exact subcall/cause was not retained.
+Backend paired_sessions1/authentication1 corroborates accepted login, while
+settled browser confirmation remains unknown. Library and both Resume actions
+were not reached; no File/native criterion was exercised or failure established.
+
+Source-only inspection found no late-cell helper dependency in that failed phase.
+A zero-browser-call fake-object witness reproduces nested-versus-top-level REPL
+binding behavior, explaining an earlier blank-tab recovery and guarded cleanup,
+**not** the later observation failure. No unsupported DOM/platform cause, product
+fix or new replay follows. [Precise observations, call-site limits and both
+attempts](authenticated-file-native-attempt.md).
+
+Second window: **18:28:03–18:34:24 Europe/Vienna** (17:28:03–17:34:24 UTC),
+**381 seconds** within its separately granted 900/180-second bounds. Safe counters
+were captured before stop, not after shutdown. Normal Disconnect was not performed;
+teardown exited0, all nine owned PIDs/listener18092/control were absent and both
+owned tabs closed. The master independently verified process/listener cleanup and
+accepted release. The ignored artifact is
+`.lab/reports/32-candidate-corrected-20261031T172803Z.json`. Independent source,
+privacy and evidence review accepted the limited record; it inspected sanitized
+selected records/source without replaying UI or cleanup. Product/adapter/security
+policy and default-off state are unchanged.
+
+## Authenticated-file browser attempt: incomplete native workflow — #32
+
+**Actual browser subset / device-unverified / native acceptance deferred:** one
+bounded run on exact main `e1a6bcd93a34fcdb9e04a1b2caba541b4925800c`, connected
+Chrome extension, existing synthetic resume candidate. Offline pin/preflight and
+exact local/public candidate readiness passed; normal pairing, libraries/catalogue,
+Movie details and the outer eight-second Resume entry were observed. The expected
+inner `Resume saved progress` action was **not verified or activated**. Source
+review corrected the initial premature classification as a startup block: zero
+negotiations/media and an unloaded native element do not establish failure when
+the two-step flow was not completed. No File policy/byte/decoder verdict follows.
+
+The [detailed observations and source comparison](authenticated-file-native-attempt.md)
+separate actual UI, the last safe aggregate snapshot (17:07:56 UTC, not final
+post-teardown counters), ordinary cross-origin unreadability and untested native
+criteria. API-start invocation is unknown because that path is not counted.
+No screenshot/private value or new source/SDK/CSP/body/timing variant was used.
+
+Run window: **18:00:17–18:09:38 Europe/Vienna** (17:00:17–17:09:38 UTC),
+**561 seconds** within the original 900-second total/180-second startup bounds.
+Normal Disconnect was **not performed**; teardown only returned supervisor exit0,
+all nine owned PIDs absent, listener18092 absent, owned control removed and both
+owned tabs closed. The master independently verified process/listener cleanup
+and accepted slot release. The safe selected-observation artifact is ignored under
+`.lab/reports/32-candidate-20261031T170017Z.json`. Independent evidence/source review
+accepted this limited record; no native pass is claimed. #32 remains open,
+the strict original Videos failure is unchanged and the candidate remains default-off.
+
 ## Existing HTTPS resume harness: candidate option preparation — #32
 
 **Implemented / automated-tested with mocks / native and device-unverified:** one
