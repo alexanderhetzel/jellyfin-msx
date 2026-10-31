@@ -31,6 +31,10 @@ passes, including healthy fallback Range206 and outside-item404. One earlier
 focused invocation named a nonexistent test file and ran no tests; corrected
 commands supplied these results. Required current-head CI/final review remain
 draft gates. Completion-property changes after this full run get affected checks.
+Required CI initially rejected the filtered Docker context because the new bridge
+JS was missing. An exact filename allowlist entry now includes only that reviewed
+asset; container/context/image validation must rerun on the updated head. This
+does not relax the test/media/private-state exclusion policy.
 
 ## Authenticated hosted series navigation — issue #7
 
