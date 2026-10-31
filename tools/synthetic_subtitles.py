@@ -27,10 +27,15 @@ def subtitle_source():
 
 def cues(index):
     label = {7: "DE", 12: "EN", 18: "DE alternate"}[index]
+    first_text = label + " A: Grüße, ÄÖÜ äöü ß\nSecond line"
+    if index == 18:
+        first_text = (
+            label + " A: four-line wrap\n"
+            "Wrapped subtitle text demonstrates a readable multi-line cue across a paused "
+            "language switch and seek.\nThird line with umlauts: ÄÖÜ äöü ß\nFourth line"
+        )
     return (
-        "WEBVTT\n\n00:00:00.000 --> 00:00:08.000\n"
-        + label
-        + " A: Grüße, ÄÖÜ äöü ß\nSecond line\n\n"
+        "WEBVTT\n\n00:00:00.000 --> 00:00:08.000\n" + first_text + "\n\n"
         "00:00:08.000 --> 00:00:16.000\n" + label + " B: subtitle timing\n\n"
         "00:00:16.000 --> 00:00:25.000\n" + label + " C: end test\n"
     ).encode()
