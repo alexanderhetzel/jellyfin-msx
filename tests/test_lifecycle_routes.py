@@ -1,4 +1,5 @@
 import asyncio
+import copy
 import json
 
 import httpx
@@ -52,6 +53,124 @@ def submit(p, grant, *rows):
         headers={"Authorization": "Bearer " + grant["grant"]},
         json={"version": 1, "playback_id": grant["playback_id"], "observations": list(rows)},
     )
+
+
+@pytest.mark.parametrize(
+    ("fault", "category"),
+    [
+        ("denial", "negotiation_denied"),
+        ("timeout", "upstream_timeout"),
+        ("connection", "upstream_connectivity"),
+        ("auth", "authorization"),
+    ],
+)
+def test_recovery_diagnostics_describe_observed_boundary_only(reporting, fault, category):
+    p = reporting
+    if fault == "denial":
+        p.fake.error_code = "private-upstream-error"
+    elif fault == "timeout":
+        p.fake.timeout = True
+    elif fault == "auth":
+        p.fake.deny_item = True
+    else:
+
+        def fail(request):
+            raise httpx.ConnectError("private-upstream-error", request=request)
+
+        p.fake.handle = fail
+    response = start(p)
+    assert response.json()["category"] == category
+    assert "private-upstream-error" not in response.text
+    event = p.device.diagnostics[-1]
+    assert event["category"] == category
+    assert set(event) == {"id", "event", "category", "status"}
+    assert not p.reports
+
+
+def options(p, **extra):
+    return p.reporting_client.post(
+        "/api/playback/options",
+        headers={"Authorization": "Bearer " + p.secret},
+        json={"item_id": MOVIE, "media_source_id": SOURCE, **extra},
+    )
+
+
+def test_alternatives_are_authorized_fresh_eligible_stored_sources_only(reporting):
+    p = reporting
+    alternate = copy.deepcopy(p.fake.source)
+    alternate["Id"] = "a" * 32
+    oversized = copy.deepcopy(alternate)
+    oversized["Id"] = "b" * 32
+    oversized["MediaStreams"][0]["Width"] = 3840
+    unknown = copy.deepcopy(alternate)
+    unknown["Id"] = "c" * 32
+    unknown["MediaStreams"][0].pop("Codec")
+    base = p.fake.handle
+
+    def handle(request):
+        response = base(request)
+        if (
+            response.status_code == 200
+            and request.method == "GET"
+            and request.url.path.endswith("/Items/" + MOVIE)
+        ):
+            item = response.json()
+            item["MediaSources"] = [p.fake.source, alternate, alternate, oversized, unknown]
+            return httpx.Response(200, json=item)
+        return response
+
+    p.fake.handle = handle
+    response = options(p)
+    assert response.status_code == 200
+    assert response.json() == {"alternatives": ["a" * 32]}
+    assert not any("PlaybackInfo" in request.url.path for request in p.fake.requests)
+    assert p.device.diagnostics[-1]["category"] == "native_unknown"
+    assert not p.reports
+    p.fake.deny_item = True
+    assert options(p).status_code == 401
+
+
+def test_recovery_catalogue_auth_origin_schema_and_no_alternative(reporting):
+    p = reporting
+    assert options(p).json() == {"alternatives": []}
+    assert options(p, server="https://foreign.invalid").status_code == 400
+    assert options(p, category="native_decode").status_code == 400
+    assert p.reporting_client.post("/api/playback/options", json={}).status_code == 401
+    response = p.reporting_client.post(
+        "/api/playback/options",
+        headers={"Authorization": "Bearer " + p.secret, "Origin": "https://foreign.invalid"},
+        json={"item_id": MOVIE, "media_source_id": SOURCE},
+    )
+    assert response.status_code == 403
+    response = p.reporting_client.post(
+        "/api/playback/options",
+        headers={"Authorization": "Bearer " + p.secret, "Content-Type": "application/json"},
+        content=b"x" * 8193,
+    )
+    assert response.status_code == 413
+
+
+def test_application_disconnect_is_observation_not_native_network_diagnosis(reporting):
+    p = reporting
+    grant = start(p).json()
+    response = submit(p, grant, row(1, 0, kind="event", name="app:disconnect"))
+    assert response.status_code == 200
+    assert p.device.diagnostics[-1]["category"] == "app_connectivity"
+    assert not p.reports
+
+
+@pytest.mark.parametrize("error_type", [httpx.DecodingError, httpx.RemoteProtocolError])
+def test_response_protocol_failure_does_not_claim_connection_failure(reporting, error_type):
+    p = reporting
+
+    def fail(request):
+        raise error_type("private response details", request=request)
+
+    p.fake.handle = fail
+    response = start(p)
+    assert response.status_code == 502
+    assert response.json()["category"] == "request_failed"
+    assert "private response details" not in response.text
 
 
 def test_authenticated_source_pinned_reports_pause_seek_stop_and_duplicate(reporting, caplog):

@@ -136,6 +136,13 @@ automatic fallback remain separate work. Source-pinned official-runtime Chrome
 observations now verify the supported original flow; physical device behavior
 and genuine suspension remain unverified.
 
+The [partial recovery milestone](playback-recovery.md) adds bounded explicit
+Retry/Stop/Back and fresh authenticated eligible stored alternatives on that
+preferred flow. It preserves reporting generation/cleanup and admission policy.
+Concrete negotiation/portal transport boundaries receive fixed categories;
+native causes remain unknown because the documented interaction samples do not
+provide typed decoder errors. Actual recovery runtime acceptance remains pending.
+
 [Lifecycle research](msx-lifecycle-research.md) records actual public MSX callbacks
 and requested state samples. Control events carry previous state; initial load,
 Back, natural completion and media failures do not imply a reliable Play/Stop

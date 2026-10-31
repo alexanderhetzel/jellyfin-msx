@@ -23,7 +23,7 @@ from .lifecycle import Lifecycle
 from .middleware import PairBodyLimit
 from .msx import button, content, pairing_page, subtitle_playback, text, wrapped
 from .pairing_qr import activation_png
-from .playback import PROFILE_NAME, choose_source, compatibility_reasons, resolve
+from .playback import PROFILE_NAME, choose_source, compatibility_reasons, compatible, resolve
 from .presentation import PAIR_CSS
 from .state import State
 from .subtitles import OFFICIAL_ORIGINS, SubtitleResources
@@ -92,7 +92,32 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
     def failure(request, error):
         if request.url.path.startswith("/msx/") and "/image/" not in request.url.path:
             return JSONResponse(wrapped(status=error.status, message=error.message))
-        return JSONResponse({"error": error.message}, status_code=error.status)
+        data = {"error": error.message}
+        if request.url.path.startswith("/api/playback/"):
+            data["category"] = playback_category(error)
+        return JSONResponse(data, status_code=error.status)
+
+    def playback_category(error):
+        if error.category in {"upstream_timeout", "upstream_connectivity"}:
+            return error.category
+        return {
+            401: "authorization",
+            403: "authorization",
+            409: "negotiation_denied",
+            429: "request_limited",
+            504: "request_timeout",
+        }.get(error.status, "request_failed")
+
+    def record_playback_failure(device, error):
+        state.record(
+            device,
+            {
+                "id": secrets.token_hex(8),
+                "event": "playback_error",
+                "category": playback_category(error),
+                "status": error.status,
+            },
+        )
 
     @app.middleware("http")
     async def security(request: Request, call_next):
@@ -215,15 +240,19 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
             raise PortalError(400, "Playback report rejected.")
         item_id, source_id = identifier(body["item_id"]), identifier(body["media_source_id"])
         context = {}
-        stream_url, decision = await resolve(
-            jellyfin,
-            device,
-            item_id,
-            body.get("force", False),
-            body.get("subtitle", -1),
-            source_id,
-            playback_context=context,
-        )
+        try:
+            stream_url, decision = await resolve(
+                jellyfin,
+                device,
+                item_id,
+                body.get("force", False),
+                body.get("subtitle", -1),
+                source_id,
+                playback_context=context,
+            )
+        except PortalError as error:
+            record_playback_failure(device, error)
+            raise
         state.get(secret)  # Expiry/revocation during upstream negotiation fails closed.
         ticks, play_session = context["duration_ticks"], context["play_session_id"]
         if (
@@ -254,6 +283,42 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
             "expires_in": min(28800, device.expires - state.clock()),
         }
 
+    @app.post("/api/playback/options")
+    async def playback_options(request: Request):
+        secret = bearer(request)
+        device = state.get(secret)
+        state.limit("playback-options:" + device.device_id, 12)
+        limit(request, "playback-options", 48)
+        body = await playback_body(request)
+        if set(body) != {"item_id", "media_source_id"}:
+            raise PortalError(400, "Playback request rejected.")
+        item_id, source_id = identifier(body["item_id"]), identifier(body["media_source_id"])
+        item = await jellyfin.item(device, item_id)
+        state.get(secret)
+        if item.get("Type") not in {"Movie", "Episode", "Video"}:
+            raise PortalError(400, "Select a movie or episode to play.")
+        sources = item.get("MediaSources") or []
+        # A stale/removed original is not silently replaced; alternatives are explicit choices.
+        alternatives = []
+        seen = {source_id}
+        for source in sources:
+            if compatible(source, settings.max_bitrate) and source.get("Id") not in seen:
+                alternative = identifier(source.get("Id"))
+                seen.add(alternative)
+                alternatives.append(alternative)
+                if len(alternatives) >= 8:
+                    break
+        state.record(
+            device,
+            {
+                "id": secrets.token_hex(8),
+                "event": "recovery_requested",
+                "category": "native_unknown",
+                "alternatives": len(alternatives),
+            },
+        )
+        return {"alternatives": alternatives}
+
     @app.post("/api/playback/observations")
     async def playback_observations(request: Request):
         secret = bearer(request)
@@ -261,7 +326,17 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
         state.get(grant.session_key)
         limit(request, "lifecycle-observations", 240)
         body = await playback_body(request)
-        return await lifecycle.submit(secret, grant.session_key, body, send_report)
+        result = await lifecycle.submit(secret, grant.session_key, body, send_report)
+        if any(row["name"] == "app:disconnect" for row in body["observations"]):
+            state.record(
+                state.get(grant.session_key),
+                {
+                    "id": secrets.token_hex(8),
+                    "event": "playback_observation",
+                    "category": "app_connectivity",
+                },
+            )
+        return result
 
     def form(message="", status=200, device=None):
         csrf = secrets.token_urlsafe(32)
@@ -825,10 +900,7 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
                 jellyfin, device, item_id, force, subtitle, media_source_id
             )
         except PortalError as error:
-            state.record(
-                device,
-                {"id": secrets.token_hex(8), "event": "playback_error", "status": error.status},
-            )
+            record_playback_failure(device, error)
             raise
         decision.update(platform=text(platform, 80), player=text(player, 80))
         state.record(device, decision)
