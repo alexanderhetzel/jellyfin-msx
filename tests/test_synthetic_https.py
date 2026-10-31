@@ -24,14 +24,27 @@ from tools.synthetic_lab import MOVIE, build_synthetic_lab
 ORIGIN = "https://synthetic-test.trycloudflare.com"
 
 
-def test_remember_restart_keeps_ram_key_and_original_deadline(monkeypatch, tmp_path, capsys):
+@pytest.mark.parametrize("restart_delay,success", [(0, True), (31, False)])
+def test_remember_restart_keeps_ram_key_and_original_deadline(
+    monkeypatch,
+    tmp_path,
+    capsys,
+    restart_delay,
+    success,
+):
     clock = [0.0]
     control = tmp_path / "control"
     monkeypatch.setattr(https, "CONTROL", control)
     monkeypatch.setattr(https, "verify_binary", lambda _: None)
     monkeypatch.setattr(https, "ready_local", lambda: True)
-    monkeypatch.setattr(https, "ready_public", lambda _: True)
     calls, stopped, streams = [], [], []
+
+    def ready_public(origin):
+        if len(calls) == 3:
+            clock[0] += restart_delay
+        return True
+
+    monkeypatch.setattr(https, "ready_public", ready_public)
     shared = []
     listener = SimpleNamespace(
         share=lambda pid: shared.append(pid) or b"synthetic-socket-share",
@@ -66,7 +79,11 @@ def test_remember_restart_keeps_ram_key_and_original_deadline(monkeypatch, tmp_p
         return ORIGIN if process.pid == 2 else "RESERVED"
 
     monkeypatch.setattr(https, "await_value", allocated)
-    https.activate(tmp_path / "synthetic-binary", seconds=900, scenario="remember")
+    if success:
+        https.activate(tmp_path / "synthetic-binary", seconds=900, scenario="remember")
+    else:
+        with pytest.raises(https.PreparationError, match="restart-readiness-timeout"):
+            https.activate(tmp_path / "synthetic-binary", seconds=900, scenario="remember")
     assert len(calls) == 3 and calls[2][calls[2].index("--seconds") + 1] == "890"
     first = streams[0].getvalue().splitlines()
     restarted = streams[2].getvalue().splitlines()
