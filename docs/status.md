@@ -36,7 +36,7 @@ and CI are recorded in PR68 before merge.
 
 ## Playback recovery source milestone — issue #23
 
-**Implemented / automated-tested / device-unverified; browser acceptance pending.**
+**Implemented / automated-tested / partially browser-tested / device-unverified.**
 The preferred original-with-progress flow now provides fixed failure categories,
 three bounded explicit playback attempts, native recovery/Stop/Back controls and
 fresh authenticated policy-eligible stored alternatives. Back cancels pending
@@ -49,13 +49,31 @@ passed (**102 files** on final documentation recheck); three Node suites **50 pa
 diff check passed.
 Offline wheel build/exact manifest (**25 entries**) and synthetic HTTP smoke passed.
 The prepared synthetic recovery scenario is strict MockTransport with fixed
-faults, normal pairing and pinned RAM media; no relay or browser was started.
+faults, normal pairing and pinned RAM media.
 Independent review found and prompted fixes for stale Back callbacks, cached
 attempt reset, malformed-success recovery and protocol-error classification.
 Final independent source/security review found no remaining blocking findings;
-actual runtime acceptance remains pending. The reviewer independently reran the
+full runtime acceptance remains pending. The reviewer independently reran the
 full **491 passed / one skip**, then the latest **72 affected Python / 50 Node**
 checks after cancellation fixes. Review did not operate a browser or relay.
+
+One granted Chrome/MSX0.1.167 run on fixed `b650974` observed normal pairing,
+fixed negotiation denial, three-attempt cap, Back/details reentry and native
+non-media rejection. Manual recovery offered an actual stored alternative, but
+selecting it negotiated without any original-media GET/decoded frame: separate
+reads stayed time0/readyState0/dimensions0. Five total PlaybackInfo200, one
+unplayable GET, zero lifecycle reports; no alternate playback pass. Three safe
+JPEGs/sanitized numeric/action/request JSON support independent evidence review.
+Stopped at that blocker: two owned tabs closed, supervisor exit0, all9PIDs/
+listener18092/control absent at14:33:01UTC. No CDP/override/newbudget or real data.
+
+After cleanup the candidate was rebased onto merged #19 (`e21d103`), preserving
+Resume/Start over, source/start properties and both fixture scenarios. An explicit
+alternative starts at zero. Published ordered actions now stop old media with
+`quiet` before resolution, replacing an in-resolver stop hazard; this is a
+candidate correction, not a proven runtime fix. Full pytest **528 passed / one
+skip**, Node **55 passed**. Source/union review and focused actual verification
+remain required; no further browser grant is implied.
 
 The published interaction API does not expose a typed native media-error cause.
 Native failure remains explicitly unknown; no pause, missing sample or tool

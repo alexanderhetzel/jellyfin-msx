@@ -218,10 +218,12 @@
                 attempt_limit: "Three play attempts used. Reopen details to try again."
             };
             function playRow(title, id) {
-                return { title: title, action: "video:resolve:request:interaction:" + id, properties: {
+                // Stop the previous native media before beginning URL resolution.
+                // Keep ejection outside the in-flight replacement resolver.
+                return { title: title, action: "[quiet|video:resolve:request:interaction:" + id + "]", data: { properties: {
                     "trigger:complete": "player:stop", "button:next:enable": "false", "button:prev:enable": "false",
                     "button:content:icon": "refresh", "button:content:action": "content:request:interaction:recovery"
-                } };
+                } } };
             }
             function page(recovery) {
                 var label = context() && context().resume ? "Resume saved progress" : "Play from beginning";
@@ -286,14 +288,13 @@
                     } else if (id === "details") {
                         var ctx = context();
                         leave();
-                        TVXInteractionPlugin.executeAction("player:stop");
+                        TVXInteractionPlugin.executeAction("quiet");
                         callback(ctx ? { action: "content:" + window.location.origin + "/msx/device/" + ctx.secret + "/detail.json?item_id=" + ctx.item_id } : { action: "back" });
                     } else if (id === "recovery") {
                         recovery(callback);
                     } else if (id === "portal-video" || id === "video:portal-video" || /^(video:)?alternative-[0-7]$/.test(id)) {
                         var alternate = id.match(/alternative-([0-7])$/), source = alternate ? alternatives[Number(alternate[1])] : undefined;
                         if (alternate && !source) { callback(null); return; }
-                        TVXInteractionPlugin.executeAction("player:stop");
                         telemetry.start(function (value) {
                             if (value) { lastCategory = "native_unknown"; }
                             callback(value);

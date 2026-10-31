@@ -63,7 +63,15 @@ def build_public_synthetic_lab(origin, *, allow_public_synthetic=False, scenario
     if allow_public_synthetic is not True:
         raise PreparationError("public-synthetic-opt-in-required")
     origin = validate_origin(origin)
-    if scenario not in {"baseline", "failures", "navigation", "subtitles", "lifecycle", "resume", "recovery"}:
+    if scenario not in {
+        "baseline",
+        "failures",
+        "navigation",
+        "subtitles",
+        "lifecycle",
+        "resume",
+        "recovery",
+    }:
         raise PreparationError("invalid-synthetic-scenario")
     raw = CLIP.read_bytes()
     if hashlib.sha256(raw).hexdigest() != MEDIA_SHA256:
@@ -344,7 +352,15 @@ def ready_public(origin):
 def activate(binary, seconds=MAX_SECONDS, scenario="baseline"):
     if not 1 <= seconds <= MAX_SECONDS:
         raise PreparationError("invalid-lifetime")
-    if scenario not in {"baseline", "failures", "navigation", "subtitles", "lifecycle", "resume", "recovery"}:
+    if scenario not in {
+        "baseline",
+        "failures",
+        "navigation",
+        "subtitles",
+        "lifecycle",
+        "resume",
+        "recovery",
+    }:
         raise PreparationError("invalid-synthetic-scenario")
     verify_binary(binary)
     CONTROL.parent.mkdir(parents=True, exist_ok=True)
@@ -462,7 +478,15 @@ def main():
     parser.add_argument("--seconds", type=int, default=MAX_SECONDS)
     parser.add_argument(
         "--scenario",
-        choices=["baseline", "failures", "navigation", "subtitles", "lifecycle", "resume", "recovery"],
+        choices=[
+            "baseline",
+            "failures",
+            "navigation",
+            "subtitles",
+            "lifecycle",
+            "resume",
+            "recovery",
+        ],
         default="baseline",
     )
     parser.add_argument("--directory", type=Path, help=argparse.SUPPRESS)
