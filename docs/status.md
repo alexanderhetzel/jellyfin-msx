@@ -15,6 +15,9 @@ to official PyPI and verified their licenses; existing versions did not change.
 corrected official-MS​​X 1920x1080 rendered screenshot decode, clean activation
 sign-in/code skip, scan-only Waiting, normal credentials/Continue to private
 libraries, used-QR recovery, confirmed own disconnect and grouped-code fallback.
+Natural five-minute pending expiry then returned credential-free manual recovery;
+actual Create new code/Return, changed grouped code, normal sign-in and Continue
+reached libraries again. The final settled library screenshot was inspected.
 The first actual render caught an invalid native root structure which HTTP tests
 had missed; `pages` fixed it. Codes/QR URLs/raw images stayed in RAM; only masked
 or secret-free screenshots were retained. Full pairing-layout work stays #16;
@@ -31,6 +34,10 @@ isolated temporary/cache directories and reviewed execution resolved that
 environmental failure. Initial helper title assumptions also failed with the
 new titleless native image; action lookup now handles native page/image items.
 No local Docker, real Jellyfin, media/audio or physical-TV pass is claimed.
+The final bounded synthetic relay exited 0/stopped, all nine recorded owned PIDs,
+listener and control directory were absent at 08:08 UTC; own tabs closed and MSX
+viewport restored. Final-head independent evidence review and CI are recorded in
+the linked PR; no browser-request trace was retained or inferred from unit tests.
 
 ## Two-stage pairing software acceptance — issue #13
 

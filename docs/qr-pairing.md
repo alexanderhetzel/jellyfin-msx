@@ -54,15 +54,38 @@ stayed in local process memory; screenshots were masked before local file/output
   companion code form displayed clean blank credentials. The companion address
   wrapped readably over two lines at the long synthetic hostname; the own-TV
   instruction and Continue/new-code controls fit in the inspected native layout.
+- That second device was deliberately left pending through its original five-minute
+  lifetime. Reopening its decoded QR then showed clean manual recovery with no
+  credential fields. After waking the normal MSX screen saver, native Create new
+  code selection plus Return produced a different code. Grouped manual entry,
+  normal credentials and TV Continue again reached private libraries. The final
+  settled library screenshot was inspected and retained. An initial click only
+  selected the new-code row; reading the still-old code correctly failed. Return
+  activated the selected control and the settled changed code recovered normally.
 
 Native browser clicking brought a tab forward for screenshots; background-tab
 captures sometimes timed out. One early library capture contained the outgoing
 waiting scene and is not library screenshot proof. Later DOM/AX observations
-confirm actual libraries; a test count or outgoing scene is not substituted for
+and the final settled capture confirm actual libraries; a test count or outgoing scene is not substituted for
 that UI evidence. The generic `browser-verify` tool was unavailable; supported
 connected-Chrome controls and inspected screenshots supplied form verification.
 
-Local ignored evidence includes redacted QR/manual layout, waiting, blank manual
-sign-in and recovery screenshots. No QR-bearing image or activation link is a
+Local ignored evidence: `issue14-msx-qr-redacted.png`, `issue14-msx-waiting.png`,
+`issue14-companion-manual-signin.png`, `issue14-companion-expired-recovery.png`,
+`issue14-msx-libraries.png`, all under `.lab/reports/`. The separately named
+`issue14-msx-library-transition-waiting.png` preserves the outgoing-frame limitation.
+The recovery image's eight-digit example is the static placeholder, not a code.
+Response headers/denial/request isolation are independently checked by mocked
+HTTP tests; no raw browser request trace or final live request-count report was
+retained. No media playback/audio is claimed by these pairing actions.
+
+Own-session Disconnect/Confirm finished before cleanup; both created tabs were
+closed and the temporary MSX viewport override cleared (measured 2560x1215 again).
+The final synthetic supervisor exited 0/stopped; all nine recorded exact owned
+PIDs, listener 18092 and control directory were absent at 08:08 UTC. An earlier
+relay expired during the browser-permission stall without a QR test; another was
+stopped after the invalid root-page observation. No security or trust bypass.
+
+No QR-bearing image or activation link is a
 public fixture. Physical phone scan from the actual Philips screen, normal-distance
 readability, overscan and remote/platform behavior remain **unchecked in #4**.
