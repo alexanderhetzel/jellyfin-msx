@@ -436,9 +436,11 @@ def backend_helper(seconds, scenario="baseline", *, authenticated_file_candidate
                 proxy_headers=False,
                 log_config=None,
                 timeout_graceful_shutdown=2,
-                loop="tools.synthetic_https:remember_loop_factory"
-                if scenario == "remember"
-                else "auto",
+                **(
+                    {"loop": "tools.synthetic_https:remember_loop_factory"}
+                    if scenario == "remember"
+                    else {}
+                ),
             )
         )
         stopped = threading.Event()
@@ -737,7 +739,9 @@ def main():
     args = parser.parse_args()
     try:
         candidate_option(args.scenario, args.authenticated_file_candidate)
-        if args.authenticated_file_candidate and (args.stop or args.tunnel_helper):
+        if args.authenticated_file_candidate and (
+            args.stop or args.tunnel_helper or args.restart_backend
+        ):
             raise PreparationError("candidate-incompatible-mode")
         candidate_options = (
             {"authenticated_file_candidate": True} if args.authenticated_file_candidate else {}

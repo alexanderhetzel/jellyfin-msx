@@ -465,6 +465,34 @@ code, renewal/cache, security or deployment changes.
 
 ## Remembered-device client preparation — issue #12
 
+**Standalone public Page snapshot — observed / device-unverified:** a separate
+browser-only control verified public wiki heading/current origin, made one
+Page.getFrameTree call without Target/enable/Network and returned the expected
+root-frame structure, matching public URL and HTML MIME metadata. Seven fixed
+booleans true; error stage/class/code none, no prompt observed; owned tab closed
+in about0.5 seconds, within60 total. Raw tree/URL/IDs discarded, fixed report
+`.lab/reports/issue12-public-frame-snapshot.json` ignored. Independent reviews
+accepted public-root snapshot metadata only; app/child/parsing/execution/Network
+support and startup cause remain unresolved. The proposed
+[Page-only application observation](remembered-startup-observations.md#proposed-page-only-application-observation)
+needs a separate grant and has not run.
+
+**Rebase union on main `e1a6bcd` — automated-tested:** preserve the candidate CLI,
+resume-only option/readiness markers and all scenarios alongside remembered
+continuous listener, JobObject/EOF, Selector loop and deadline containment.
+Two candidate Config regressions first failed on an unrelated explicit loop=auto;
+the loop override now applies only to remember, retaining default kwargs elsewhere.
+A candidate-plus-restart regression first returned local-preparation-error and
+now rejects the incompatible mode before control-state access. Remember is also
+explicitly tested as candidate-ineligible. Production source is byte-identical
+to the pre-rebase remembered candidate; no application variant is introduced.
+
+Full `uv run --no-sync pytest -W error`: **755 passed / 1 POSIX skip**; candidate
+focused **35 passed**. Ruff check/format **127 files**, diff check and current-source
+exact **28-member** wheel validation passed. Independent affected protocol/union
+review passed **92 tests**. Exact-head security review and CI are recorded in PR64;
+these checks do not establish startup or physical-device acceptance.
+
 **Public capability control — observed, cause unknown:** a separate browser-only
 grant used one fresh public MSX wiki tab, verified heading/current HTTPS origin,
 then attempted the single intended root metadata command. Usable identity false;

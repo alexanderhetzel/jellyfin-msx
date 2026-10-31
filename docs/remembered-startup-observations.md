@@ -1,8 +1,8 @@
 # Remembered startup observation contract
 
 **Implemented / automated-tested / device-unverified.** This is an offline
-metadata reducer and a proposed observation procedure, not a startup repair or a
-live browser-coverage pass. Issue #12 and draft PR #64 remain unaccepted. Run9's
+metadata reducer and observation procedure, not a startup repair or an
+application/child-target coverage pass. Issue #12 and draft PR #64 remain unaccepted. Run9's
 server-side root/HTML send returns and unknown browser stages remain in
 [durable authorization](durable-authorization.md#foreground-result-and-synthetic-observation-boundary--2026-10-31).
 Earlier direct-root/test-ID queries also failed; dropping the later body
@@ -44,7 +44,7 @@ listener18092, control and helpers absent. Original900-total/180-startup bounds
 were preserved. Main's later fixture merge was assessed only after cleanup;
 the running source was never rebased or mixed. No active test resources remain.
 
-## Supported contracts and limits
+## Public-only controls
 
 ### Public-document capability control — 2026-10-31
 
@@ -68,6 +68,61 @@ document context; it does not prove the underlying method is unsupported,
 identify the failing component, explain run10 or establish app/child coverage.
 Whether any command reached protocol wire dispatch is also unknown. Page/Network
 support remains untested by this control; failure is not a universal capability claim.
+
+### Standalone public frame snapshot — 2026-10-31
+
+A separately granted browser-only control verified the same public wiki heading
+and exact HTTPS origin, then made one `Page.getFrameTree` call without a Target
+call or domain enable. The capability returned an object containing a root frame,
+string URL matching the exact public wiki origin/path/single title query and
+HTML MIME metadata. All seven context/return/shape/root-match booleans were true.
+Error stage/class/code were none, reason expected_shape; no actual platform
+prompt was observed. The own tab closed in finally in about half a second,
+within the original 60-second creation-through-cleanup bound.
+
+The projection used only `frame.url`, never `unreachableUrl`, and retained no
+tree, URL, identifier or raw error. Fixed report:
+`.lab/reports/issue12-public-frame-snapshot.json` (ignored). No Target/Network/
+Fetch/enable/attachment/alternate command, relay, application startup, private
+route, authentication or settings change followed. Implicit tool behavior is
+not claimed absent. Independent protocol/security evidence review accepted this
+as public-root snapshot support only. It proves neither parsing, resource loading,
+SDK execution, app/child coverage, Network binding nor the cause of prior failures.
+
+## Proposed Page-only application observation
+
+This is a materially different positive observation boundary from the failed
+root-identity preflight. It requires a separate exclusive grant and has not run.
+No new reducer, fake Target ID or network join is needed. Keep the exact reviewed
+startup/client/HTML/CSP/deadlines, fixture containment and candidate-off policy.
+
+Retain initial/final local-only ASGI reports. After one normal official-MS​​X
+startup and an ordinary current-origin/UI read, take at most two standalone
+`Page.getFrameTree` snapshots: early, and at the first terminal UI result/block.
+If the first UI read is already terminal, take only that one snapshot.
+Use no Target, Network, Page.enable, attachment, Fetch, body/resource-content call,
+marker probe, injection or application variant. No Retry, ForceInit, warm-up,
+credentials, restart or remaining matrix. An unsupported API/shape is a diagnostic
+block: retain fixed local call-stage/class/code/reason and stop without alternates.
+
+Project at most 64 frames with a bounded stack. Raw URLs/trees remain RAM-only.
+Output fixed shape/root-context and presence booleans: exact own plugin origin/
+path seen, matching HTML MIME seen, any about:blank/browser-error/other/unknown
+frame seen and budget exceeded. Match only `frame.url`; never treat a failed
+destination in `unreachableUrl` as an observed own document. An about:blank frame
+is not attributed to the intended plugin. Missing own-frame metadata, omitted
+children and exhausted budgets leave child coverage unknown, not absent. The two
+snapshots remain separate facts, without session/loader/epoch or network joins.
+
+Matching own-frame URL/MIME would be positive snapshot metadata, not proof of
+own HTML bytes, body parsing, load completion, SDK/handler execution, HTTP status
+or startup cause. Keep raw errors out of output; local error stage does not
+identify the failing component or prove wire dispatch. Retain finite projections
+and final ASGI snapshot before closing the sole owned tab and stopping the fixture.
+Original maximum900-total/180-startup bounds and exact owned-process/listener/
+control/helper cleanup remain mandatory. No further run is implied by this plan.
+
+## Supported contracts and limits
 
 The installed connected-Chrome `cdp.documentation()` was read without sending
 live commands. It exposes `send(method, params, {target})` and filtered

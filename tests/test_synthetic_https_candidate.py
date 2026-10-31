@@ -118,7 +118,8 @@ def test_nonboolean_option_rejects_before_factory_or_owned_side_effects(
 
 
 @pytest.mark.parametrize(
-    "scenario", ["baseline", "failures", "navigation", "subtitles", "lifecycle", "recovery"]
+    "scenario",
+    ["baseline", "failures", "navigation", "subtitles", "lifecycle", "recovery", "remember"],
 )
 def test_candidate_cannot_expand_existing_scenarios(monkeypatch, tmp_path, scenario):
     monkeypatch.setattr(https, "CLIP", SimpleNamespace(read_bytes=forbid))
@@ -144,6 +145,7 @@ def test_candidate_cannot_expand_existing_scenarios(monkeypatch, tmp_path, scena
         (["--scenario", "failures", "--check"], "candidate-requires-resume"),
         (["--scenario", "resume", "--stop"], "candidate-incompatible-mode"),
         (["--scenario", "resume", "--tunnel-helper"], "candidate-incompatible-mode"),
+        (["--scenario", "resume", "--restart-backend"], "candidate-incompatible-mode"),
     ],
 )
 def test_cli_incompatible_mode_fails_before_reading_or_starting(
