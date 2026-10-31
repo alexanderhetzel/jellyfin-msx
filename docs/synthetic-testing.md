@@ -1,5 +1,10 @@
 # Synthetic integration lab
 
+For deterministic normal-auth A/B disconnect isolation and the explicit native
+token expiry boundary, see [the two-session contract](session-boundary-check.md).
+Its expected nonrevocation detector failure and source-pinned coverage audit are
+separate from actual hosted-browser acceptance.
+
 For startup-selected authenticated JSON/playback/access/simulated-upstream faults,
 actual hosted MSX recovery assertions and positive-path failure sensitivity, see
 [the failure/recovery browser check](browser-failure-check.md). Its limited scope

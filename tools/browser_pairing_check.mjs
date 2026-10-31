@@ -4,6 +4,15 @@ import { exerciseFailures } from "./browser_failure_check.mjs";
 const ORIGIN = /^https:\/\/[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.trycloudflare\.com$/;
 const FAULTS = new Set(["none", "csrf", "login", "json", "playback"]);
 
+export function readPairingCode(text = document.body.innerText) {
+  // Current native QR layout renders the grouped code on its own line. Fail
+  // closed on ambiguous text; never guess from a hostname, footer or old code.
+  if (typeof text !== "string") return null;
+  const lines = text.split(/\r?\n/).map(line => line.trim())
+    .filter(line => /^[0-9]{4}[ \u00a0]+[0-9]{4}$/.test(line));
+  return lines.length === 1 ? lines[0].replace(/[ \u00a0]/g, "") : null;
+}
+
 export async function checkPairing({ origin, newTab, fault = "none", scenario = "pairing", saveEvidence } = {}) {
   if (typeof origin !== "string" || !ORIGIN.test(origin) || !FAULTS.has(fault) || !["pairing", "failures"].includes(scenario) || (scenario === "failures" && ["csrf", "login"].includes(fault)) || (scenario === "pairing" && ["json", "playback"].includes(fault))) {
     return { status: "failed", stage: "invalid-synthetic-options", checks: [] };
@@ -51,12 +60,9 @@ export async function checkPairing({ origin, newTab, fault = "none", scenario = 
       start.searchParams.set(name, value);
     }
     msx = await open(start.href);
-    await visible(msx, /TV code:/i);
+    await visible(msx, /^[0-9]{4}[ \u00a0]+[0-9]{4}$/);
     // The code stays in this closure. Never return body text, private URLs or raw errors.
-    const code = await msx.playwright.evaluate(() => {
-      const match = document.body.innerText.match(/TV code:\s*([A-Z0-9]{4})\s+([A-Z0-9]{4})/i);
-      return match ? match[1] + match[2] : null;
-    });
+    const code = await msx.playwright.evaluate(readPairingCode);
     if (!code) throw new Error("missing-code");
     pass();
 

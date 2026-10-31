@@ -24,6 +24,34 @@ The twelve new observer checks are MockTransport-only. Independent final review
 and normal repository CI results are recorded in the subset PR; neither replaces
 the retained failing real-server contract in draft PR #52.
 
+## Current-layout command and two-session contract — issue #9
+
+**Implemented / automated-tested / device-unverified:** the reusable browser
+entry reads the accepted QR layout's standalone grouped code instead of the
+removed prose prefix, keeping it in its private closure and rejecting ambiguous
+text. No AX tree, QR image or private URL is emitted. The change is locally
+guard-tested; focused current-head Chrome execution is still **deferred** until
+a separate resource slot is granted.
+
+The [two-session HTTP command and evidence audit](session-boundary-check.md)
+exercise normal production form authentication with strict mocked transport:
+confirmed A disconnect denies its retained private JSON/poster/resolver/media,
+B survives, A re-pairs without reviving the old capability, and portal expiry
+denies portal resources. A full bearer URL is intentionally not cookie-bound.
+An already-issued native URL remains valid after portal expiry; the report says
+native revocation is false. Synthetic ignored upstream logout exits 1 at the
+unchanged A media-revocation assertion, an expected detector failure rather than
+a real-server privacy pass. No real-version run or production policy changed.
+
+Windows/Python 3.12.14 locked offline dev/build sync passed. `uv run pytest -W
+error`: **522 passed / 1 POSIX skip**, no warnings; four focused session checks,
+seven Node browser guards, Ruff, format **108 files**, syntax/diff checks passed.
+The normal command passed with browser/device flags false; its negative CLI
+returned the fixed failed stage. No browser, relay, listener, secret store or
+external transport was used. Current accepted #7/#16/#18/#19/#22 evidence is
+referenced rather than replayed; #8 real cases, #12 startup and #23 native
+classification remain open. Overall #9 acceptance is not claimed.
+
 ## Saved progress — issue #19
 
 **Implemented / automated-tested / browser-tested / device-unverified.**
