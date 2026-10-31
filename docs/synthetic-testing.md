@@ -1,5 +1,13 @@
 # Synthetic integration lab
 
+The [pending-code expiry check](pairing-code-expiry-check.md) provides a resumable
+normal-form flow using the existing 300-second lifetime and baseline fixture.
+Its offline retained-code-valid counterexample must fail the ordinary denial
+assertion. One granted browser run observed denial of the unused code after
+307 seconds, then failed to confirm the TV expiry notice; normal recovery is
+unverified. No new scenario, clock override, service or private Network authority
+is used. The published runtime still requires a separately granted live run.
+
 For deterministic normal-auth A/B disconnect isolation and the explicit native
 token expiry boundary, see [the two-session contract](session-boundary-check.md).
 Its expected nonrevocation detector failure and source-pinned coverage audit are
