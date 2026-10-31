@@ -45,13 +45,17 @@ old-Stop acknowledgement and last-safe lease remain unchanged. Legacy/subtitle
 flows retain their existing recovery scope.
 
 `uv run pytest -q`: **491 passed / one POSIX skip**; Ruff check and format
-passed (**101 files**); three Node suites **50 passed**; diff check passed.
+passed (**102 files** on final documentation recheck); three Node suites **50 passed**;
+diff check passed.
 Offline wheel build/exact manifest (**25 entries**) and synthetic HTTP smoke passed.
 The prepared synthetic recovery scenario is strict MockTransport with fixed
 faults, normal pairing and pinned RAM media; no relay or browser was started.
 Independent review found and prompted fixes for stale Back callbacks, cached
 attempt reset, malformed-success recovery and protocol-error classification.
-Final review and actual runtime acceptance remain pending.
+Final independent source/security review found no remaining blocking findings;
+actual runtime acceptance remains pending. The reviewer independently reran the
+full **491 passed / one skip**, then the latest **72 affected Python / 50 Node**
+checks after cancellation fixes. Review did not operate a browser or relay.
 
 The published interaction API does not expose a typed native media-error cause.
 Native failure remains explicitly unknown; no pause, missing sample or tool
