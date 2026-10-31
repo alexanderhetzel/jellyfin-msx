@@ -18,15 +18,14 @@
     function Client(deps) {
         this.deps = deps;
         this.busy = false;
-        this.started = false;
         this.blocked = false;
         this.pending = null;
         this.session = null;
         this.last = page("Opening Jellyfin", [control("Check device memory", "boot")]);
     }
-    Client.prototype.show = function (value) {
+    Client.prototype.show = function (value, terminal) {
         this.last = value;
-        this.deps.render(value);
+        this.deps.render(value, terminal !== false);
     };
     Client.prototype.raw = function () {
         var storage = this.deps.storage();
@@ -203,7 +202,7 @@
     Client.prototype.run = function (operation) {
         if (this.busy || ["boot", "pair", "continue", "home"].indexOf(operation) < 0) { return; }
         this.busy = true;
-        this.show(page("Opening Jellyfin", [{title: "Please wait", action: "info:Checking sign-in."}]));
+        this.show(page("Opening Jellyfin", [{title: "Please wait", action: "info:Checking sign-in."}]), false);
         if (operation === "pair") { this.pair(true); }
         else if (operation === "continue") { this.continuePair(); }
         else if (operation === "home") { this.home(); }
@@ -224,15 +223,25 @@
     mark(2);
     TVXPluginTools.onReady(function () {
         mark(4);
+        var pending = null, sdkReady = false, starting = false, epoch = 0;
         var client = new Client({origin: window.location.origin,
             now: function () { return Date.now() / 1000; },
             storage: function () { return TVXServices.storage; },
             onBoot: function () { mark(32); },
-            render: function (value) { mark(64); TVXInteractionPlugin.showContent(value); },
+            render: function (value, terminal) {
+                if (pending) {
+                    if (!terminal) { return; }
+                    var callback = pending.callback;
+                    clearTimeout(pending.timer);
+                    pending = null; starting = false;
+                    callback(value);
+                } else { mark(64); TVXInteractionPlugin.showContent(value); }
+            },
             request: function (method, path, data, callback) {
-                var xhr = new XMLHttpRequest(), done = false;
+                var xhr = new XMLHttpRequest(), done = false, requestEpoch = epoch;
                 function complete(error, value) {
-                    if (done) { return; } done = true; callback(error, value);
+                    if (done) { return; } done = true;
+                    if (requestEpoch === epoch) { callback(error, value); }
                 }
                 xhr.open(method, path, true);
                 xhr.withCredentials = false;
@@ -249,23 +258,41 @@
                 try { xhr.send(data === null ? null : JSON.stringify(data)); }
                 catch (ignore) { complete({status: 0}); }
             }});
+        function begin() {
+            if (!sdkReady || !pending || starting) { return; }
+            starting = true;
+            var attempts = 0, attemptEpoch = epoch;
+            function start() {
+                if (!pending || attemptEpoch !== epoch) { return; }
+                var ready = false;
+                try { ready = TVXServices.storage && TVXServices.storage.isReady(); } catch (ignore) {}
+                if (ready) { client.run("boot"); }
+                else if (++attempts < 50) { setTimeout(start, 100); }
+                else { client.recovery("Device memory is unavailable. Pair without remembering."); }
+            }
+            start();
+        }
         TVXInteractionPlugin.setupHandler({
             init: function () {},
             ready: function () {
                 mark(16);
-                if (client.started) { return; } client.started = true;
-                var attempts = 0;
-                function start() {
-                    var storage = TVXServices.storage, ready = false;
-                    try { ready = storage && storage.isReady(); } catch (ignore) {}
-                    if (ready) { client.run("boot"); }
-                    else if (++attempts < 50) { setTimeout(start, 100); }
-                    else { client.recovery("Device memory is unavailable. Pair without remembering."); }
-                }
-                start();
+                sdkReady = true;
+                begin();
             },
-            handleData: function (data) { client.run(data && data.data && data.data.operation); },
-            handleRequest: function (id, data, callback) { callback(client.last); }
+            handleData: function (data) {
+                if (!pending) { client.run(data && data.data && data.data.operation); }
+            },
+            handleRequest: function (id, data, callback) {
+                if (id !== "init" || pending || client.busy) { callback(null); return; }
+                epoch += 1;
+                pending = {callback: callback, timer: setTimeout(function () {
+                    // A lost/late renewal may already be consumed. Never replay it.
+                    epoch += 1;
+                    client.blocked = true;
+                    client.recovery("Sign-in took too long. Create a new code to re-pair.");
+                }, 25000)};
+                begin();
+            }
         });
         mark(8);
         TVXInteractionPlugin.init();

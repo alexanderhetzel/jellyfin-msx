@@ -103,6 +103,91 @@ test("malformed pending page leaves usable recovery instead of throwing",()=>{
     assert.equal(x.pages.at(-1).headline,"Remembered sign-in unavailable");
     assert.equal(x.client.busy,false);
 });
+
+function browserLab(initial = raw()) {
+    const vm=require("node:vm"), fs=require("node:fs");
+    let handler, sdkReady, timerId=0;
+    const timers=new Map(), state={value:initial,requests:[],pages:[],replies:[],now:1000000,silent:false,storageReady:true};
+    class XHR {
+        open(method,path){this.path=path;this.status=200;}
+        setRequestHeader(){}
+        send(){state.requests.push(this);}
+    }
+    const scope={window:{location:{origin:"https://portal.test"}},Date:{now:()=>state.now},
+        XMLHttpRequest:XHR,setTimeout:(fn,delay)=>{timers.set(++timerId,{fn,at:state.now+delay});return timerId;},
+        clearTimeout:id=>timers.delete(id),TVXPluginTools:{onReady:fn=>{sdkReady=fn;}},
+        TVXServices:{storage:{isReady:()=>state.storageReady,get:()=>state.value,
+            set:(_,v)=>{if(!state.silent)state.value=v;},remove:()=>{state.value=null;}}},
+        TVXInteractionPlugin:{setupHandler:h=>{handler=h;},init:()=>{},showContent:p=>state.pages.push(p)}};
+    vm.runInNewContext(fs.readFileSync(require.resolve("../src/jellyfin_msx/templates/remember.js"),"utf8"),scope);
+    state.sdk=()=>sdkReady(); state.ready=()=>handler.ready();
+    state.request=id=>handler.handleRequest(id,null,p=>state.replies.push(p));
+    state.init=()=>state.request("init");
+    state.control=operation=>handler.handleData({data:{operation}});
+    state.reply=(value)=>{const r=state.requests.shift();r.responseText=JSON.stringify(value);r.onload();return r;};
+    state.tick=ms=>{const until=state.now+ms; for(;;){const due=[...timers.entries()].filter(([,t])=>t.at<=until).sort((a,b)=>a[1].at-b[1].at)[0];if(!due)break;state.now=due[1].at;timers.delete(due[0]);due[1].fn();}state.now=until;};
+    return state;
+}
+
+test("init returns one terminal page only after renewal save and home, never progress",()=>{
+    const x=browserLab(); x.sdk(); x.ready(); x.init();
+    assert.equal(x.requests.length,1); assert.equal(x.replies.length,0);
+    assert.equal(x.pages.length,0);
+    x.reply({renewal:next,generation:3,expires:2000,session});
+    assert.equal(x.value,raw(next,3)); assert.equal(x.replies.length,0);
+    const last=x.reply({headline:"Jellyfin libraries",items:[]});
+    assert.equal(x.replies.length,1); assert.equal(x.replies[0].headline,"Jellyfin libraries");
+    last.onload(); assert.equal(x.replies.length,1); assert.equal(x.pages.length,0);
+});
+
+test("delayed SDK readiness and concurrent init cannot dispatch duplicate renewal",()=>{
+    const x=browserLab(); x.sdk(); x.init(); x.init();
+    assert.equal(x.requests.length,0); assert.equal(x.replies.length,1);assert.equal(x.replies[0],null);
+    x.ready(); x.ready(); assert.equal(x.requests.length,1);
+});
+
+test("init save failure responds with recovery without requesting libraries",()=>{
+    const x=browserLab();x.silent=true;x.sdk();x.ready();x.init();
+    x.reply({renewal:next,generation:3,expires:2000,session});
+    assert.equal(x.replies.length,1);assert.equal(x.replies[0].headline,"Remembered sign-in unavailable");
+    assert(x.requests.every(r=>!r.path.endsWith("home.json")));
+});
+
+test("aggregate init timeout settles once and late renewal cannot save or navigate",()=>{
+    const x=browserLab();x.sdk();x.ready();x.init();x.tick(25000);
+    assert.equal(x.replies.length,1);assert.equal(x.replies[0].headline,"Remembered sign-in unavailable");
+    x.reply({renewal:next,generation:3,expires:2000,session});
+    assert.equal(x.value,raw());assert.equal(x.requests.length,0);assert.equal(x.pages.length,0);
+    x.init();assert.equal(x.requests.length,0);assert.equal(x.replies.length,2);
+});
+
+test("deadline after save suppresses late home and unknown IDs never disclose the page",()=>{
+    const x=browserLab();x.sdk();x.ready();x.init();
+    x.reply({renewal:next,generation:3,expires:2000,session});x.tick(25000);
+    assert.equal(x.replies.length,1);
+    x.reply({headline:"Jellyfin libraries",items:[]});
+    assert.equal(x.replies.length,1);assert.equal(x.pages.length,0);
+    x.request("unknown");assert.equal(x.replies.at(-1),null);assert.equal(x.requests.length,0);
+});
+
+test("missing SDK or storage readiness cannot leave init hanging or start late renewal",()=>{
+    for(const missing of ["sdk","storage"]){
+        const x=browserLab();x.sdk();if(missing==="storage"){x.storageReady=false;x.ready();}
+        x.init();x.control("pair");assert.equal(x.requests.length,0);
+        x.tick(missing==="sdk"?25000:5000);
+        assert.equal(x.replies.length,1);assert.equal(x.replies[0].headline,"Remembered sign-in unavailable");
+        x.storageReady=true;x.ready();assert.equal(x.requests.length,0);
+    }
+});
+
+test("later explicit init refreshes authority while controls still render normally",()=>{
+    const x=browserLab();x.sdk();x.ready();x.init();
+    x.reply({renewal:next,generation:3,expires:2000,session});x.reply({headline:"Jellyfin libraries",items:[]});
+    x.init();assert.equal(x.requests.length,1);assert.equal(x.replies.length,1);
+    x.reply({renewal:"d".repeat(43),generation:4,expires:2000,session});x.reply({headline:"Jellyfin libraries",items:[]});
+    x.control("home");x.reply({headline:"Jellyfin libraries",items:[]});assert.equal(x.pages.length,2);
+    assert.equal(x.replies.length,2);
+});
 test("browser adapter readiness and duplicate XHR callbacks remain bounded",()=>{
     const vm=require("node:vm"), fs=require("node:fs");
     let handler; const requests=[], pages=[];
@@ -112,12 +197,13 @@ test("browser adapter readiness and duplicate XHR callbacks remain bounded",()=>
         send(){requests.push(this);}
     }
     const scope={window:{location:{origin:"https://portal.test"}}, Date:{now:()=>1000000},
-        XMLHttpRequest:XHR, setTimeout:()=>{throw new Error("unexpected retry");},
+        XMLHttpRequest:XHR, setTimeout:()=>1, clearTimeout:()=>{},
         TVXPluginTools:{onReady:fn=>fn()},
         TVXServices:{storage:{isReady:()=>true,get:()=>null}},
         TVXInteractionPlugin:{setupHandler:h=>{handler=h;}, init:()=>handler.ready(),
             showContent:value=>pages.push(value)}};
     vm.runInNewContext(fs.readFileSync(require.resolve("../src/jellyfin_msx/templates/remember.js"),"utf8"),scope);
+    assert.equal(requests.length,0); handler.handleRequest("init",null,p=>pages.push(p));
     assert.equal(requests.length,1); handler.ready(); assert.equal(requests.length,1);
     requests[0].responseText=JSON.stringify({session,page:{headline:"Pair",items:[]}});
     requests[0].onload(); const count=pages.length;
@@ -133,7 +219,7 @@ test("RAM-only lifecycle flags follow actual delayed adapter boundaries without 
         document:{documentElement:{setAttribute:(name,value)=>{
             assert.equal(name,"data-jellyfin-msx-lifecycle");
             assert.match(value,/^\d+$/); attributes[name]=value; exposed.push(value);
-        }}}, XMLHttpRequest:XHR, setTimeout:()=>{throw new Error("unexpected retry");},
+        }}}, XMLHttpRequest:XHR, setTimeout:()=>1, clearTimeout:()=>{},
         TVXPluginTools:{onReady:fn=>{sdkReady=fn;}},
         TVXServices:{storage:{isReady:()=>true,get:()=>raw()}},
         TVXInteractionPlugin:{setupHandler:h=>{handler=h;}, init:()=>{initialized=true;},
@@ -145,7 +231,10 @@ test("RAM-only lifecycle flags follow actual delayed adapter boundaries without 
     assert.equal(attributes["data-jellyfin-msx-lifecycle"],"15");
     assert.equal(initialized,true); assert.equal(requests.length,0);
     handler.ready();
-    assert.equal(attributes["data-jellyfin-msx-lifecycle"],"127");
+    assert.equal(attributes["data-jellyfin-msx-lifecycle"],"31");
+    assert.equal(requests.length,0);
+    handler.handleRequest("init",null,()=>{});
+    assert.equal(attributes["data-jellyfin-msx-lifecycle"],"63");
     assert.equal(requests.length,1);
     assert(!JSON.stringify(exposed).includes(old));
     handler.ready(); assert.equal(requests.length,1);
