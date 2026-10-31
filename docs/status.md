@@ -1,8 +1,9 @@
 # Verification status — 2026-10-31
 
-## Pending-code expiry driver preparation — issue #9
+## Pending-code expiry: denial observed, TV recovery incomplete — issue #9
 
-**Implemented / automated-tested with mocks / runtime-unverified /
+**Implemented / automated-tested with mocks / actual browser subset /
+recovery deferred /
 device-unverified.** The [resumable expiry check](pairing-code-expiry-check.md)
 uses the existing 300-second pending lifetime, waits 305 monotonic seconds after
 its private unused-code read, requires a clean fresh companion Step 1 and one
@@ -28,8 +29,26 @@ Ruff check/format passed (**124 files**), as did syntax/diff checks.
 This is a new pending-code criterion only. Historical JSON/playback/CSRF/login
 detector observations remain historical, and preferred outer/inner playback,
 authenticated-session expiry and A/B resource acceptance are separate gaps.
-No runtime or ordinary five-minute wait has been executed for this new driver.
-PR #73 remains draft and #9 remains open pending separately granted actual evidence.
+The one granted expiry-only run at reviewed head `b43ad558` executed the ordinary
+wait for **307 monotonic seconds after the private unused-code read**. A fresh
+companion form rejected its single old-code submission with the specific
+invalid/expired message, keeping credentials hidden. Normal TV Continue then
+executed, but the expected expiry notice was not confirmed. The driver stopped
+at `expired-tv-notice`; the cause is unknown. New-code recovery, sign-in,
+libraries and Disconnect were not attempted. No retry or clock override ran.
+Source audit confirmed the Continue target, expiry headline/public recovery
+payload and disabled cache/reuse/preload; focused existing route/layout tests
+passed: `uv run --no-sync pytest -q tests/test_pairing_layout.py` (**3 passed**).
+This source evidence does not establish hosted headline visibility or the failure cause.
+
+Sanitized server counters were pairing statuses `[400]`, authentication 0,
+PlaybackInfo 0, paired sessions 0 and logout 0. The supervisor started at
+18:28:56 UTC with its original 18:43:56 deadline and stopped/exit 0; cleanup was
+verified at **18:37:14 UTC**. All three owned tabs, nine captured owned PIDs,
+port 18092 listener and control directory were absent; pending creations 0.
+See the [expiry evidence and limitations](pairing-code-expiry-check.md#granted-browser-observation--2026-10-31).
+PR #73 remains draft and #9 remains open. This is partial evidence, not full
+runtime recovery, A/B acceptance or a physical-TV pass.
 
 ## Pillow 13 development dependency review — #80
 

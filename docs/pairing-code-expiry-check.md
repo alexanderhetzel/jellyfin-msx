@@ -1,7 +1,7 @@
 # Pending-code expiry and normal recovery — issue #9
 
-**Implemented / automated-tested with mocks / runtime-unverified /
-device-unverified.** This independent test entry covers the unused pending TV
+**Implemented / automated-tested with mocks / actual browser subset /
+recovery deferred / device-unverified.** This independent test entry covers the unused pending TV
 code's lifetime, not authenticated-session/native-token expiry or A/B authority.
 The required fixture scope is explicitly baseline with the authenticated-file
 candidate **off**. Use the existing supervisor's baseline selection without its
@@ -112,6 +112,46 @@ then identified unbounded awaits and the missing post-wait budget check; both
 were corrected and the expanded tests passed. Review also caught the zero-action
 allowance edge, now rejected before scheduling; seventeen focused tests passed,
 including refusal of a candidate delivery marker.
-No runtime source
-variant or live retry was performed. Actual expiry, normal UI recovery and
-sanitized server corroboration remain **unverified** pending a separate grant.
+## Granted browser observation — 2026-10-31
+
+The one expiry-only baseline/candidate-off run used reviewed head
+`b43ad558bb9cf275ec18bdaef1cc6ddab0742b5c`. The original supervisor window was
+18:28:56–18:43:56 UTC; execution stopped and cleanup completed at 18:37:14 UTC.
+The published official MSX runtime was controlled through the granted Chrome
+extension. No runtime source variant, clock override or live retry was used.
+
+**Actual browser observation:** after 307 monotonic seconds following the private
+unused-code read, a fresh companion Step 1 had an empty status and no credentials.
+Exactly one old-code submission showed the specific invalid/expired denial;
+credentials remained absent and no CSRF, verified or success state was accepted.
+The subsequent normal TV Continue action executed, but the expected
+`Pairing or session expired` notice was not confirmed. The driver failed at
+`expired-tv-notice` and stopped immediately. The precise observation failure's
+cause is unknown; this does not establish a product defect or a recovery pass.
+The source audit confirmed that the single Continue control targets
+`pairing.json`, whose expired/unknown branch returns this headline and only the
+public new-code action. Its content payload disables cache/reuse/preload.
+`uv run --no-sync pytest -q tests/test_pairing_layout.py` passed **3 tests**,
+covering the action target, expiry recovery payload and secret absence.
+The browser click resolved, but no retained visible-state/cardinality or request
+observation distinguishes rendering, locator or delivery causes. The offline
+driver model assumes the headline becomes visible; it cannot establish that
+hosted-runtime behavior. No concrete source defect was found in this audit.
+Create new code, fresh sign-in, library recovery and normal Disconnect were
+**not attempted / deferred**. Authenticated-session/native-token expiry and
+physical MSX playback remain outside this evidence.
+
+**Sanitized server corroboration:** pairing statuses `[400]`, authentication 0,
+PlaybackInfo 0, paired sessions 0 and logout 204 responses 0. These counters
+corroborate the denied submission without proving the missing TV notice.
+The fixed result recorded three passed checks (synthetic identity, normal
+pending lifetime elapsed and expired unused-code denial), final status failed,
+session cleanup not required, tabs closed and pending tab creations 0.
+An independent inventory found all three owned tabs absent. The supervisor
+returned stopped/exit 0; all nine captured owned PIDs, the port 18092 listener
+and the supervisor control directory were absent before slot release.
+
+Ignored local evidence: `.lab/reports/issue9-expiry-entry-result.json`,
+`issue9-expiry-server.json`, `issue9-expiry-tabs.json` and
+`issue9-expiry-cleanup.json` in the same directory. Overall #9 remains open and
+PR #73 remains draft; this partial observation does not accept the full ticket.
