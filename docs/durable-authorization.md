@@ -48,6 +48,12 @@ The run stopped at this first functional block, without Retry, credentials,
 restart or a source change. Callback unit tests and CI remain software evidence;
 they do not override this failed actual automatic-start result.
 
+The next narrow observation variant normalizes the empty plugin body to ordinary
+markup, matching the published plugin example and subtitle bridge. Hidden-body
+causation is unproven; this changes no script, CSP, authentication or scheduling.
+The body stays empty and the fixed lifecycle marker stays on the root. Actual
+startup and observation outcomes must be attributed to the tested variant.
+
 Normal current companion QR/manual two-stage CSRF pairing is unchanged. The
 plugin uses same-origin body-only pair/status endpoints and keeps the pending
 session in RAM. Pending Continue redisplays the normal waiting instructions;
