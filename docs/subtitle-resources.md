@@ -22,19 +22,24 @@ original-playback row, and disables next/previous mode changes. These published
 extended properties also remain browser-unverified.
 Track properties now carry only bounded opaque IDs. The transient bridge checks
 the authenticated subtitle resource when HTML5X requests its URL, with a fixed
-recovery notice for fresh denial/failure. It delivers validated bytes through an
-in-memory text/vtt data URL, avoiding a second native bearer fetch. UTF-8 Blob/
-FileReader support is feature-detected with no unsafe URL fallback; URI expansion
-is bounded at1,400,000 characters and stale asynchronous context is rejected.
-No persistence/renewal is added; already delivered cues cannot be recalled.
+recovery notice for fresh denial/failure. The current comparison candidate returns
+the fixed absolute own-origin HTTPS resource URL after that preflight, through
+the unchanged callback object. The native player authenticates its later GET
+again; expiry/revocation between requests can still deny that fetch. No hidden
+renewal/cache is added; already delivered cue bytes cannot be recalled.
 Actual `2473dbb` Chrome playback rejected track loading; DE/EN selected native
 tracks failed with opaque-ID src unchanged. Whether dispatch, response shape or
 data-URL acceptance caused this is not established. The next candidate preserves
-that behavior and exposes only fixed, bounded frame-local numeric counters in a
+that behavior and exposed only fixed, bounded frame-local numeric counters in a
 hidden output: request categories, subtitle XHR entry/status category and callback
 attempts. A data-callback count precedes the callback and proves attempted
 handoff only; HTTP200 does not prove MIME acceptance or rendering. No identifiers,
 URLs, payloads or errors enter counters; no persistence or telemetry is added.
+Actual `1497273` counters established three known subtitle requests, HTTP200
+responses and attempted data-URL callbacks per playback start, while native
+tracks still failed. That evidence supports the single HTTPS comparison, not
+an inferred success. The current successful-URL counter is named
+`subtitleUrlCallback`; it still means attempted handoff, not native acceptance.
 
 An independently authored transient interaction bridge uses only the published
 [interaction interface](https://msx.benzac.de/wiki/index.php?title=Interaction_Plugin)

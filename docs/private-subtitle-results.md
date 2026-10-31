@@ -8,6 +8,40 @@ pause recorded below. No IAB retry/fallback is needed. The original partial Chro
 evidence stays valid within its limits. Final connected-Chrome placement, natural
 expiry, failure recovery and Stop/completion acceptance is still pending.
 
+## Callback-dispatch evidence at `1497273` — 2026-10-31
+
+The diagnostic-only run used exact
+`1497273a7bda07b31153474fd83e55cf5ca3b42a`, normal pairing, official hosted MSX
+in connected Chrome at 1920x1080, strict subtitle fixtures and a 600-second total
+bound including the unchanged 180-second startup allowance. Normal public
+readiness succeeded; no source changes or expiry repeat occurred during the run.
+
+Before playback, the hidden first-party bridge counters were init1 and all
+others0. After startup: video1, subtitle3, unknown0, subtitleFetch3, subtitleOk3,
+subtitleDataCallback3, subtitleNullCallback0, denied0 and other0. This establishes
+known subtitle dispatch, authenticated HTTP200 responses and attempted data-URL
+callback handoff. It does not prove native acceptance or rendering. After a
+second playback start, DE7 then EN12 selection and Stop: video2, subtitle6,
+fetch6, ok6, dataCallback6, unknown0/null0. Active-player counter reads sometimes
+timed out; the final after-Stop read succeeded. No exact per-selection delta is
+claimed. German and English each had native track readyState3 and opaque-ID src,
+at the same paused 4.346121. Captions and layout still failed.
+
+At 10:15:36 UTC normal Disconnect/Confirm showed Disconnected; viewport reset
+succeeded, both owned tabs closed, explicit stop returned exit0/stopped, and all
+nine recorded PIDs/listener18092/control were absent. The original 600-second
+bound was preserved. Only fixed numeric categories were saved in ignored
+`issue22-dispatch-counters.json`; no IDs, URLs, cue text or credentials.
+
+This evidence justifies one minimal next comparison: return the fixed absolute
+authenticated HTTPS subtitle URL through the same callback object, after the
+same preflight. Published HTML5X documentation promises HTTP/HTTPS URLs and IDs,
+not data-URL results. The native player must authenticate its subsequent GET
+again. Expiry/revocation between preflight and that GET can still deny playback;
+there is no hidden renewal or cache, and already delivered cue bytes cannot be
+recalled. This comparison is not a caption pass and does not yet establish that
+URI type rather than payload shape caused rejection.
+
 ## Diagnostic run at `2473dbb` — 2026-10-31
 
 **Partial browser evidence; caption delivery failed.** Exact source
@@ -94,7 +128,7 @@ were absent. Both owned tabs were closed and the shared slot released. The secon
 session had naturally expired; no second-session logout is claimed. No lifetime
 extension, detached helper, new relay, real server or operator credentials.
 
-The resumed candidate uses HTML5X's documented non-HTTP subtitle IDs. On a subtitle
+The earlier data-URL candidate used HTML5X's documented non-HTTP subtitle IDs. On a subtitle
 resolver request, the first-party bridge validates the existing authenticated
 resource through same-origin XHR, then supplies its already-authorized bytes as an
 in-memory `text/vtt` data URL. Fresh denial/missing/type/size failures show a fixed Off/Stop recovery notice;

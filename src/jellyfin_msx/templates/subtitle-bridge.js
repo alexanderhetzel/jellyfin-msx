@@ -1,6 +1,6 @@
 (function () {
     "use strict";
-    var counts = { init: 0, video: 0, subtitle: 0, unknown: 0, subtitleFetch: 0, subtitleOk: 0, subtitleDenied: 0, subtitleOther: 0, subtitleDataCallback: 0, subtitleNullCallback: 0 };
+    var counts = { init: 0, video: 0, subtitle: 0, unknown: 0, subtitleFetch: 0, subtitleOk: 0, subtitleDenied: 0, subtitleOther: 0, subtitleUrlCallback: 0, subtitleNullCallback: 0 };
     function count(kind) {
         counts[kind] = Math.min(65535, counts[kind] + 1);
         var output = document.getElementById("subtitle-diagnostics");
@@ -27,7 +27,7 @@
             if (!isCurrent()) { value = null; }
             if (!settled) {
                 settled = true;
-                if (index !== undefined) { count(value ? "subtitleDataCallback" : "subtitleNullCallback"); }
+                if (index !== undefined) { count(value ? "subtitleUrlCallback" : "subtitleNullCallback"); }
                 callback(value);
             }
         }
@@ -69,15 +69,7 @@
                 if (xhr.status !== 200 || xhr.responseText.length > (index !== undefined ? 1048576 : 100000)) { failure(); return; }
                 if (index !== undefined) {
                     if ((xhr.getResponseHeader("Content-Type") || "").split(";")[0].toLowerCase() !== "text/vtt") { failure(); return; }
-                    if (typeof FileReader !== "function" || typeof Blob !== "function") { failure(); return; }
-                    var reader = new FileReader();
-                    reader.onerror = failure;
-                    reader.onabort = failure;
-                    reader.onload = function () {
-                        if (typeof reader.result !== "string" || reader.result.indexOf("data:text/vtt;") !== 0 || reader.result.length > 1400000) { failure(); return; }
-                        finish({ url: reader.result });
-                    };
-                    reader.readAsDataURL(new Blob([xhr.responseText], { type: "text/vtt;charset=utf-8" }));
+                    finish({ url: window.location.origin + resource });
                     return;
                 }
                 var value = JSON.parse(xhr.responseText);

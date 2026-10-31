@@ -44,6 +44,21 @@ Fresh `uv run pytest -W error`:420passed/1POSIXskip; Ruff check/format95files;
 Node18/18; diffcheck; locked offline wheel/exact22-member allowlist passed.
 Dispatch/actual VTT-request evidence is required before a URI comparison.
 
+Actual diagnostic Chrome at exact `1497273`: beforeplay init1/allothers0;
+afterstartup video1/subtitle3/unknown0/fetch3/HTTP2003/dataCallback3/null0;
+aftersecondstart+DE7/EN12+Stop video2/subtitle6/fetch6/ok6/data6/unknown0/null0.
+This proves known dispatch/HTTP200/attempted callback, not render acceptance.
+Both selected native tracks failed with opaque-ID src at paused4.346121.
+Active-player counter reads timed out; final after-Stop totals worked, so no
+per-selection delta claimed. Normal disconnect/reset/tabs cleanup and explicit
+supervisor stop10:15:36UTC succeeded; all9PIDs/listener/control absent,600s bound
+preserved. Next comparison returns fixed own-origin authenticated HTTPS URL
+through the same callback after preflight; strict later-native-GET denial and
+already-delivered-byte limits remain. No URI-type cause or caption pass inferred.
+The HTTPS comparison passed78affected Python checks, Node17/17, Ruff95files,
+diffcheck and locked offline wheel/exact22-member allowlist. Independent source
+review approves one Chrome comparison only; full acceptance/merge remain open.
+
 The recovery candidate passed a fresh Windows `uv run pytest -W error`:
 **420 passed / 1 POSIX skip**; `uv run ruff check .` and
 `uv run ruff format --check .` passed (95 files), as did the 17 Node guards and
