@@ -1,5 +1,50 @@
 # Verification status — 2026-10-31
 
+## uv bootstrap update — PR #47
+
+**Implemented / automated-tested locally / device-unverified:** the existing
+Dependabot PR is refreshed onto current main with uv 0.13.4, corrected provenance
+and four reviewed binary-wheel hashes covering the existing Linux amd64/arm64
+and Windows amd64 scope. All four actual wheel downloads match official PyPI
+SHA256 values; official Astral release/advisory, Python minimum and Windows
+wheel metadata/licenses were reviewed. [Evidence and failure paths](build-supply-chain.md#uv-bootstrap-update--pr-47-2026-10-31).
+Application/build constraints and `uv.lock` bytes are unchanged.
+
+Windows/Python 3.12.14, task-private hash-verified uv 0.13.4:
+`pip install --require-hashes --only-binary=:all: -r tools/requirements.txt`,
+`uv lock --check`, `uv sync --frozen --only-group build` and
+`uv sync --frozen --extra dev --group build --no-build-isolation` passed.
+`uv run --no-sync pytest -W error`: **544 passed / 1 POSIX skip**, no warnings;
+Ruff check and format **112 files** passed. Synthetic HTTP and two-session
+contract commands passed with browser/device flags false. Locked offline wheel
+build with explicit `.venv/Scripts/python.exe`, exact **25-member** source/license/
+template manifest and exclusion canaries passed. A fresh separate environment
+installed hash-required binary runtime exports and the built wheel without
+resolution; outside-checkout template/app/Fernet/SQLite restart/rotation/replay
+smoke passed. Diff/lock checks passed.
+
+Python/uv are not on this shell's default PATH; the commands explicitly selected
+the existing bundled Python and task-private uv. No global installation changed.
+Local Docker is unavailable. Actual [Linux CI on `9984710`](https://github.com/alexanderhetzel/jellyfin-msx/actions/runs/41214115638)
+passed CPython 3.12.15 and 3.13.17 (**543 passed / 2 skipped** each, warnings as
+errors), Ruff/format, synthetic HTTP/session, wheel/canaries and isolated
+installed-wheel smoke. Docker passed filtered-context export, pinned-image build,
+proxy validation, UID 10001, final image manifest, `pip check`, installed-wheel
+smoke and health/start/pair HTTP checks. Full-history redacted secret scan and
+CodeQL passed. Existing pip update/root-build notices and UID-range warning do
+not establish a test failure and remain visible. Independent exact-head review
+of `998471014e6391c4b3e7c634637bfe8c65c6717a` matched fresh PyPI metadata and all
+four actual wheel hashes/licenses, reran **544 passed / 1 POSIX skip** with
+warnings as errors, and found no source/security blocker. Its evidence-wording
+finding prompted an actual fresh installed-wheel smoke from the OS temporary
+directory outside the checkout, which passed; the reviewer separately confirmed
+installed-wheel import isolation and the same external-directory smoke. Review
+did not establish binary/source equivalence through artifact attestation or run
+local Docker. Final documentation-head review/checks and the master-controlled
+explicit squash merge are recorded in PR #47 before merge.
+No browser/relay, real Jellyfin, credentials, production, trust-store or physical
+device action/pass is part of this tooling update.
+
 ## Revocation source evidence and mocked observer subset — issue #32
 
 **Source-reviewed / automated-tested in part / device-unverified.**

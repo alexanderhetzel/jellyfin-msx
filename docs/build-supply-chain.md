@@ -13,7 +13,7 @@ this build check. See [actual results](status.md).
 | Python builder/runtime | `python:3.12-slim@sha256:aa943ce411423c7582288f18707ff66eddcbaeb510502d747a72aeb34f30d159` |
 | HTTPS proxy | `caddy:2-alpine@sha256:e70b164da81ef698b3ad19af799ea6086ce6d9e48ed4079eb9fe26f6fbf14ee5` |
 | Build backend | `hatchling==1.33.0` in both build-system requirements and the `build` dependency group; transitive versions/artifact hashes in `uv.lock` |
-| Bootstrap | `uv==0.9.8`, existing tool version retained; reviewed PyPI wheel SHA256 values in `tools/requirements.txt` |
+| Bootstrap | `uv==0.13.4`; reviewed PyPI wheel SHA256 values in `tools/requirements.txt`; see the PR #47 review below |
 | GitHub Actions | Full commit SHAs; checkout does not persist credentials; workflow token has only `contents: read` |
 | Secret scanner | Gitleaks 8.30.1 release archive with its existing SHA256 verification; complete Git history, redacted findings |
 
@@ -29,7 +29,7 @@ and `sha256:04913b1da43339a40ad1ea87827d70a576ac5aa6cf674c6e24fdca675887533a`.
 CI executes Linux amd64 builds; the index listing other architectures is not an
 execution pass for them. Bootstrap hashes cover Linux amd64/arm64 and Windows
 amd64; add reviewed wheel hashes before using this bootstrap on another platform.
-[PyPI's uv release metadata](https://pypi.org/pypi/uv/0.9.8/json) and
+[PyPI's uv release metadata](https://pypi.org/pypi/uv/0.13.4/json) and
 [Hatchling metadata](https://pypi.org/pypi/hatchling/1.33.0/json) are the provenance
 for those selections.
 
@@ -116,6 +116,41 @@ Existing dependency versions did not change. The ordinary locked CI, wheel and
 production packaging checks remain required; no local Docker pass is claimed.
 
 ## Update review procedure
+
+### uv bootstrap update — PR #47, 2026-10-31
+
+**Implemented / automated-tested locally:** uv 0.13.4 replaces 0.9.8 only in
+the bootstrap requirements. The application/build lock, constraints, Docker
+instructions and workflow permissions are unchanged. The
+[official tagged release](https://github.com/astral-sh/uv/releases/tag/0.13.4)
+and [Astral advisory](https://github.com/astral-sh/uv/security/advisories/GHSA-hq85-5cpj-mr62)
+confirm that 0.13.4 removes the compromised emSign ECC Root CA - G3 from uv's
+bundled trust roots; the advisory affects uv versions below 0.13.4. This fixes
+the build tool's bundled roots, not the OS or every other dependency's trust store.
+No TLS verification override or OS trust change is part of this update.
+
+The [official PyPI metadata](https://pypi.org/pypi/uv/0.13.4/json) declares
+Python >=3.8, Astral's repository and `MIT OR Apache-2.0`. All four selected
+wheel downloads were SHA256 checked before use; the Windows wheel's metadata
+and both included license files were inspected. The documented platform scope
+remains Linux amd64/arm64 and Windows amd64. Two arm64 wheels cover glibc
+2.17/musl 1.1 and glibc 2.28 selections; the latter can be preferred by newer
+glibc platforms and therefore also needs its reviewed hash. No sdist, macOS,
+32-bit or additional architecture hash is admitted by this requirements file.
+
+| Wheel suffix after `uv-0.13.4-py3-none-` | Verified SHA256 |
+| --- | --- |
+| `manylinux_2_17_x86_64.manylinux2014_x86_64.whl` | `05e4332791b4d55b6dde8695b7fa6079b26991519f44760887c5dfbd5ca4fe53` |
+| `manylinux_2_17_aarch64.manylinux2014_aarch64.musllinux_1_1_aarch64.whl` | `e90ab42825587821096cb0d071e387468da38cfa22818c91f9c0b3c0453048e8` |
+| `manylinux_2_28_aarch64.whl` | `7b3cdf868e5415631fe797b648c0d6945d38d388f23367bdd0b6332e80a1fcb0` |
+| `win_amd64.whl` | `b2ff80397273fff0e02c20eacae6882834c811827d6fc08f658db156fe754386` |
+
+Local execution uses a hash-verified task-private uv, leaving global tools and
+other worktrees untouched. Hash-required binary bootstrap installation, frozen
+sync and offline project build retain fail-closed behavior. Unsupported wheels
+or changed bytes fail their allowlist/hash checks rather than falling back to a
+source build. Actual commands/results and remaining CI/review gates are in
+[status](status.md#uv-bootstrap-update--pr-47).
 
 Weekly Dependabot PRs cover uv application/build locks, pip bootstrap requirements,
 SHA-pinned Actions and Docker inputs including Compose. Updates are review-only;
