@@ -2,8 +2,8 @@
     "use strict";
     var events = ["video:load", "video:play", "video:pause", "video:stop", "video:seek", "video:restart", "video:speed", "app:suspend", "app:resume", "app:sleep", "app:awake", "app:connect", "app:disconnect"];
     function context() {
-        var match = window.location.hash.match(/^#([A-Za-z0-9_-]{43})\/([a-fA-F0-9-]{32,36})\/([a-fA-F0-9-]{32,36})(?:\/([01])\/(-1|0|[1-9][0-9]{0,3}))?$/);
-        return match && (match[5] === undefined || Number(match[5]) <= 1024) ? { secret: match[1], item_id: match[2], media_source_id: match[3], force: match[4] === "1", subtitle: match[5] === undefined ? -1 : Number(match[5]), hash: window.location.hash } : null;
+        var match = window.location.hash.match(/^#([A-Za-z0-9_-]{43})\/([a-fA-F0-9-]{32,36})\/([a-fA-F0-9-]{32,36})(?:\/([01])\/(-1|0|[1-9][0-9]{0,3})(?:\/(resume|start))?)?$/);
+        return match && (match[5] === undefined || Number(match[5]) <= 1024) ? { secret: match[1], item_id: match[2], media_source_id: match[3], force: match[4] === "1", subtitle: match[5] === undefined ? -1 : Number(match[5]), resume: match[6] === "resume", hash: window.location.hash } : null;
     }
     function numbers(input) {
         var result = {};
@@ -148,15 +148,16 @@
                         if (xhr.status !== 200 || xhr.responseText.length > 100000 || requestEpoch !== epoch || window.location.hash !== ctx.hash || Date.now() - requested >= 18000) { finish(null); return; }
                         var value = JSON.parse(xhr.responseText);
                         if (!value || !/^[A-Za-z0-9_-]{43}$/.test(value.grant) || typeof value.playback_id !== "string" || !/^[A-Za-z0-9_-]{16,64}$/.test(value.playback_id) || typeof value.url !== "string" || value.url.indexOf("https://") !== 0 || typeof value.expires_in !== "number" || !isFinite(value.expires_in) || value.expires_in <= 0 || value.expires_in > 28800) { finish(null); return; }
+                        if (typeof value.start_position !== "number" || !isFinite(value.start_position) || value.start_position < 0 || typeof value.duration !== "number" || !isFinite(value.duration) || value.duration <= 0 || value.duration > 864000 || value.start_position >= value.duration || (!ctx.resume && value.start_position !== 0)) { finish(null); return; }
                         var now = Date.now();
                         active = { epoch: requestEpoch, hash: ctx.hash, id: value.playback_id, grant: value.grant, expectedURL: value.url, correlated: false, expires: now + value.expires_in * 1000, started: now, lastFresh: now, lastProgress: 0, seq: 0, queue: [], retries: 0, sampling: true, reconcile: 0, stopUntil: 0 };
                         var generation = active;
                         generation.life = setTimeout(function () { abandon(generation); }, value.expires_in * 1000);
-                        finish({ url: value.url, properties: { "portal:playback": value.playback_id } });
+                        finish({ url: value.url, properties: { "portal:playback": value.playback_id, "resume:position": String(value.start_position) } });
                         generation.poll = setTimeout(function () { sample(generation); }, 2000);
                     } catch (error) { finish(null); }
                 };
-                xhr.send(JSON.stringify({ item_id: ctx.item_id, media_source_id: ctx.media_source_id, force: ctx.force, subtitle: ctx.subtitle }));
+                xhr.send(JSON.stringify({ item_id: ctx.item_id, media_source_id: ctx.media_source_id, force: ctx.force, subtitle: ctx.subtitle, resume: ctx.resume }));
             },
             handleEvent: function (event) {
                 var g = active;
@@ -189,7 +190,7 @@
                 handleRequest: function (id, data, callback) {
                     if (id === "init") {
                         callback({ type: "list", cache: false, reuse: false, headline: "Playback", template: { type: "default", layout: "0,0,12,1" }, items: [
-                            { title: "Play original", action: "video:resolve:request:interaction:portal-video", properties: { "trigger:complete": "player:stop", "button:next:enable": "false", "button:prev:enable": "false" } },
+                            { title: context() && context().resume ? "Resume saved progress" : "Play from beginning", action: "video:resolve:request:interaction:portal-video", properties: { "trigger:complete": "player:stop", "button:next:enable": "false", "button:prev:enable": "false" } },
                             { title: "Back to details", action: "back" }
                         ] });
                     } else if (id === "portal-video" || id === "video:portal-video") {

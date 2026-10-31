@@ -1,5 +1,25 @@
 # Verification status — 2026-10-31
 
+## Saved progress source milestone — issue #19
+
+**Implemented / automated-tested / device-unverified; browser acceptance pending.**
+Movie/episode details now offer meaningful saved-progress Resume/Start over.
+Fresh authorized metadata and the selected source bound PlaybackInfo StartTimeTicks
+and native resume:position; invalid/watched/near-end progress starts at zero.
+Saved resume never enables conversion, including on an opted-in host. #18's
+observed-only progress/Stop and generation fencing remain unchanged. No audio/
+version selector or subtitle/legacy reporting support is claimed.
+[Contract, scope and pending runtime gate](saved-progress.md).
+
+Windows/Python3.12.14 locked dev/build sync passed. Full `uv run --no-sync pytest
+-W error`: **518 passed / 1 POSIX skip**, no warnings. Node **45** (28 lifecycle,
+12 subtitle, 5 browser guards), Ruff check/format **104 files**, diff check and
+locked offline wheel/exact **25-member** source/license/template allowlist passed.
+No browser/relay activation, operator/Ultra access, deployment or TV/audio pass
+occurred at this checkpoint. Independent source/security review found no blockers
+after the optional-host HLS timeline edge was removed; final committed-head/docs
+review and exact-head CI remain required before runtime readiness.
+
 ## Original playback lifecycle reporting — issue #18
 
 **Implemented / automated-tested / browser-tested / device-unverified.**

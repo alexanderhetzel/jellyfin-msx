@@ -23,7 +23,14 @@ from .lifecycle import Lifecycle
 from .middleware import PairBodyLimit
 from .msx import button, content, pairing_page, subtitle_playback, text, wrapped
 from .pairing_qr import activation_png
-from .playback import PROFILE_NAME, choose_source, compatibility_reasons, resolve
+from .playback import (
+    PROFILE_NAME,
+    choose_source,
+    compatibility_reasons,
+    position_label,
+    resolve,
+    resume_ticks,
+)
 from .presentation import PAIR_CSS
 from .state import State
 from .subtitles import OFFICIAL_ORIGINS, SubtitleResources
@@ -207,10 +214,12 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
         body = await playback_body(request)
         if (
             not {"item_id", "media_source_id"} <= set(body)
-            or set(body) - {"item_id", "media_source_id", "force", "subtitle"}
+            or set(body) - {"item_id", "media_source_id", "force", "subtitle", "resume"}
             or type(body.get("force", False)) is not bool
+            or type(body.get("resume", False)) is not bool
             or type(body.get("subtitle", -1)) is not int
             or not -1 <= body.get("subtitle", -1) <= 1024
+            or (body.get("resume", False) and (body.get("force") or body.get("subtitle", -1) >= 0))
         ):
             raise PortalError(400, "Playback report rejected.")
         item_id, source_id = identifier(body["item_id"]), identifier(body["media_source_id"])
@@ -223,6 +232,7 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
             body.get("subtitle", -1),
             source_id,
             playback_context=context,
+            resume=body.get("resume", False),
         )
         state.get(secret)  # Expiry/revocation during upstream negotiation fails closed.
         ticks, play_session = context["duration_ticks"], context["play_session_id"]
@@ -251,6 +261,7 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
             "playback_id": grant.playback_id,
             "url": stream_url,
             "duration": grant.duration,
+            "start_position": context["start_ticks"] / 10_000_000,
             "expires_in": min(28800, device.expires - state.clock()),
         }
 
@@ -661,14 +672,20 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
         entries = []
         try:
             selected = choose_source(item, settings.max_bitrate, settings.allow_transcoding)
-            entries.append(
-                button(
-                    "Play original with watch progress (TV unverified)",
-                    "content:request:interaction:init@"
-                    + url("/lifecycle.html")
-                    + f"#{secret}/{item_id}/{identifier(selected.get('Id'))}",
+            progress = resume_ticks(item, selected)
+            for label, choice in (
+                [("Resume from " + position_label(progress), "resume"), ("Start over", "start")]
+                if progress
+                else [("Play original with watch progress (TV unverified)", "start")]
+            ):
+                entries.append(
+                    button(
+                        label,
+                        "content:request:interaction:init@"
+                        + url("/lifecycle.html")
+                        + f"#{secret}/{item_id}/{identifier(selected.get('Id'))}/0/-1/{choice}",
+                    )
                 )
-            )
             entries.append(play_button("Try original (TV unverified)"))
             entries.append(
                 button(
