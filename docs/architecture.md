@@ -40,7 +40,10 @@ same-origin checks. Passwords are neither persisted nor sent through query strin
 Authenticated REST requests use the standard MediaBrowser Authorization header
 with its Token parameter. Native video URLs use canonical `ApiKey`, replacing
 any previous token query variants. Legacy `X-Emby-Token` and `api_key` are not
-accepted by Jellyfin 12 and must not be used.
+required by this client; Jellyfin 12 can optionally enable legacy authorization.
+The client must work without that setting. The
+[source investigation](jellyfin-revocation-source.md) distinguishes credential
+validation from the authorization requirement on an original-file endpoint.
 The companion `/pair` page uses `Referrer-Policy: same-origin` so native Chromium
 form submissions preserve their Origin for validation; off-site referrers are
 still suppressed. Private capability routes retain `no-referrer`. A blanket

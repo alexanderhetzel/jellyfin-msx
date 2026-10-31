@@ -1,5 +1,29 @@
 # Verification status — 2026-10-31
 
+## Revocation source evidence and mocked observer subset — issue #32
+
+**Source-reviewed / automated-tested in part / device-unverified.**
+The [pinned source investigation](jellyfin-revocation-source.md) distinguishes
+confirmed authentication/authorization/static-file code from the inferred
+explanation of the retained original-file response. Metadata denial in the old
+probe is client-normalized 401, not a measured raw upstream status: 401 and 403
+both normalize to that error. Original-file 206 and byte comparison were raw.
+
+The standalone strict observer requires a fresh bounded request denied with
+401/403 and rejects a denial body containing the original fixture prefix. Mocked
+regressions preserve rejection of 200/206/redirects, body bounds and safe fixed
+diagnostics. This subset imports no real Jellyfin runner, version/image manifest
+or matrix workflow, and changes no client playback or authorization policy.
+Draft PR #52's failing real expectation is unchanged; #32 remains open and no
+complete server-version range, new live result, MSX or TV pass is claimed.
+
+Windows/Python 3.12.14 frozen build/dev sync passed. Local
+`uv run --no-sync pytest -q -W error`: **540 passed / 1 POSIX skip**, no warnings;
+Ruff check and format check passed (**109 files**); `git diff --check` passed.
+The twelve new observer checks are MockTransport-only. Independent final review
+and normal repository CI results are recorded in the subset PR; neither replaces
+the retained failing real-server contract in draft PR #52.
+
 ## Saved progress — issue #19
 
 **Implemented / automated-tested / browser-tested / device-unverified.**
