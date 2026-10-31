@@ -13,12 +13,12 @@ version selector or subtitle/legacy reporting support is claimed.
 
 Windows/Python3.12.14 locked dev/build sync passed. Full `uv run --no-sync pytest
 -W error`: **518 passed / 1 POSIX skip**, no warnings. Node **45** (28 lifecycle,
-12 subtitle, 5 browser guards), Ruff check/format **104 files**, diff check and
+12 subtitle, 5 browser guards), Ruff check/format **105 files**, diff check and
 locked offline wheel/exact **25-member** source/license/template allowlist passed.
 No browser/relay activation, operator/Ultra access, deployment or TV/audio pass
 occurred at this checkpoint. Independent source/security review found no blockers
-after the optional-host HLS timeline edge was removed; final committed-head/docs
-review and exact-head CI remain required before runtime readiness.
+after the optional-host HLS timeline edge was removed; committed-head/docs review
+accepted the source milestone. Exact-head CI remains required before runtime readiness.
 
 ## Original playback lifecycle reporting — issue #18
 
