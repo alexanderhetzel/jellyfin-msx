@@ -17,6 +17,7 @@ class PairBodyLimit:
                 "/api/device-authorization/enroll",
                 "/api/device-authorization/renew",
                 "/api/playback/start",
+                "/api/playback/options",
                 "/api/playback/observations",
             }
         ):

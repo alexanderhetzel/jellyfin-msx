@@ -1,5 +1,34 @@
 # Verification status — 2026-10-31
 
+## Playback recovery source milestone — issue #23
+
+**Implemented / automated-tested / device-unverified; browser acceptance pending.**
+The preferred original-with-progress flow now provides fixed failure categories,
+three bounded explicit playback attempts, native recovery/Stop/Back controls and
+fresh authenticated policy-eligible stored alternatives. Back cancels pending
+responses; cached explicit reentry resets the budget. #18 generation binding,
+old-Stop acknowledgement and last-safe lease remain unchanged. Legacy/subtitle
+flows retain their existing recovery scope.
+
+`uv run pytest -q`: **491 passed / one POSIX skip**; Ruff check and format
+passed (**102 files** on final documentation recheck); three Node suites **50 passed**;
+diff check passed.
+Offline wheel build/exact manifest (**25 entries**) and synthetic HTTP smoke passed.
+The prepared synthetic recovery scenario is strict MockTransport with fixed
+faults, normal pairing and pinned RAM media; no relay or browser was started.
+Independent review found and prompted fixes for stale Back callbacks, cached
+attempt reset, malformed-success recovery and protocol-error classification.
+Final independent source/security review found no remaining blocking findings;
+actual runtime acceptance remains pending. The reviewer independently reran the
+full **491 passed / one skip**, then the latest **72 affected Python / 50 Node**
+checks after cancellation fixes. Review did not operate a browser or relay.
+
+The published interaction API does not expose a typed native media-error cause.
+Native failure remains explicitly unknown; no pause, missing sample or tool
+timeout diagnoses decoding/connectivity. Therefore the original decode-specific
+criterion remains unmet and #23 stays open as a partial draft milestone. See
+[the recovery contract, evidence boundaries and pending verification](playback-recovery.md).
+
 ## Original playback lifecycle reporting — issue #18
 
 **Implemented / automated-tested / browser-tested / device-unverified.**
