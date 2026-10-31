@@ -485,6 +485,29 @@ environment variant ran. This repair does not identify the previous transport
 failure's cause; original automatic entry/reload/restart/re-pair acceptance and
 all negative runtime evidence below remain outstanding.
 
+**Focused normal entry at `e597045`: failed / no runtime acceptance.** Under
+the granted unchanged 900-second total/180-second startup bounds, verified HTTPS
+became ready and official MSX 0.1.167 was opened directly with normal startup
+parameters. No ForceInit, Retry or top-level test-origin warm-up occurred. After
+ordinary settling, the visible UI showed Load Error / Data Load Error and the
+existing runtime error reported Request timed out, before any pairing page.
+The fixed own-frame body marker returned only a selector deadline; its value
+and handler/boot entry remain unknown. No CDP, Network collection or viewport
+override was used, so this run supplies neither HTTP status categories nor an
+explicit paused-document error. Earlier transport observations are not imported.
+
+The readable sanitized 2560x1249 error PNG was inspected after excluding a
+full-page CSS-gradient mask from the conservative privacy rectangles; raw capture
+stayed in RAM only. The initial overmasked preview is not evidence. Initial REPL
+bindings had reset; fresh inventory selected connected Chrome profile Mein Chrome
+before the sole test tab opened. No IAB/native app or MCP App tab was used.
+Explicit supervisor stop at **14:51:04 UTC / 15:51:04 Vienna** exited zero/stopped;
+all **nine** recorded owned PIDs, listener18092, control directory and own helpers
+were absent, and the one owned Chrome tab closed. No credentials, restore matrix,
+source change, new budget or operator state was used. The callback-order repair
+remains automated evidence; it is not a verified fix for automatic entry or the
+previous unknown document boundary. #12 remains open and the PR remains draft.
+
 **Request/response startup correction — implemented / automated-tested /
 runtime acceptance pending:** rebased onto subtitle milestone `1594bf63`, keeping
 its bridge, policies, packaging and synthetic scenario. Startup now uses the

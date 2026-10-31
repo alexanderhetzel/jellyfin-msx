@@ -31,6 +31,18 @@ reached our handler or that this gate caused the HTTP-200/paused-document failur
 All failed runs, unknown lifecycle values and the prior-visit counterexample
 below remain valid. No browser/relay or environment variant was used in this audit.
 
+Its later focused runtime check at `e597045` did not pass: direct normal startup
+without ForceInit/Retry/warm-up settled on Data Load Error / Request timed out
+before pairing. The own-frame marker read returned a selector deadline only;
+no handler entry is established. No CDP/Network/viewport override was used, so
+no HTTP or explicit paused-response evidence is claimed for this run. A readable
+sanitized default2560x1249 error capture was inspected; the initial overmasked
+preview is excluded and raw pixels remained RAM-only. Explicit stop at
+14:51:04 UTC / 15:51:04 Vienna returned exit zero/stopped; all nine owned PIDs,
+listener/control/helpers were absent and the sole owned tab closed. No credentials
+or full restore matrix ran. The source repair remains valid defensive callback
+handling, not actual automatic-start acceptance or a proven historical root cause.
+
 **Implemented / automated-tested / device-unverified:** `MSX_REMEMBER_DEVICES=true`
 requires the external key/database configuration below and selects a public
 `/msx/remember.json` startup document. The default remains ordinary RAM pairing.
