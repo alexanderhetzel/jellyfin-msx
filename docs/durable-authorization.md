@@ -1,5 +1,108 @@
 # Durable server authorization — issue #12
 
+## Opt-in MSX client — 2026-10-31
+
+**Implemented / automated-tested / device-unverified:** `MSX_REMEMBER_DEVICES=true`
+requires the external key/database configuration below and selects a public
+`/msx/remember.json` startup document. The default remains ordinary RAM pairing.
+The independently authored plugin shell/script live on the portal's own HTTPS
+origin. Only its exact HTML route permits framing by the official MSX web origins;
+other pages retain frame denial. Script policy allows our own script and the
+vendor-hosted public API library; connect policy is same-origin. No proprietary
+runtime is copied, and no inline/eval exception or cross-origin POST is added.
+
+The published [multiple-action/startup contract](https://msx.benzac.de/wiki/index.php?title=Internal_Actions)
+shows the public fallback content, then loads the interaction plugin. Its public
+readiness callback reads `TVXServices.storage`, then shows normal pairing or
+renews authorization. Readiness is bounded to five seconds, requests to fifteen
+seconds and one operation per plugin instance. Actual automatic startup and
+normal reopen acceptance must be recorded separately; these API choices alone
+do not establish an MSX integration pass.
+
+Normal current companion QR/manual two-stage CSRF pairing is unchanged. The
+plugin uses same-origin body-only pair/status endpoints and keeps the pending
+session in RAM. Pending Continue redisplays the normal waiting instructions;
+authenticated Continue enrolls, verifies the exact newly stored renewal value and
+generation, and only then opens private libraries. Storage contains only version,
+renewal secret, absolute expiry and generation. User-scoped Jellyfin tokens and
+short RAM sessions never enter this storage record.
+
+Before each replacement write, the client checks that the complete prior record
+is unchanged. It then reads back and privately compares the exact new serialized
+value/generation. Silent no-op writes cannot pass on mere key presence. A losing
+or uncertain request does not overwrite another context's newer record. Timeout
+preserves local state and blocks automatic retry; a definitive 401 may remove
+only the exact unchanged stale record. An early losing context can safely force
+both contexts to re-pair; no successful durable client winner is guaranteed by
+storage lacking atomic compare-and-swap. Failed verification prevents library
+navigation and attempts authenticated cleanup of the just-issued RAM grant.
+
+Only one key, `jellyfin-msx.authorization.v1`, is read/written/removed through the
+public API. No enumeration/global clear or direct localStorage is used. Explicit
+Create new code may clear that owned record and start normal pairing; unavailable
+storage has an explicit Pair without remembering path. Missing/corrupt/expired
+records never authorize a library. Clearing a lost record alone cannot revoke an
+unknown server credential; bounded expiry and normal authenticated Disconnect
+remain the server authority boundary.
+
+The plugin owns startup/enrollment transiently. It has no timer, observer or
+background renewal after entering libraries. Another explicit feature may replace
+the interaction plugin; normal Back/private navigation does not reload bootstrap.
+Public startup reload rotates the renewal and replaces old sessions, so it must
+not run while another resolver still needs the old grant. Normal server
+Disconnect/Confirm works independently of current interaction ownership. Any
+remaining local renewal is denied and exact-record cleaned on next bootstrap.
+
+The same portal origin/top-level MSX site/profile/partition shares a remembered
+credential, as a browser device context. A second tab is not cryptographic device
+isolation. Normal independently pending pairing grants remain separated; a copied
+renewal is still a bearer credential. Physical installed-app framing, retention,
+standby and remote behavior remain device-unverified in #4.
+
+### Isolated synthetic restart verification
+
+The startup-only `remember` scenario in `tools.synthetic_https` uses only
+normal synthetic login, MockTransport, a private temporary directory, an external
+synthetic Fernet key generated in supervisor RAM and SQLite synthetic upstream
+token verifiers. It never reads operator configuration/environment secrets or an
+OS credential store, and has no real-network Jellyfin fallback. The key travels
+only through private owned stdin pipes, never argv/files/output. The fixture's
+hashed upstream sessions survive a fresh backend process, modeling a separately
+running Jellyfin without bypassing its synthetic authentication.
+
+The local-only `--restart-backend` signal replaces the owned backend under the
+same original relay lifetime (at most 900 seconds including 180-second startup).
+The supervisor continuously holds the exclusive loopback listener; private Windows
+socket descriptors are duplicated to exact owned child PIDs. The vendor wrapper
+also holds a duplicate until its tunnel stops, including parent-EOF cleanup.
+Restart never exposes a free relay port, changes the origin, extends the original
+deadline or adds a public mutation endpoint. Replacement readiness is bounded by
+30 seconds and the remaining original deadline. JobObject/EOF/PID cleanup and
+verified-TLS/no-redirect/no-host-config safeguards remain.
+
+Independent pre-launch security review identified and corrected an initial
+released-listener gap. Actual Windows ephemeral-port tests deny competing binds
+through two child-process lifecycles and the interval between them; mock tests
+check vendor-stop-before-reservation-release and unchanged RAM key/deadline.
+These are containment/source tests, not actual hosted MSX restoration evidence.
+
+### Browser availability and acceptance — 2026-10-31
+
+**Deferred:** the current maintainer instruction requires the integrated browser
+for application verification. Fresh inventory exposed only the Chrome extension.
+The documented `cua.createBrowserTab("iab", "about:blank")` call returned
+**Browser is not available: iab**. No tab or public relay was created. The browser
+slot was released without a Chrome fallback, permission change or repeated call.
+
+Automatic startup, actual exact-generation storage, normal reload/reopen, MSX
+restoration after backend-process restart, second pending-context denial and
+visible revoke/re-pair are therefore **not accepted** for this client. API restart/
+isolation and real ephemeral Windows socket/process tests are not MSX passes.
+Keep the client in a draft PR and #12 open until the required evidence exists.
+Older marker retention/QR evidence remains attributed to its original revisions.
+
+## Server authorization milestone — 2026-10-30 (historical)
+
 **Implemented / automated-tested / device-unverified — 2026-10-30.** This opt-in
 backend milestone does not yet remember a TV. The default MSX UI still uses RAM
 sessions and does not call these APIs. Issue #12 stays open for controlled-origin

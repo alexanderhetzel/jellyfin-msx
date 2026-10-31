@@ -36,6 +36,50 @@ succeeded and both tabs closed. Session naturally expired during cleanup Back;
 no logout claim. Original600-second bound preserved. No operator/Ultra, vendor
 code, renewal/cache, security or deployment changes.
 
+## Remembered-device client preparation — issue #12
+
+**Implemented / automated-tested / device-unverified; runtime acceptance deferred:**
+the explicit `MSX_REMEMBER_DEVICES` option requires the existing external key and
+encrypted store. Its own-origin public-MS​​X client performs ordinary pending
+pairing, body-only enrollment/renewal, exact new secret/generation readback and
+bounded readiness/requests with one in-flight operation. Timeout/conflict/save
+failure gives recovery without automatic replay or overwriting a newer context
+record. Normal server Disconnect is independent of transient interaction ownership.
+Default pairing, CSRF, strict generation/revocation and single-worker policy remain.
+See [client/security/recovery details](durable-authorization.md).
+
+The startup-only synthetic `remember` scenario uses only a supervisor-RAM key,
+private temporary encrypted state, hashed synthetic upstream sessions and strict
+MockTransport. Its local restart signal retains the original 900-second bound
+including startup, verified TLS and no operator state. Independent review caught
+a draft restart listener gap; retaining exclusive sockets in the supervisor and
+vendor wrapper corrected it before any relay run. Actual Windows ephemeral-port
+child restarts deny competing binds; mock EOF cleanup stops the vendor before
+releasing its reservation. No public relay was launched for this client.
+
+Windows/Python 3.12.14, source `2e658c8` rebased onto `3bfc60b`: frozen dev/build
+sync passed; full `uv run --no-sync pytest -W error` with isolated temp/cache
+**420 passed / 1 POSIX skip**, no warnings; Ruff check/format **94 files**,
+**12 Node client guards** and diff checks passed. Offline wheel build and exact
+**22-member** source/license/template/script allowlist passed. No dependency or
+lock versions changed. An initial strict descriptor decoder rejected its newline;
+stripping the owned IPC line and closing test pipes fixed the new test harness.
+
+Independent pre-launch source/security review found no blockers for bounded
+synthetic verification and independently ran 65 affected Python tests/one POSIX
+skip, 12 Node guards and Ruff/format/diff checks, including actual Windows
+socket/process and EOF-ordering cases. It ran no relay/browser and established
+no application acceptance.
+
+**Deferred / issue remains open:** integrated-browser-only verification was
+required by the maintainer. Inventory exposed only Chrome, and the documented
+IAB creation call returned Browser is not available: iab. No tab, supervisor,
+shared listener or control directory was created; the slot was released. No Chrome
+fallback, trust/security change, operator/Jellyfin access or TV action occurred.
+Keep the client PR a draft until actual automatic startup, exact-save/readback,
+normal reload/reopen, backend restart, second-device denial and visible
+disconnect/re-pair pass. Tests and older storage/QR evidence do not satisfy them.
+
 ## Authenticated hosted series navigation — issue #7
 
 **Implemented / automated-tested / browser-tested / device-unverified:** the
