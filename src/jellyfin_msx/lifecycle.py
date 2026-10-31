@@ -90,6 +90,7 @@ class Lifecycle:
         play_method="DirectPlay",
         *,
         send=None,
+        authorize=None,
     ):
         if not _number(duration, 864000) or duration <= 0 or expires <= self.clock():
             raise invalid()
@@ -101,6 +102,8 @@ class Lifecycle:
         if len(self.grants) >= self.maximum:
             raise invalid(503)
         async with self._locked(session_key):
+            if authorize is not None:
+                authorize()
             if session_key in self.blocked_sessions:
                 raise invalid(503)
             previous = self.active.get(session_key)
@@ -113,6 +116,8 @@ class Lifecycle:
                     # Never publish the replacement until the old Stop is ACKed.
                     if not previous.terminal_delivered:
                         raise invalid(503)
+            if authorize is not None:
+                authorize()
             if len(self.grants) >= self.maximum or expires <= self.clock():
                 raise invalid(503)
             grant = PlaybackGrant(
@@ -131,6 +136,14 @@ class Lifecycle:
             self.grants[_digest(grant.secret)] = grant
             self.active[session_key] = grant
             return grant
+
+    def discard_unpublished(self, grant):
+        """Remove only this never-disclosed generation, without reporting playback."""
+        if grant.started:
+            return
+        self.grants.pop(_digest(grant.secret), None)
+        if self.active.get(grant.session_key) is grant:
+            self.active.pop(grant.session_key, None)
 
     @asynccontextmanager
     async def _locked(self, session_key):

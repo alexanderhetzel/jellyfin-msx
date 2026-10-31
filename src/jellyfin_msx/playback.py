@@ -1,7 +1,9 @@
+import asyncio
 import math
 import secrets
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
+from . import original_file
 from .device_profile import (
     AUDIO_CODECS,
     MAX_VIDEO_HEIGHT,
@@ -261,13 +263,46 @@ async def resolve(
     *,
     resume: bool = False,
 ):
+    if original_file.enabled(jellyfin.settings):
+        if playback_context is None or media_source_id is None or force or subtitle != -1:
+            raise original_file.unsupported()
+        try:
+            async with asyncio.timeout(original_file.SOURCE_SECONDS):
+                return await _resolve(
+                    jellyfin,
+                    device,
+                    item_id,
+                    force,
+                    subtitle,
+                    media_source_id,
+                    playback_context,
+                    resume=resume,
+                )
+        except TimeoutError:
+            raise PortalError(504, "Authenticated original preparation timed out.") from None
+    return await _resolve(
+        jellyfin, device, item_id, force, subtitle, media_source_id, playback_context, resume=resume
+    )
+
+
+async def _resolve(
+    jellyfin: Jellyfin,
+    device: Device,
+    item_id: str,
+    force: bool,
+    subtitle: int,
+    media_source_id: str | None = None,
+    playback_context: dict | None = None,
+    *,
+    resume: bool = False,
+):
     # Saved-progress resume is an original-file contract. HLS may have a
     # server-shifted timeline, so it cannot share the native absolute offset.
     allow_transcoding = jellyfin.settings.allow_transcoding and not resume
     if not allow_transcoding and (force or subtitle >= 0):
         raise PortalError(409, "Transcoding and subtitle burn-in are disabled for this server.")
     item = await jellyfin.item(device, item_id)  # enforce user access before negotiation
-    if item.get("Type") not in {"Movie", "Episode", "Video"}:
+    if item.get("Type") not in ("Movie", "Episode", "Video"):
         raise PortalError(400, "Select a movie or episode to play.")
     if item.get("PlayAccess") == "None":
         raise PortalError(403, "Jellyfin does not allow playback of this item.")
@@ -291,6 +326,9 @@ async def resolve(
                 409, "Selected version is no longer eligible. Reopen the item details."
             )
     source_id = identifier(selected.get("Id"))
+    file_proof = None
+    if original_file.enabled(jellyfin.settings):
+        file_proof = await original_file.prepare(jellyfin, device, item_id, item, selected)
     start_ticks = resume_ticks(item, selected) if resume else 0
     body = {
         "UserId": device.user_id,
@@ -318,6 +356,8 @@ async def resolve(
         raise PortalError(
             409, "Jellyfin cannot play this item. Check permissions and encoder support."
         )
+    if file_proof is not None:
+        original_file.member(info, source_id)
     sources = [
         s for s in info.get("MediaSources", []) if s.get("Id") == source_id and within_hd_policy(s)
     ]
@@ -335,6 +375,11 @@ async def resolve(
     )
     if direct:
         source = direct
+        file_path = None
+        if file_proof is not None:
+            file_path = await original_file.revalidate(
+                jellyfin, device, item_id, file_proof, source
+            )
         query = urlencode(
             {
                 "Static": "true",
@@ -345,7 +390,9 @@ async def resolve(
         )
         url = authenticated_url(
             jellyfin.settings.jellyfin_url,
-            f"/Videos/{item_id}/stream.{lower(source['Container'])}?{query}",
+            file_path
+            if file_path is not None
+            else f"/Videos/{item_id}/stream.{lower(source['Container'])}?{query}",
             device.token,
         )
         mode = "DirectPlay"

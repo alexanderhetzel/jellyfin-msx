@@ -1,5 +1,11 @@
 # Architecture and decisions
 
+The default-off authenticated-original candidate preserves the existing control
+and reporting architecture, with a narrowly admitted selected-version `/File`
+byte target. Its operator trust contract, final authority fences and unverified
+runtime limits are in the [route assessment](authenticated-original-assessment.md)
+and [configuration](deployment.md#configuration). The default remains `legacy`.
+
 ## M1 data flow
 
 1. MSX loads `/msx/start.json` (also `/msx/start.json` under the MSX setup convention).
