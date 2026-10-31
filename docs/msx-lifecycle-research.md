@@ -1,8 +1,10 @@
 # Public MSX playback lifecycle research — issue #17
 
 **Implemented / browser-tested / device-unverified:** an independently authored,
-synthetic-only interaction probe and the observations below. **Deferred:** a
-production telemetry collector and Jellyfin reporting (#18), genuine application
+synthetic-only interaction probe and the observations below. **Implemented
+separately:** native-original authenticated collection and Jellyfin reporting in
+the [#18 contract and actual Chrome evidence](playback-reporting.md).
+**Deferred:** genuine application
 suspension/resume, abrupt-exit delivery guarantees and physical Philips comparison
 (#4). The original research criteria are satisfied by the observed contract,
 recorded unavailable cases and conservative fallback (acceptance audit below).

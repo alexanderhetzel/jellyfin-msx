@@ -132,8 +132,9 @@ The preferred original-with-progress flow now uses authenticated generation-boun
 native resolver's public generation marker; only observed advancing samples
 establish Start. Stop confirmation or a 45-second last-safe lease ends reporting.
 The legacy Try original and HTML5X subtitle entries remain unreported. Resume and
-automatic fallback remain separate work; actual reporting runtime acceptance is
-still pending.
+automatic fallback remain separate work. Source-pinned official-runtime Chrome
+observations now verify the supported original flow; physical device behavior
+and genuine suspension remain unverified.
 
 [Lifecycle research](msx-lifecycle-research.md) records actual public MSX callbacks
 and requested state samples. Control events carry previous state; initial load,

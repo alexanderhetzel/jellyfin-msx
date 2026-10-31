@@ -1,6 +1,6 @@
 # Authenticated original playback reporting — issue #18
 
-**Implemented / automated-tested; actual runtime verification pending.** Physical
+**Implemented / automated-tested / browser-tested / device-unverified.** Physical
 Philips playback, audio, genuine suspension and OS sleep/crash remain
 **device-unverified** in #4. This feature does not establish decoder support.
 
@@ -39,8 +39,8 @@ The existing interaction fragment and direct media URL remain private bearer
 material; [direct-media token exposure](media-token-security.md) is unchanged.
 
 `POST /api/playback/observations` requires that reporting grant and revalidates
-the original session on every request and upstream send. JSON-only, exact-origin
-requests reject duplicate object keys, unknown fields, malformed values and
+the original session on every request and upstream send. JSON-only requests reject
+foreign supplied origins, duplicate object keys, unknown fields, malformed values and
 oversized bodies (8 KiB before parsing). Batches contain at most 16 allowlisted
 observations. Positions/durations cannot expand the server-known duration (two
 seconds of rounding allowance; reported ticks clamp to the known duration).
@@ -113,6 +113,79 @@ replacement, missing metadata, early body limits, conflicts/replays, selected
 source/generation, stale samples/Stop, pause/seek/end/last-safe lease, bounded
 queue/retries, lost Start acknowledgements, Stop ordering/fences and cancellation.
 The existing historical public exports exclude authenticated reporting controls.
-These checks do not establish official-runtime delivery. Actual Chrome actions,
-media observations, sanitized request evidence and cleanup will be recorded here
-after the master grants the shared browser/relay slot.
+These checks alone do not establish official-runtime delivery. The actual
+source-pinned observations below supply that separate software evidence.
+
+## Actual official-runtime verification — 2026-10-31
+
+Source `96837f114f2b77b05f19ab306cd5ca6a42f2d986`, official hosted MSX 0.1.167 web,
+connected Chrome extension, Windows, measured viewport 2560x1215 (no override).
+The isolated synthetic lifecycle scenario used normal credential pairing, private
+library/details, the preferred reporting entry and its actual Play control.
+No event injection, media setters, proprietary runtime inspection/modification,
+operator configuration, real Jellyfin server or Ultra conversion was used.
+
+The following are separate observations: media state is read-only native DOM;
+visible JPEGs corroborate decoded pictures and controls; the fixed aggregate
+summary counts authenticated requests received by strict synthetic MockTransport.
+The latter is not a real Jellyfin dashboard/session-compatibility test.
+
+| Actual action | Media/UI observation | Separate authenticated request evidence |
+| --- | --- | --- |
+| Play original with reporting | Real color-bar/moving-pattern picture;1280x720,ready4,errornull,time11.941801 of30,playing | Start1,Progress1,active,pos11. The reviewed client cannot upload valid samples until public video-info generation properties match its resolver response. No raw info or marker value was retained; successful guarded reporting corroborates propagation rather than a separately logged field dump. |
+| Pause and hold | Paused at16.498143; a later read held exactly16.498143 withready4 | Pausedtrue,pos16,active. Start4/Stop3 reflect earlier replays used while identifying native controls, not four distinct media sources. |
+| Forward/rewind/resume | Paused seek16.498→21→16, then playing16.062029 | Subsequent active/pausedfalse,pos21. Requested seek targets were not used as observed positions. |
+| End versus near-end Stop | An earlier attempted Stop near24.5s could not be separated from natural completion by the later read; reset0/ready0 followed | That generation ultimately reportedStop/pos30/Failedfalse. It is end evidence, not the decisive explicit-Stop test. Earlier ends with no accepted ended sample conservatively reportedFailedStop/pos29. |
+| Decisive explicit Stop | Fresh replay advanced, paused at6.835279; after held pause the visible eject control was double-clicked. Native video becamepausedtrue,time0,ready0 | Before:Start5,Stop4,active,pausedtrue,pos7. After:Stop5,inactive,Failedtrue,pos7. Reset zero was not reported as progress. |
+| Replay/new generation | A fresh Play subsequently decoded/advanced at12.603374,ready4,playing | Start6,Stop5,Progress31,active,pos11. Replacement reporting did not inherit the previous terminal state. |
+| Close owned MSX tab | The actual owned client was abruptly closed, with no final-action injection | At20.651s after close:stillactive,pos11,Progress31,Stop5. At55.536s:inactive,pos11,Progress31,Stop6,Failedtrue. No position/progress extrapolation or completion occurred. |
+
+The disappearance observation brackets delivery between 20.651 and 55.536 seconds
+after close. It does **not** measure an exact<=45-second delivery time. The
+45-second valid-sample lease, two-second sweep and bounded upstream delivery are
+application policy tested separately with controlled clocks; scheduler/transport
+delivery adds allowance. No additional runtime matrix was manufactured to replace
+that honest timing boundary. Duplicate/conflict/retry/rate/authorization denial,
+unknown/revoked grants and optional permitted-host transcode Stop are
+**automated-tested**, not new actual browser network/crash/conversion passes.
+The RAM restart fail-closed boundary is **source-reviewed**; no explicit backend
+restart delivery test or actual process-restart result is claimed here.
+
+Ignored local evidence: `.lab/reports/issue18-run2.json` retains only fixed counts,
+numeric media/timing observations and incident categories. The
+`issue18-{playing,paused,stopped,lease}.jpg` captures contain no credentials,
+capability URLs, QR/code or operator content. `stopped.jpg` is the post-end menu,
+not a screenshot of the decisive paused Stop. Physical Philips/audio/remote and
+genuine suspension remain **device-unverified**.
+
+One companion locator timed out despite a visible field; normal AX form actions
+completed sign-in. Initial control locator attempts failed because glyphs were
+CSS icons and some AX indices were stale; the visible DOM control layout and
+saved paused image identified actual Pause/seek/eject controls. No playback failure
+is inferred from those tool errors. An initial AX tool preview exposed a synthetic
+session fragment; normal confirmed Disconnect invalidated that authority before
+any Play/report, then normal re-pairing continued within the same supervised
+budget. Raw fragments were not repeated or saved in repository/report evidence.
+
+The preceding attempt did not enter pairing or playback: enabling raw Network
+inspection while its tab was on the temporary relay origin requested a separate
+DevTools permission and delayed the tool return. The master stopped that original
+supervisor and verified cleanup. This run used no raw CDP commands, Network
+observation or viewport override, and did not change browser/security settings.
+
+At 13:20:59 UTC the existing supervisor was explicitly stopped and returned exit 0
+within its original 900-second total budget (startup included). All nine recorded
+owned process IDs, loopback listener 18092 and the control directory were absent;
+both owned tabs were closed. The first synthetic authority was normally revoked;
+the final synthetic authentication was discarded when the bounded backend exited,
+not claimed to have been logged out through the already-closed MSX client.
+
+Independent final review inspected all four saved images, the sanitized JSON,
+the source/public API contract and automated regressions. It accepts all four
+original #18 software criteria for this explicitly supported flow. It did not
+operate the browser, repeat the network matrix or establish hardware/audio or
+real-server compatibility. The decisive paused Stop and its report were read in
+consecutive browser calls after fresh paused samples; their exact time delta was
+not retained. The reviewer distinguishes that prompt confirmed Stop from the
+later disappearance observation and does not infer either from the post-end
+menu image alone.
