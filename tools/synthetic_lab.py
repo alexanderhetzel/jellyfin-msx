@@ -52,6 +52,7 @@ def source():
     return {
         "Id": SOURCE,
         "Container": "mp4",
+        "RunTimeTicks": 300_000_000,
         "SupportsDirectPlay": True,
         "SupportsTranscoding": False,
         "MediaStreams": [
@@ -143,7 +144,9 @@ class SyntheticJellyfin:
                 return httpx.Response(400)
             candidate = copy.deepcopy(source())
             candidate["SupportsDirectPlay"] = self.fault != "playback"
-            return httpx.Response(200, json={"MediaSources": [candidate]})
+            return httpx.Response(
+                200, json={"MediaSources": [candidate], "PlaySessionId": secrets.token_hex(16)}
+            )
         return httpx.Response(404)
 
 

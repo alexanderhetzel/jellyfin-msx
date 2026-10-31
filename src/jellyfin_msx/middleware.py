@@ -16,6 +16,8 @@ class PairBodyLimit:
                 "/pair",
                 "/api/device-authorization/enroll",
                 "/api/device-authorization/renew",
+                "/api/playback/start",
+                "/api/playback/observations",
             }
         ):
             return await self.app(scope, receive, send)

@@ -1,5 +1,46 @@
 # Verification status — 2026-10-31
 
+## Original playback lifecycle reporting — issue #18
+
+**Implemented / automated-tested / browser-tested / device-unverified.**
+The preferred original-with-progress interaction authenticates session/source/
+generation-bound reporting, requires matching public video-info properties before
+numeric samples, confirms Stop or expires a last-safe 45-second lease, and uses
+modern Jellyfin start/progress/Stopped APIs. Retry queues, locks, uncertain Start
+cleanup and failed-Stop replacement fences are bounded. Existing subtitle bridge
+and startup ownership remain unchanged; legacy Try original and subtitle playback
+are explicitly unreported. [Contract and limits](playback-reporting.md).
+
+Pre-browser Windows/Python3.12.14 full `uv run --no-sync --python
+.venv/Scripts/python.exe pytest -W error`: **481 passed / 1 POSIX skip**, including
+cancellation and optional-transcode scoped cleanup. Node 42 (25 lifecycle,
+12 unchanged subtitle, 5 browser guards), Ruff check/format 101 files, diff check
+and locked offline wheel/exact 25-member allowlist passed. Independent
+source/security review resolved generation identity,
+oldStop/newStart ordering, retry circuit, uncertain Start/Stop cleanup, terminal
+retention, lock waiter and post-await revocation findings; independently 89 affected
+Python and 25 Node tests passed. Actual source 96837f, official MSX 0.1.167 and
+connected Chrome normal private original flow decoded 1280x720 and sent
+authenticated Start, Progress, held Pause and Stop. Decisive paused Stop retained
+position 7 rather than reset zero; fresh replay established Start 6, then actual
+client close held position 11 / Progress 31 at 20.651s and delivered failed Stop 6,
+inactive with unchanged position 11, by 55.536s. This brackets delivery; it does
+not measure exact <=45s. Earlier near-end Stop is documented as ambiguous with
+natural completion; separate ended sample yielded position 30 / Failed false.
+
+Four secret-free JPEGs and fixed-counter/numeric JSON support the
+[actual action/evidence table and limits](playback-reporting.md). No new actual
+network/crash/transcode/real-server/physical TV/audio/suspension pass is inferred.
+One synthetic AX fragment preview was contained by normal confirmed Disconnect
+before any playback; re-pairing stayed in the same original 900-second budget.
+The prior attempt's unnecessary temporary-origin CDP approval delay produced no
+media acceptance. Final run used no raw CDP/Network/viewport override. Explicit
+supervisor stop at 13:20:59 UTC returned exit 0; all nine owned PIDs, listener
+18092 and control directory were absent; both owned tabs closed. Independent
+final review inspected all four images and sanitized JSON and accepts the four
+original software criteria with these limits. Final exact-head review/checks
+and merge are recorded in PR67.
+
 ## Private subtitle selection — issue #22
 
 **Implemented / automated-tested / browser-tested / device-unverified.**

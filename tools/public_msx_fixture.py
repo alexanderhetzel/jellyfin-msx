@@ -75,6 +75,10 @@ def export_pages(base):
         result = {}
         for name, original in pages.items():
             page = copy.deepcopy(original)
+            # This public renderer cannot carry private reporting authority.
+            page["items"] = [
+                row for row in page["items"] if "/lifecycle.html#" not in row["action"]
+            ]
             page["headline"] = "PUBLIC FIXTURE / " + page["headline"]
             for row in page["items"]:
                 target = row["action"]

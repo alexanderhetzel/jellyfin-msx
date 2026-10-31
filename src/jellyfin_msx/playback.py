@@ -229,6 +229,7 @@ async def resolve(
     force: bool,
     subtitle: int,
     media_source_id: str | None = None,
+    playback_context: dict | None = None,
 ):
     allow_transcoding = jellyfin.settings.allow_transcoding
     if not allow_transcoding and (force or subtitle >= 0):
@@ -343,6 +344,14 @@ async def resolve(
         if not urlsplit(url).path.lower().endswith(".m3u8"):
             raise PortalError(502, "Jellyfin did not return an HLS manifest.")
         mode = "TranscodeHLS"
+    if playback_context is not None:
+        # Transport correlation is private state, never a diagnostic field.
+        playback_context.update(
+            source_id=source_id,
+            play_session_id=info.get("PlaySessionId"),
+            duration_ticks=source.get("RunTimeTicks", item.get("RunTimeTicks")),
+            mode=mode,
+        )
     diagnostic = {
         "id": secrets.token_hex(8),
         "event": "playback_decision",
