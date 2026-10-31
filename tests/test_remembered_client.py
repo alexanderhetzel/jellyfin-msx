@@ -67,7 +67,11 @@ def test_opt_in_client_routes_csp_and_normal_pairing_restart_isolation(tmp_path)
         headers = {"Origin": ORIGIN}
         assert client.get("/msx/start.json").json()["parameter"].endswith("/msx/remember.json")
         start = client.get("/msx/remember.json").json()
-        assert start["action"] == "[home|interaction:load:" + ORIGIN + "/msx/remember.html]"
+        assert start["reference"] == "request:interaction:init@" + ORIGIN + "/msx/remember.html"
+        assert "action" not in start
+        assert start["items"][0]["action"] == (
+            "content:request:interaction:init@" + ORIGIN + "/msx/remember.html"
+        )
         plugin = client.get("/msx/remember.html")
         assert 'data-jellyfin-msx-lifecycle="1"' in plugin.text
         csp = plugin.headers["Content-Security-Policy"]

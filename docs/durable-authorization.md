@@ -11,15 +11,27 @@ other pages retain frame denial. Script policy allows our own script and the
 vendor-hosted public API library; connect policy is same-origin. No proprietary
 runtime is copied, and no inline/eval exception or cross-origin POST is added.
 
-The published [multiple-action/startup contract](https://msx.benzac.de/wiki/index.php?title=Internal_Actions)
-shows the public fallback content, then loads the interaction plugin. Its public
-readiness callback reads `TVXServices.storage`, then shows normal pairing or
-renews authorization. Storage readiness polling after `handler.ready` is bounded
-to five seconds, requests to fifteen seconds and one operation per plugin instance.
-Vendor/plugin readiness itself has no timeout; the public fallback content remains.
-Actual automatic startup and
-normal reopen acceptance must be recorded separately; these API choices alone
-do not establish an MSX integration pass.
+The startup document now uses the published
+[content reference request contract](https://msx.benzac.de/wiki/index.php?title=Content_Root_Object):
+`reference: request:interaction:init@` followed by our public plugin URL.
+`handler.ready` only signals readiness. One accepted `init` request waits for
+storage, ordinary pairing or renewal, exact save/readback and authenticated home,
+then returns one terminal page through its callback. Progress pages are not pushed
+against the foreground request. Explicit later controls still use `showContent`.
+Unknown or simultaneous requests receive null without starting another renewal;
+a later sequential explicit init refreshes authority rather than serving an old
+cached library forever. There is no hidden background renewal.
+
+Storage polling retains its five-second bound and each XHR its fifteen-second
+bound. An aggregate 25-second init deadline also covers delayed SDK/storage and
+sequential requests. Timeout returns recovery, blocks silent renewal replay and
+invalidates the attempt's late callbacks, preventing delayed save/navigation.
+An upstream renewal may already have committed; uncertain authority requires
+explicit re-pairing. A plugin that never loads cannot run this deadline: normal
+runtime request error/retry is the delivery boundary. The reference ignores most
+root content items, so the old two-button fallback is not promised on delivery
+failure. Actual automatic entry/reload/reopen/restart acceptance remains separate;
+this callback-contract correction does not prove a fix for paused transport.
 
 Normal current companion QR/manual two-stage CSRF pairing is unchanged. The
 plugin uses same-origin body-only pair/status endpoints and keeps the pending
@@ -131,6 +143,9 @@ entered, not that MSX displayed the requested content. The marker has no secrets
 context, URLs, storage, logging or telemetry. It resets with each document and
 does not change startup scheduling/authentication. A delayed-SDK adapter guard
 checks the boundary progression.
+With request/response startup, automatic content is returned through the callback;
+63 can therefore cover parsed/script/SDK/handler/boot without a `showContent`
+call. Bit 64 still means an actual later `showContent` request, not callback delivery.
 
 The focused run at `fecdc4e` displayed the original fallback and one iframe with
 our public HTML source. The documented own-frame/test-ID attribute query failed

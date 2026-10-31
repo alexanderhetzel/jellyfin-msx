@@ -38,6 +38,26 @@ code, renewal/cache, security or deployment changes.
 
 ## Remembered-device client preparation — issue #12
 
+**Request/response startup correction — implemented / automated-tested /
+runtime acceptance pending:** rebased onto subtitle milestone `1594bf63`, keeping
+its bridge, policies, packaging and synthetic scenario. Startup now uses the
+published content-reference interaction request. SDK readiness alone does not
+renew; one init callback waits for the terminal pair/recovery/library page after
+exact save/readback. Intermediate progress is not pushed against that request.
+Duplicate/unknown init is bounded, later explicit init refreshes authority, and
+the aggregate 25-second deadline blocks late replies and uncertain replay.
+The old fallback items are ignored for a startup reference; runtime delivery-error
+handling must be observed separately. No paused-transport fix is inferred.
+
+Five new contract regressions failed on the old premature callback, then passed
+after the correction. All **20 Node client guards**, **45 affected Python tests**,
+full `uv run --no-sync pytest -W error` **437 passed / 1 POSIX skip**, Ruff
+check/format **97 files**, diff check and offline wheel/exact **24-member**
+allowlist passed. No dependency/lock change. An initial affected-test command
+named a nonexistent file and ran no tests; the corrected command above passed.
+Earlier runtime observations below belong to their recorded source, not this
+new request contract. Independent affected review precedes the next actual run.
+
 **Focused diagnostic preparation:** a fixed RAM-only numeric bitmask on the own
 plugin document now records parsed/script/SDK/handler/boot/content-call boundaries
 without values, logging, telemetry, storage, timers or scheduling/auth changes.

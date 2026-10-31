@@ -347,12 +347,15 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
         page = content(
             "Opening Jellyfin",
             [
-                button("Retry remembered sign-in", "interaction:reload"),
+                button(
+                    "Retry remembered sign-in",
+                    "content:request:interaction:init@" + url("/msx/remember.html"),
+                ),
                 button("Pair without remembering", "content:" + url("/msx/pair.json")),
             ],
         )
         page.update(
-            action="[home|interaction:load:" + url("/msx/remember.html") + "]", restore=False
+            reference="request:interaction:init@" + url("/msx/remember.html"), restore=False
         )
         return page
 
