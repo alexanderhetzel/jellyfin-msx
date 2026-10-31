@@ -80,8 +80,16 @@ class Jellyfin:
                         if len(data) > 2_000_000:
                             raise PortalError(502, "Jellyfin response exceeds the size limit.")
                     return response, bytes(data)
-        except (httpx.RequestError, TimeoutError) as from_error:
-            raise PortalError(504, "Jellyfin is unreachable or timed out.") from from_error
+        except (httpx.TimeoutException, TimeoutError) as from_error:
+            raise PortalError(
+                504, "Jellyfin is unreachable or timed out.", category="upstream_timeout"
+            ) from from_error
+        except httpx.NetworkError as from_error:
+            raise PortalError(
+                504, "Jellyfin is unreachable or timed out.", category="upstream_connectivity"
+            ) from from_error
+        except httpx.RequestError as from_error:
+            raise PortalError(502, "Jellyfin request failed.") from from_error
 
     async def json(self, method: str, path: str, device: Device, **kwargs) -> dict:
         import json
