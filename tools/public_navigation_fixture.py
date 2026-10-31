@@ -39,6 +39,11 @@ def export_pages(assets=ASSETS):
             page = copy.deepcopy(response.json())
             if "headline" in page:
                 page["headline"] = "PUBLIC NAVIGATION / " + page["headline"]
+            # Reporting is an authenticated dynamic flow, excluded from public exports.
+            if "items" in page:
+                page["items"] = [
+                    row for row in page["items"] if "/lifecycle.html#" not in row["action"]
+                ]
             for row in page.get("items", []):
                 if "image" in row:
                     poster = client.get(row["image"])

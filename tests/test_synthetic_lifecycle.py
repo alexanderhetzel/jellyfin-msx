@@ -1,0 +1,48 @@
+import httpx
+from fastapi.testclient import TestClient
+
+from tools.synthetic_check import pair
+from tools.synthetic_https import build_public_synthetic_lab
+from tools.synthetic_lab import MOVIE, SOURCE
+
+
+def test_lifecycle_scenario_normal_auth_reports_and_no_network_fallback(monkeypatch):
+    def forbid(*args, **kwargs):
+        raise AssertionError("Unexpected real network")
+
+    monkeypatch.setattr(httpx.AsyncHTTPTransport, "handle_async_request", forbid)
+    origin = "https://synthetic-test.trycloudflare.com"
+    app, _, fixture = build_public_synthetic_lab(
+        origin, allow_public_synthetic=True, scenario="lifecycle"
+    )
+    with TestClient(app, base_url=origin) as client:
+        home_action = pair(client, origin)
+        secret = home_action.split("/device/", 1)[1].split("/", 1)[0]
+        response = client.post(
+            "/api/playback/start",
+            headers={"Authorization": "Bearer " + secret},
+            json={"item_id": MOVIE, "media_source_id": SOURCE},
+        )
+        assert response.status_code == 200
+        grant = response.json()
+        observations = [
+            {
+                "seq": n,
+                "ms": n * 2000,
+                "kind": "snapshot",
+                "name": "video",
+                "data": {"state": 2, "position": n * 2, "duration": 30},
+            }
+            for n in (1, 2)
+        ]
+        response = client.post(
+            "/api/playback/observations",
+            headers={"Authorization": "Bearer " + grant["grant"]},
+            json={"version": 1, "playback_id": grant["playback_id"], "observations": observations},
+        )
+        assert response.status_code == 200
+        summary = client.get("/__synthetic/lifecycle").json()
+        assert summary == fixture.summary()
+        assert summary["start"] == 1 and summary["active"] is True
+        assert summary["position_seconds"] == 4
+        assert not any(value in str(summary) for value in (grant["grant"], grant["url"], secret))

@@ -1,5 +1,26 @@
 # Verification status — 2026-10-31
 
+## Original playback lifecycle reporting — issue #18
+
+**Implemented / automated-tested / device-unverified; browser acceptance pending.**
+The preferred original-with-progress interaction authenticates session/source/
+generation-bound reporting, requires matching public video-info properties before
+numeric samples, confirms Stop or expires a last-safe 45-second lease, and uses
+modern Jellyfin start/progress/Stopped APIs. Retry queues, locks, uncertain Start
+cleanup and failed-Stop replacement fences are bounded. Existing subtitle bridge
+and startup ownership remain unchanged; legacy Try original and subtitle playback
+are explicitly unreported. [Contract and limits](playback-reporting.md).
+
+Pre-browser Windows/Python3.12.14 full `uv run --no-sync --python
+.venv/Scripts/python.exe pytest -W error`: **481 passed / 1 POSIX skip**, including
+cancellation and optional-transcode scoped cleanup. Node42 (25lifecycle,
+12unchangedsubtitle,5browserguards), Ruff check/format101 files, diff check and
+locked offline wheel/exact25-member allowlist passed. Independent source/security review resolved generation identity,
+oldStop/newStart ordering, retry circuit, uncertain Start/Stop cleanup, terminal
+retention, lock waiter and post-await revocation findings; independently89affected
+Python and25Node tests passed. No actual MSX transport/media, production host,
+Ultra conversion, physical TV/audio or genuine suspension pass is inferred.
+
 ## Private subtitle selection — issue #22
 
 **Implemented / automated-tested / browser-tested / device-unverified.**

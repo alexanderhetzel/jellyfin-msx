@@ -126,14 +126,21 @@ software criteria. Intermittent hosted Data Load Errors and missing native
 per-track error notices remain documented; no cause/fix or physical pass is
 inferred. See [source-pinned browser evidence](private-subtitle-results.md).
 
-M1 records playback *decisions*, not proof that video started. Automatic fallback,
-watch progress, resume, stop reporting and active transcode cleanup are M3 work.
+M1's legacy resolver records playback *decisions*, not proof that video started.
+The preferred original-with-progress flow now uses authenticated generation-bound
+[playback reporting](playback-reporting.md). Requested samples must echo the
+native resolver's public generation marker; only observed advancing samples
+establish Start. Stop confirmation or a 45-second last-safe lease ends reporting.
+The legacy Try original and HTML5X subtitle entries remain unreported. Resume and
+automatic fallback remain separate work; actual reporting runtime acceptance is
+still pending.
 
 [Lifecycle research](msx-lifecycle-research.md) records actual public MSX callbacks
 and requested state samples. Control events carry previous state; initial load,
 Back, natural completion and media failures do not imply a reliable Play/Stop
-pair. Its bounded authenticated telemetry/reconciliation contract is a design
-for #18, not an implemented collector. Research acceptance includes the recorded
+pair. Its bounded authenticated telemetry/reconciliation contract is implemented
+for the #18 original-with-progress flow, with separate actual-runtime acceptance.
+Research acceptance includes the recorded
 unavailable suspension precondition and conservative disappearance lease; it does
 not require successful suspend emission. Genuine suspend/resume and physical
 Philips ordering remain unverified. #18 must verify its own authenticated

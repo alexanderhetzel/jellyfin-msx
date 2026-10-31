@@ -30,6 +30,7 @@ from tools.lab import ROOT, TrafficRecorder, attach_observations
 from tools.navigation_fixture import EPISODES, NavigationJellyfin
 from tools.synthetic_failures import FailureJellyfin
 from tools.synthetic_lab import SyntheticJellyfin, attach_fixture_media
+from tools.synthetic_lifecycle import LifecycleJellyfin
 from tools.synthetic_subtitles import ITEMS as SUBTITLE_ITEMS
 from tools.synthetic_subtitles import SubtitleJellyfin
 from tools.windows_job import enter_kill_on_close_job
@@ -60,7 +61,7 @@ def build_public_synthetic_lab(origin, *, allow_public_synthetic=False, scenario
     if allow_public_synthetic is not True:
         raise PreparationError("public-synthetic-opt-in-required")
     origin = validate_origin(origin)
-    if scenario not in {"baseline", "failures", "navigation", "subtitles"}:
+    if scenario not in {"baseline", "failures", "navigation", "subtitles", "lifecycle"}:
         raise PreparationError("invalid-synthetic-scenario")
     raw = CLIP.read_bytes()
     if hashlib.sha256(raw).hexdigest() != MEDIA_SHA256:
@@ -77,6 +78,7 @@ def build_public_synthetic_lab(origin, *, allow_public_synthetic=False, scenario
         "failures": FailureJellyfin,
         "navigation": NavigationJellyfin,
         "subtitles": SubtitleJellyfin,
+        "lifecycle": LifecycleJellyfin,
     }[scenario]
     fixture = fixture_type(origin)
     recorder = TrafficRecorder(httpx.MockTransport(fixture.handle))
@@ -95,6 +97,13 @@ def build_public_synthetic_lab(origin, *, allow_public_synthetic=False, scenario
     @app.get("/__synthetic/ready")
     def ready():
         return {"mode": "public-synthetic", "configured": True}
+
+    if scenario == "lifecycle":
+
+        @app.get("/__synthetic/lifecycle")
+        def lifecycle_summary():
+            # Fixed synthetic counters only; no IDs, URLs, grants or user content.
+            return fixture.summary()
 
     return app, launch, fixture
 
@@ -319,7 +328,7 @@ def ready_public(origin):
 def activate(binary, seconds=MAX_SECONDS, scenario="baseline"):
     if not 1 <= seconds <= MAX_SECONDS:
         raise PreparationError("invalid-lifetime")
-    if scenario not in {"baseline", "failures", "navigation", "subtitles"}:
+    if scenario not in {"baseline", "failures", "navigation", "subtitles", "lifecycle"}:
         raise PreparationError("invalid-synthetic-scenario")
     verify_binary(binary)
     CONTROL.parent.mkdir(parents=True, exist_ok=True)
@@ -437,7 +446,7 @@ def main():
     parser.add_argument("--seconds", type=int, default=MAX_SECONDS)
     parser.add_argument(
         "--scenario",
-        choices=["baseline", "failures", "navigation", "subtitles"],
+        choices=["baseline", "failures", "navigation", "subtitles", "lifecycle"],
         default="baseline",
     )
     parser.add_argument("--directory", type=Path, help=argparse.SUPPRESS)

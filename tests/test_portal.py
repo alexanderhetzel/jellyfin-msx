@@ -320,6 +320,11 @@ def test_detail_has_remote_actions_and_sanitizes_metadata(portal):
     result = portal.client.get(portal.path + "/browse.json", params={"parent_id": LIBRARY}).json()
     assert all(c not in result["items"][0]["title"] for c in "{}[]|<>")
     detail = portal.client.get(portal.path + "/detail.json", params={"item_id": MOVIE}).json()
-    assert detail["items"][0]["action"].startswith("video:resolve:https://portal.test/")
+    assert detail["items"][0]["action"].startswith(
+        "content:request:interaction:init@https://portal.test/lifecycle.html#"
+    )
+    assert any(
+        row["action"].startswith("video:resolve:https://portal.test/") for row in detail["items"]
+    )
     assert any("Burn subtitle" in item["title"] for item in detail["items"])
     assert TOKEN not in json.dumps(detail)

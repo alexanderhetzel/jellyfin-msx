@@ -1,6 +1,8 @@
 import asyncio
 import json
 import logging
+import math
+import re
 import secrets
 from contextlib import asynccontextmanager
 from html import escape
@@ -17,6 +19,7 @@ from .config import Settings
 from .device_profile import MODEL, PROFILE_BASIS, evidence_warnings
 from .errors import PortalError
 from .jellyfin import Jellyfin, identifier
+from .lifecycle import Lifecycle
 from .middleware import PairBodyLimit
 from .msx import button, content, pairing_page, subtitle_playback, text, wrapped
 from .pairing_qr import activation_png
@@ -40,14 +43,28 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
     state = state or State(settings)
     jellyfin = Jellyfin(settings, transport)
     subtitles = SubtitleResources(jellyfin, state)
+    lifecycle = Lifecycle(clock=state.clock, maximum=settings.max_states)
     # Native playback needs bearer URLs. Never emit request URLs from HTTP client logs.
     logging.getLogger("httpx").setLevel(logging.WARNING)
     logging.getLogger("httpcore").setLevel(logging.WARNING)
 
     @asynccontextmanager
     async def lifespan(app):
-        yield
-        await jellyfin.client.aclose()
+        async def sweep():
+            while True:
+                await asyncio.sleep(2)
+                await lifecycle.expire(send_report, authorize_report)
+
+        task = asyncio.create_task(sweep())
+        try:
+            yield
+        finally:
+            task.cancel()
+            try:
+                await task
+            except asyncio.CancelledError:
+                pass
+            await jellyfin.client.aclose()
 
     app = FastAPI(
         title="Jellyfin MSX",
@@ -57,6 +74,7 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
         openapi_url=None,
     )
     app.state.portal = state
+    app.state.lifecycle = lifecycle
     app.add_middleware(PairBodyLimit)
     app.add_middleware(
         CORSMiddleware,
@@ -104,7 +122,7 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
                 "frame-ancestors 'none'; base-uri 'none'",
             }
         )
-        if request.url.path == "/subtitle-bridge.html":
+        if request.url.path in {"/subtitle-bridge.html", "/lifecycle.html"}:
             response.headers["Content-Security-Policy"] = (
                 "default-src 'none'; script-src 'self' https://msx.benzac.de; "
                 "connect-src 'self'; frame-ancestors https://msx.benzac.de "
@@ -135,6 +153,115 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
         peer = request.client.host if request.client else "unknown"
         state.limit(kind + ":" + peer, maximum)
         state.limit(kind + ":global", maximum * 4)
+
+    def authorize_report(grant):
+        try:
+            state.get(grant.session_key)
+            return True
+        except PortalError:
+            return False
+
+    async def send_report(kind, grant, payload):
+        device = state.get(grant.session_key)
+        if kind == "stop":
+            # Jellyfin otherwise infers watched from its near-end threshold.
+            # Unknown disappearance is never evidence of natural completion.
+            payload = {**payload, "Failed": grant.terminal != "ended"}
+        suffix = {"start": "", "progress": "/Progress", "stop": "/Stopped"}[kind]
+        await jellyfin.fetch("POST", "/Sessions/Playing" + suffix, device, json=payload)
+
+    def bearer(request):
+        value = request.headers.get("authorization", "")
+        if not re.fullmatch(r"Bearer [A-Za-z0-9_-]{43}", value):
+            raise PortalError(401, "Playback authorization required.")
+        return value[7:]
+
+    async def playback_body(request):
+        if request.headers.get("origin", settings.public_url) != settings.public_url:
+            raise PortalError(403, "Playback origin rejected.")
+        if request.headers.get("content-type", "").split(";")[0].lower() != "application/json":
+            raise PortalError(415, "JSON required.")
+
+        def unique(pairs):
+            value = {}
+            for key, item in pairs:
+                if key in value:
+                    raise ValueError
+                value[key] = item
+            return value
+
+        try:
+            body = json.loads(await request.body(), object_pairs_hook=unique)
+        except (ValueError, UnicodeError, RecursionError) as error:
+            raise PortalError(400, "Playback report rejected.") from error
+        if type(body) is not dict:
+            raise PortalError(400, "Playback report rejected.")
+        return body
+
+    @app.post("/api/playback/start")
+    async def playback_start(request: Request):
+        secret = bearer(request)
+        device = state.get(secret)
+        state.limit("lifecycle-start:" + device.device_id, 12)
+        limit(request, "lifecycle-start", 48)
+        body = await playback_body(request)
+        if (
+            not {"item_id", "media_source_id"} <= set(body)
+            or set(body) - {"item_id", "media_source_id", "force", "subtitle"}
+            or type(body.get("force", False)) is not bool
+            or type(body.get("subtitle", -1)) is not int
+            or not -1 <= body.get("subtitle", -1) <= 1024
+        ):
+            raise PortalError(400, "Playback report rejected.")
+        item_id, source_id = identifier(body["item_id"]), identifier(body["media_source_id"])
+        context = {}
+        stream_url, decision = await resolve(
+            jellyfin,
+            device,
+            item_id,
+            body.get("force", False),
+            body.get("subtitle", -1),
+            source_id,
+            playback_context=context,
+        )
+        state.get(secret)  # Expiry/revocation during upstream negotiation fails closed.
+        ticks, play_session = context["duration_ticks"], context["play_session_id"]
+        if (
+            type(ticks) not in (int, float)
+            or not math.isfinite(ticks)
+            or not 0 < ticks <= 864000 * 10_000_000
+            or not isinstance(play_session, str)
+            or not re.fullmatch(r"[A-Za-z0-9_-]{1,128}", play_session)
+        ):
+            raise PortalError(409, "Playback reporting metadata unavailable. Reopen details.")
+        grant = await lifecycle.issue(
+            secret,
+            item_id,
+            context["source_id"],
+            play_session,
+            ticks / 10_000_000,
+            device.expires,
+            "DirectPlay" if context["mode"] == "DirectPlay" else "Transcode",
+            send=send_report,
+        )
+        state.get(secret)  # The session lock/old Stop may have awaited during logout.
+        state.record(device, decision)
+        return {
+            "grant": grant.secret,
+            "playback_id": grant.playback_id,
+            "url": stream_url,
+            "duration": grant.duration,
+            "expires_in": min(28800, device.expires - state.clock()),
+        }
+
+    @app.post("/api/playback/observations")
+    async def playback_observations(request: Request):
+        secret = bearer(request)
+        grant = lifecycle.get(secret)
+        state.get(grant.session_key)
+        limit(request, "lifecycle-observations", 240)
+        body = await playback_body(request)
+        return await lifecycle.submit(secret, grant.session_key, body, send_report)
 
     def form(message="", status=200, device=None):
         csrf = secrets.token_urlsafe(32)
@@ -534,6 +661,14 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
         entries = []
         try:
             selected = choose_source(item, settings.max_bitrate, settings.allow_transcoding)
+            entries.append(
+                button(
+                    "Play original with watch progress (TV unverified)",
+                    "content:request:interaction:init@"
+                    + url("/lifecycle.html")
+                    + f"#{secret}/{item_id}/{identifier(selected.get('Id'))}",
+                )
+            )
             entries.append(play_button("Try original (TV unverified)"))
             entries.append(
                 button(
@@ -641,6 +776,25 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
     @app.get("/subtitle-bridge.html")
     async def subtitle_bridge():
         return HTMLResponse(SUBTITLE_BRIDGE)
+
+    @app.get("/lifecycle.html")
+    async def lifecycle_bridge():
+        return HTMLResponse(
+            Path(__file__)
+            .with_name("templates")
+            .joinpath("lifecycle.html")
+            .read_text(encoding="utf-8")
+        )
+
+    @app.get("/lifecycle.js")
+    async def lifecycle_script():
+        return Response(
+            Path(__file__)
+            .with_name("templates")
+            .joinpath("lifecycle.js")
+            .read_text(encoding="utf-8"),
+            media_type="application/javascript",
+        )
 
     @app.get("/subtitle-bridge.js")
     async def subtitle_bridge_script():
