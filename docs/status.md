@@ -731,7 +731,7 @@ with zero duration, without a collected app:disconnect. Cached media continued
 offline. Network/cache overrides were restored. Screenshots and sanitized ordered
 records are retained locally; no runtime events/player state were fabricated.
 
-**Deferred / issue remains open:** genuine browser suspension/resume. With
+**Deferred runtime evidence:** genuine browser suspension/resume. With
 documented suspend=1, actual tab changes still exposed visible documents in this
 automation environment; no collected suspend/resume callback established the
 required precondition. Physical comparison stays in #4. Abrupt-close final
@@ -739,7 +739,21 @@ delivery is not guaranteed; the proposed lease fallback is design only.
 No production telemetry endpoint or Jellyfin reporting was added. Real plugin
 authenticated transport needs a controlled HTTPS origin and separate validation.
 
-**Automated-tested on Windows / Python 3.12.14:** frozen dev sync passed;
+**Research acceptance audit — 2026-10-31:** independent review mapped all four
+original #17 criteria to the retained evidence and conservative contract. The
+criterion asks to record behavior, and its milestone explicitly permits
+unavailable cases with fallback. Requiring successful genuine suspension before
+closing research exceeded that scope. The bounded same-window/minimized-window
+follow-up is now recorded in the research document: metadata confirmed minimized,
+but the document remained visible and no collected suspend/resume callback proved
+the precondition. That technical limit remains unverified, with no new runtime
+pass. The research contract is sufficient to begin #18; implementation, actual
+authenticated transport, generation correlation and reporting/disappearance tests
+remain #18 acceptance. Unknown visibility never fabricates progress; fresh valid
+samples supply observations and missing evidence expires the candidate lease.
+No browser/relay or production behavior was changed by this documentation audit.
+
+**Historical automated checks — 2026-10-30 / Windows / Python 3.12.14:** frozen dev sync passed;
 `uv run pytest`: **206 passed**, existing Starlette warning #30;
 `uv run ruff check .`: passed; `uv run ruff format --check .`: **51 files already
 formatted**; `uv build --wheel`: passed. These check the existing application and
@@ -749,6 +763,14 @@ Independent source/API/evidence review checked both ordered record sets and six
 saved screenshots, and independently reran 206 tests and Ruff/format/diff checks.
 Its replay-conflict finding was corrected by specifying a bounded digest window;
 the reviewer did not operate the browser or verify audio/hardware.
+
+**Current audit checks — 2026-10-31 / Windows / Python 3.12.14:**
+`uv sync --locked --extra dev --group build` passed;
+`uv run pytest -W error`: **428 passed / 1 POSIX skip**, no warnings;
+`uv run ruff check .` passed; `uv run ruff format --check .`: **95 files** passed.
+These are current application regressions for a documentation-only change; they
+add no browser, suspension or hardware evidence. Final documentation diff review
+and required current-head GitHub checks remain merge prerequisites.
 
 ## Actual public MSX renderer/player milestone — issue #9
 
