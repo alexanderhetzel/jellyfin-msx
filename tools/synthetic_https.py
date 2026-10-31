@@ -32,6 +32,7 @@ from jellyfin_msx.config import Settings
 from jellyfin_msx.original_file import MODE
 from tools.lab import ROOT, TrafficRecorder, attach_observations
 from tools.navigation_fixture import EPISODES, NavigationJellyfin
+from tools.remember_observations import RememberObservations
 from tools.synthetic_failures import FailureJellyfin
 from tools.synthetic_lab import SyntheticJellyfin, attach_fixture_media
 from tools.synthetic_lifecycle import RECOVERY_BAD_SOURCE, LifecycleJellyfin, RecoveryJellyfin
@@ -162,7 +163,12 @@ def build_public_synthetic_lab(
         )
     recorder = TrafficRecorder(httpx.MockTransport(fixture.handle))
     app = create_app(settings, transport=recorder)
-    app, launch = attach_observations(app, settings, recorder)
+    app, launch = attach_observations(
+        app,
+        settings,
+        recorder,
+        remember_observations=RememberObservations() if scenario == "remember" else None,
+    )
     if scenario == "navigation":
         attach_fixture_media(app, fixture, raw, None, item_ids=EPISODES)
     elif scenario == "subtitles":

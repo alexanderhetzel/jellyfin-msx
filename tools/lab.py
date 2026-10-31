@@ -104,7 +104,7 @@ def build_lab(settings, *, transport=None):
     return attach_observations(app, settings, recorder)
 
 
-def attach_observations(app, settings, recorder):
+def attach_observations(app, settings, recorder, *, remember_observations=None):
     """Attach redacted lab UI to an already constructed app; never create transport."""
     counts = Counter()
     pairing_results = []
@@ -142,6 +142,11 @@ def attach_observations(app, settings, recorder):
             del pairing_results[:-20]
         return response
 
+    if remember_observations is not None:
+        from tools.remember_observations import RememberObservationMiddleware
+
+        app.add_middleware(RememberObservationMiddleware, observations=remember_observations)
+
     @app.get("/__lab/", response_class=HTMLResponse)
     async def dashboard():
         return HTMLResponse(
@@ -163,7 +168,7 @@ def attach_observations(app, settings, recorder):
         events = [
             event for device in app.state.portal.devices.values() for event in device.diagnostics
         ]
-        return {
+        result = {
             "target": "official-msx-web",
             "physical_device_verified": False,
             "transcoding_allowed": False,
@@ -177,6 +182,9 @@ def attach_observations(app, settings, recorder):
             "interpretation": "Network observations do not prove successful video decoding. "
             "Verify playback using the visible MSX player and video element.",
         }
+        if remember_observations is not None:
+            result["remember_asgi"] = remember_observations.snapshot()
+        return result
 
     return app, launch
 

@@ -465,8 +465,51 @@ code, renewal/cache, security or deployment changes.
 
 ## Remembered-device client preparation — issue #12
 
+**Foreground run 8 — actual entry failed / device-unverified:** source `e5e2153`
+parsed root content and dispatched startup interaction `init` to the correct own
+HTTPS plugin target, then settled on Load Error / Data Load Error and Request
+timed out. The own-frame selector reached its deadline: HTML/JS/SDK/handler/
+storage/callback stages remain unknown. No Network/CDP observation, HTTP status
+or paused-document evidence belongs to this run. No Retry, ForceInit, warm-up,
+credentials, restart or restore matrix ran. Sanitized 2560x1249 error capture was
+inspected at ignored `.lab/reports/issue12-run8-foreground-start-data-load-error.png`;
+raw pixels remained RAM-only. Explicit stop returned exit zero/stopped; cleanup
+at 15:39:51 UTC / 16:39:51 Vienna confirmed all nine exact owned PIDs, listener
+18092, control and helpers absent, and the sole owned Chrome tab closed.
+
+**Synthetic ASGI diagnostic milestone — implemented / automated-tested /
+device-unverified:** rebased onto main `e46a4de`, preserving fresh Full permission
+admission and synthetic fixture unions. The existing report gains fixed
+`remember_asgi` counters only for the remembered synthetic scenario. Seven exact
+method/route categories distinguish startup config/root, HTML, own JS, pairing,
+renewal and private home; request entry, response-start send returned, final-body
+send returned, aborted and incomplete are separate. Status keys and saturating
+counts are bounded. No production app/startup, CSP/body/timer or dependency change.
+See [semantics and limits](durable-authorization.md#foreground-result-and-synthetic-observation-boundary--2026-10-31).
+
+Focused `uv run --no-sync pytest tests/test_remember_observations.py -q -W error`:
+**17 passed**, covering streaming, cancellation/send errors, duplicate messages,
+concurrency, disconnect after final send, adversarial redaction, non-HTTP passthrough,
+outer-generated 500 and HTTP200 with an MSX401 body. The last two explicitly disprove
+equating server counters with delivered/authenticated UI. Existing report fields
+are preserved; ordinary real-loopback and other synthetic scenarios lack these
+counters. No runtime diagnostics run has occurred with them, and the automatic
+entry/restore/revoke/re-pair acceptance remains unmet. The cause is unknown and
+investigation continues; #12 remains OPEN and #64 DRAFT/unmerged/no auto-merge.
+
+Full `uv run --no-sync pytest -W error`: **612 passed / 1 POSIX skip** on Windows
+Python 3.12.14. Ruff check and format check: **120 files passed**. Independent
+protocol review passed **23 affected tests** and confirmed a wrong-Host 400 can
+bypass even `received` because TrustedHostMiddleware is outer; this counterexample
+is now retained in the integration test. Received means observer entry, not every
+socket/backend request. Final source/security review and current-head CI are
+recorded in the PR; no new browser/relay activation is implied by these checks.
+`node --test tools/remember_client.test.cjs`: **22 passed**. Offline
+`uv build --wheel --no-build-isolation --offline` and exact **27-member**
+`tools.package_check.wheel_files` validation passed; `git diff --check` passed.
+
 **Startup-only foreground design — implemented / automated-tested /
-device-unverified; actual entry pending:** a second independent protocol audit
+device-unverified; actual entry failed above:** a second independent protocol audit
 confirmed the previous root reference grammar was valid but ignored fallback
 items. The chosen ordinary root has no reference/ready and executes the published
 startup-only `[home|content:request:interaction:init@...]` action. Private Pair,

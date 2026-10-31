@@ -2,9 +2,63 @@
 
 ## Opt-in MSX client — 2026-10-31
 
+### Foreground result and synthetic observation boundary — 2026-10-31
+
+**Actual entry unaccepted / device-unverified.** The single normal-entry run at
+`e5e2153` parsed root data, executed its startup action, dispatched interaction
+`init` and logged a plugin-load attempt to the correct own HTTPS HTML target.
+It then settled on Load Error / Data Load Error and Request timed out. The own
+frame marker read hit a selector deadline: HTML/JavaScript/SDK/handler/storage/
+callback stages remain **unknown**. This run used no Network/CDP observation and
+provides no HTTP-status or paused-document evidence. Earlier runs' transport
+observations cannot be attributed to it. No Retry, ForceInit, warm-up, credentials,
+restart or remaining restore matrix ran. The sanitized error image was inspected;
+raw pixels remained in RAM. At 15:39:51 UTC / 16:39:51 Vienna, explicit stop had
+returned exit zero/stopped, all nine owned PIDs/listener18092/control/helpers were
+absent and the sole owned Chrome tab was closed. The timeout's cause is unresolved.
+
+The existing leaf-name lab counters omit this startup boundary and conflate
+companion `/pair` with authorization pairing. A synthetic-only extension to the
+existing `/__lab/report` adds `remember_asgi` for the `remember` scenario:
+
+| Fixed category | Method and whole route shape |
+| --- | --- |
+| `start_config` | GET `/msx/start.json` |
+| `entry_content` | GET `/msx/remember.json` |
+| `plugin_html` | GET `/msx/remember.html` |
+| `plugin_script` | GET `/msx/remember.js` |
+| `authorization_pair` | POST `/api/device-authorization/pair` |
+| `authorization_renew` | POST `/api/device-authorization/renew` |
+| `private_home` | GET `/msx/device/{one nonempty segment}/home.json` |
+
+Each category counts entry into the observation middleware, first response-start send returned (fixed
+status allowlist plus `other`), first final-body send returned, aborted requests
+and incomplete requests. Aborted means app/send raised, including cancellation,
+even after final send. Incomplete means the app exited without a returned final
+body send; in-flight requests are not yet classified. These counts can overlap.
+Duplicate messages are still forwarded once each, but each request increments
+each start/final counter at most once. Values saturate at one million. Snapshots
+contain only fixed keys and counts; unknown routes/methods are ignored. The
+observer retains no paths, queries, capabilities, headers, body bytes, timestamps
+or exception text, never drains receive and passes original messages unchanged.
+Existing lab fields retain their prior meanings; this is no production telemetry.
+
+The observer is user middleware inside Starlette's outer ServerErrorMiddleware.
+The synthetic TrustedHostMiddleware is also outside the observer: a rejected Host
+can return 400 without incrementing even `received`. Thus this is not a socket
+request counter. An outer-generated 500 bypasses it: received/aborted/incomplete may increase with
+no observed response start even though the client receives 500. Counters reset
+on backend restart and aggregate all callers, without browser attribution.
+Status 200 can contain an MSX authorization-error envelope; it is not proof of
+authenticated libraries. A final ASGI body send returning does not prove browser
+receipt, document completion, JavaScript execution, SDK registration, storage,
+callback completion or visible rendering. Off-origin SDK requests are unobserved.
+Zero counts cannot exclude caching or failure before this backend. A future
+diagnosis run must retain these limits and keep the startup source fixed.
+
 ### Startup-only foreground entry — 2026-10-31
 
-**Implemented / automated-tested / device-unverified; runtime acceptance pending.**
+**Implemented / automated-tested / device-unverified; actual entry failed above.**
 The public startup document is now ordinary content with usable Retry/Pair item
 definitions, without `reference` or `ready`. Its single startup action is
 `[home|content:request:interaction:init@` followed by the same own plugin URL and
