@@ -1,5 +1,11 @@
 (function () {
     "use strict";
+    var counts = { init: 0, video: 0, subtitle: 0, unknown: 0, subtitleFetch: 0, subtitleOk: 0, subtitleDenied: 0, subtitleOther: 0, subtitleDataCallback: 0, subtitleNullCallback: 0 };
+    function count(kind) {
+        counts[kind] = Math.min(65535, counts[kind] + 1);
+        var output = document.getElementById("subtitle-diagnostics");
+        if (output) { output.textContent = JSON.stringify(counts); }
+    }
     function context() {
         var match = window.location.hash.match(/^#([A-Za-z0-9_-]{43})\/([a-fA-F0-9-]{32,36})\/([a-fA-F0-9-]{32,36})$/);
         return match ? { secret: match[1], item: match[2], source: match[3] } : null;
@@ -10,6 +16,7 @@
         var xhr = new XMLHttpRequest();
         var resource = "/api/device/" + ctx.secret + "/subtitles/" + ctx.item + "/" + ctx.source + "/" + index + ".vtt";
         xhr.open("GET", index !== undefined ? resource : "/msx/device/" + ctx.secret + "/" + endpoint + "?item_id=" + ctx.item + "&media_source_id=" + ctx.source);
+        if (index !== undefined) { count("subtitleFetch"); }
         xhr.timeout = 18000;
         var settled = false;
         function isCurrent() {
@@ -18,7 +25,11 @@
         }
         function finish(value) {
             if (!isCurrent()) { value = null; }
-            if (!settled) { settled = true; callback(value); }
+            if (!settled) {
+                settled = true;
+                if (index !== undefined) { count(value ? "subtitleDataCallback" : "subtitleNullCallback"); }
+                callback(value);
+            }
         }
         function failure() {
             if (settled) { return; }
@@ -53,6 +64,7 @@
         xhr.ontimeout = failure;
         xhr.onload = function () {
             try {
+                if (index !== undefined) { count(xhr.status === 200 ? "subtitleOk" : xhr.status === 401 || xhr.status === 403 ? "subtitleDenied" : "subtitleOther"); }
                 if (!isCurrent()) { finish(null); return; }
                 if (xhr.status !== 200 || xhr.responseText.length > (index !== undefined ? 1048576 : 100000)) { failure(); return; }
                 if (index !== undefined) {
@@ -85,10 +97,10 @@
             handleData: function () {},
             handleRequest: function (id, data, callback) {
                 var subtitle = typeof id === "string" ? id.match(/^(?:subtitle:)?portal-subtitle-(0|[1-9][0-9]{0,4})$/) : null;
-                if (id === "init") { load("subtitle-playback.json", callback, false); }
-                else if (id === "portal-video" || id === "video:portal-video") { load("play.json", callback, true); }
-                else if (subtitle && Number(subtitle[1]) <= 10000) { load(null, callback, false, Number(subtitle[1])); }
-                else { callback(null); }
+                if (id === "init") { count("init"); load("subtitle-playback.json", callback, false); }
+                else if (id === "portal-video" || id === "video:portal-video") { count("video"); load("play.json", callback, true); }
+                else if (subtitle && Number(subtitle[1]) <= 10000) { count("subtitle"); load(null, callback, false, Number(subtitle[1])); }
+                else { count("unknown"); callback(null); }
             }
         });
         TVXInteractionPlugin.init();

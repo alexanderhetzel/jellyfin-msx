@@ -8,6 +8,55 @@ pause recorded below. No IAB retry/fallback is needed. The original partial Chro
 evidence stays valid within its limits. Final connected-Chrome placement, natural
 expiry, failure recovery and Stop/completion acceptance is still pending.
 
+## Diagnostic run at `2473dbb` — 2026-10-31
+
+**Partial browser evidence; caption delivery failed.** Exact source
+`2473dbbfae23914ad7d2c2129706e622b93b275b`, official hosted MSX in connected
+Chrome at measured 1920x1080, same strict synthetic subtitles scenario and
+unchanged 900-second/180-second startup bounds. Initial public DNS resolution
+failed; normal readiness succeeded within the bound. Public bridge-shell
+navigation without a fragment preceded prompt first preparation in two normal
+pairings; it remains a correlation, not a proven startup fix.
+
+Playback initially displayed `Track URL is missing or invalid`. DE7 at paused
+12.924185 and EN12 at paused 15.549597 selected the expected native track, but
+each selected track had `readyState=3` and its DOM `src` attribute remained the
+opaque subtitle ID. No caption rendered. This does **not** distinguish a rejected
+data URL from missing dispatch or a response-contract mismatch. The sanitized
+top-tab response sample captured only bridge HTML 200, not subtitle requests;
+absence in that limited sample proves neither dispatch nor lack of dispatch.
+Data-URL delivery, placement, umlauts and wrapped/four-line layout have no pass.
+
+Off disabled all three tracks at the same paused 12.924185; Stop returned to
+the subtitle menu. Missing and malformed fixtures each showed Subtitles
+unavailable, and Play without subtitles decoded actual 1280x720 original video
+at 2.931524 and 4.60287 seconds respectively (`readyState=4`, no media error).
+After visiting those sources, reopening healthy preparation stalled into Data
+Load Error. Ordinary Back at session age 241 seconds showed the strict 401
+expired-session explanation. Public start and a second normal pairing recovered.
+
+In the second session, Stop retained the loaded subtitle submenu. At natural
+session age 246 seconds, replay showed the persistent Playback unavailable page
+with Session expired or video unavailable, Pair again and Back. Pair again
+opened a fresh public pairing page. This **passes that video-resolver expiry
+recovery path**, not late subtitle-fetch recovery or the whole issue.
+
+At 10:07 UTC explicit stop completed with supervisor exit0/stopped. All nine
+recorded owned PIDs, listener18092 and control directory were absent. Both owned
+tabs closed. CDP disable/viewport reset was unavailable while the document
+response was paused; closing the owned tabs removes their scoped diagnostic
+state. No successful viewport reset is claimed. No timer extension, new relay,
+operator/Ultra account, vendor modification or security override.
+
+Ignored synthetic captures: `issue22-dataurl-track-failure.png`,
+`issue22-missing-original.png`, `issue22-reopen-load-error.png`, and
+`issue22-expired-playback-recovery.png`. Only the last captures the successful
+native expiry recovery. The next diagnostic candidate preserves the data-URL
+callback unchanged and adds bounded, frame-local numeric counters for known
+request categories, subtitle XHR status categories and callback settlement.
+No IDs, context, URLs, subtitle text or raw errors enter those counters. This
+must establish actual dispatch before considering a URL-type comparison.
+
 ## Resumed Chrome run — 2026-10-31
 
 **Partial browser evidence only; issue open / PR draft.** The bounded run used

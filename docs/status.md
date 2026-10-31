@@ -23,6 +23,27 @@ runtime-error/timing/Stop criteria stay unchecked. The original 900-second run
 exited0/stopped; nine owned PIDs/listener/control were absent, both tabs closed,
 and shared slot released. No operator/Ultra/TV/security change.
 
+Later actual Chrome at exact `2473dbb` **failed caption delivery**: initial Track
+URL is missing or invalid; DE7 and EN12 selected the expected track, but native
+track readyState3 and opaque-ID src remained, with no caption rendering. The
+limited top-tab network sample does not establish subtitle callback dispatch.
+Off preserved paused12.924185 and disabled all tracks; Stop returned to menu.
+Missing and malformed preparation each recovered to actual decoded original
+video. A healthy reopen produced Data Load Error; normal Back after expiry showed
+strict401, then public start/new pairing recovered. At second-session age246s,
+replay showed persistent Playback unavailable/Pair again/Back; Pair again opened
+public pairing. That video-expiry recovery path passes, subtitle late-fetch
+recovery and caption/layout criteria remain open. Explicit stop at10:07UTC:
+supervisor exit0/stopped, all9ownedPIDs/listener/control absent, both tabs closed.
+CDP reset was unavailable; closed tabs remove scoped state, no reset pass claimed.
+
+Diagnostic-only follow-up preserves the failed candidate's data-URL behavior
+while adding bounded frame-local numeric request/XHR/callback counters, with no
+secret or payload values. Independent review approves next Chrome testing only.
+Fresh `uv run pytest -W error`:420passed/1POSIXskip; Ruff check/format95files;
+Node18/18; diffcheck; locked offline wheel/exact22-member allowlist passed.
+Dispatch/actual VTT-request evidence is required before a URI comparison.
+
 The recovery candidate passed a fresh Windows `uv run pytest -W error`:
 **420 passed / 1 POSIX skip**; `uv run ruff check .` and
 `uv run ruff format --check .` passed (95 files), as did the 17 Node guards and

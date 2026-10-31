@@ -27,7 +27,14 @@ in-memory text/vtt data URL, avoiding a second native bearer fetch. UTF-8 Blob/
 FileReader support is feature-detected with no unsafe URL fallback; URI expansion
 is bounded at1,400,000 characters and stale asynchronous context is rejected.
 No persistence/renewal is added; already delivered cues cannot be recalled.
-Actual resolver/data-URL behavior remains a browser gate.
+Actual `2473dbb` Chrome playback rejected track loading; DE/EN selected native
+tracks failed with opaque-ID src unchanged. Whether dispatch, response shape or
+data-URL acceptance caused this is not established. The next candidate preserves
+that behavior and exposes only fixed, bounded frame-local numeric counters in a
+hidden output: request categories, subtitle XHR entry/status category and callback
+attempts. A data-callback count precedes the callback and proves attempted
+handoff only; HTTP200 does not prove MIME acceptance or rendering. No identifiers,
+URLs, payloads or errors enter counters; no persistence or telemetry is added.
 
 An independently authored transient interaction bridge uses only the published
 [interaction interface](https://msx.benzac.de/wiki/index.php?title=Interaction_Plugin)

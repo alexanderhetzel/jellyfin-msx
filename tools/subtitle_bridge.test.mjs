@@ -7,13 +7,15 @@ function fixture(hash, options = {}) {
     let handler;
     const requests = [], notices = [], readers = [], panels = [], contents = [], actions = [];
     const window = { location: { hash, origin: "https://portal.test" } };
+    const diagnosticOutput = { textContent: "" };
+    const document = { getElementById: id => id === "subtitle-diagnostics" ? diagnosticOutput : null };
     function XHR() { requests.push(this); this.open = (method, url) => { this.method = method; this.url = url; }; this.send = () => {}; this.headers = {}; this.getResponseHeader = name => this.headers[name] || null; }
     function FixtureBlob(parts, options) { this.text = parts.join(""); this.type = options.type; }
     function Reader() { readers.push(this); this.readAsDataURL = blob => { this.result = "data:" + blob.type + ";base64," + Buffer.from(blob.text).toString("base64"); if (!options.deferRead) this.onload(); }; }
-    runInNewContext(code, { window, XMLHttpRequest: XHR, Blob: FixtureBlob, FileReader: options.noReader ? undefined : Reader,
+    runInNewContext(code, { window, document, XMLHttpRequest: XHR, Blob: FixtureBlob, FileReader: options.noReader ? undefined : Reader,
         TVXPluginTools: { onReady: fn => fn() },
         TVXInteractionPlugin: { setupHandler: h => { handler = h; }, init() {}, info: (...args) => notices.push(args), showPanel: value => panels.push(value), showContent: value => contents.push(value), executeAction: value => actions.push(value) } });
-    return { handler, requests, notices, window, readers, panels, contents, actions };
+    return { handler, requests, notices, window, readers, panels, contents, actions, diagnosticOutput };
 }
 const hash = "#" + "s".repeat(43) + "/" + "2".repeat(32) + "/" + "3".repeat(32);
 test("invalid context cannot fetch; unknown request cannot fetch", () => {
@@ -145,4 +147,17 @@ test("failure callback changing context suppresses every recovery side effect", 
         assert.equal(calls, 1);
         assert.equal(f.notices.length + f.panels.length + f.contents.length + f.actions.length, 0);
     }
+});
+test("diagnostics contain only fixed bounded counters, never request or response material", () => {
+    const f = fixture(hash);
+    f.handler.handleRequest("private unexpected ID", { secret: "private data" }, () => {});
+    f.handler.handleRequest("portal-subtitle-7", null, () => {});
+    const xhr = f.requests[0]; xhr.status = 200; xhr.responseText = "WEBVTT\n"; xhr.headers["Content-Type"] = "text/vtt"; xhr.onload();
+    const counts = JSON.parse(f.diagnosticOutput.textContent);
+    assert.deepEqual(counts, { init: 0, video: 0, subtitle: 1, unknown: 1, subtitleFetch: 1, subtitleOk: 1, subtitleDenied: 0, subtitleOther: 0, subtitleDataCallback: 1, subtitleNullCallback: 0 });
+    for (let i = 0; i < 65536; i++) f.handler.handleRequest("private unexpected ID", null, () => {});
+    assert.equal(JSON.parse(f.diagnosticOutput.textContent).unknown, 65535);
+    assert.ok(!f.diagnosticOutput.textContent.includes("private"));
+    assert.ok(!f.diagnosticOutput.textContent.includes("WEBVTT"));
+    assert.ok(!f.diagnosticOutput.textContent.includes("portal.test"));
 });
