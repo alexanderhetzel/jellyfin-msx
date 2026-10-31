@@ -427,6 +427,37 @@ was corrected and output-mutation HD isolation strengthened; the affected
 real Jellyfin or a container. Required GitHub container/check gates still apply
 before merge; no local Docker execution is inferred.
 
+## Isolated Jellyfin API matrix — issue #32 (not accepted)
+
+**Implemented / automated-tested in part / device-unverified:** separate
+digest-pinned official real-server checks ran for every stable 12.x release
+12.0.0–12.4.0, each at root and `/jellyfin`. All ten passed regular synthetic
+sign-in, wrong-password/anonymous wizard reuse denial, non-admin private item and
+portal-image access/denial, minimal metadata and production Direct Play with
+canonical `ApiKey`, exact base path and matching original-file range bytes.
+The four optional metadata scalars observed were absent, not explicit null;
+nullable collection/malformed metadata cases remain separately mocked.
+
+The **complete real-server contract failed**: after successful logout and denied
+item access, independent fresh original-file requests still returned matching
+range bytes. The strict failing assertion is retained. No full supported-version
+range or reliable media-token revocation is claimed. #32 stays open and PR #52
+draft/unmerged; see [exact inputs, run and limits](jellyfin-api-compatibility.md).
+Real run `41132506701` at `dc80fa6` failed all five jobs on that expectation,
+with both paths exercised and all five cleanup steps successful. Earlier harness
+failures (internal-network published port and transient startup identity) were
+corrected before those observations. No operator credentials/resources, MSX
+runtime, OS trust, deployment or conversion settings were changed.
+
+Windows/Python 3.12.14: frozen build/dev sync passed with explicit bundled Python;
+`python -m pytest -q` **345 passed, 1 POSIX skip**, known warning #30;
+Ruff check and format check passed (**79 files**). Existing standard CI, including
+Python 3.12/3.13, Docker/wheel/context/proxy/secret scan and CodeQL, passed for the
+tested source; those passes do not override the failing new real API matrix.
+An independent reviewer checked source/security boundaries, official registry
+manifest hashes and Actions evidence; Docker is unavailable on this Windows
+machine, so the reviewer did not independently rerun the servers locally.
+
 ## Consistent visual design — issue #15
 
 **Implemented / automated-tested / browser-tested / device-unverified:** shared
