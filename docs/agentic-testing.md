@@ -16,8 +16,9 @@ Use `msx-testing.md` for lab startup, TLS and actual runtime details.
    regressions for real bugs, not tests that merely repeat implementation details.
 4. Run affected tests, then the full required CI checks for a shared change.
    Never count a mocked PlaybackInfo flag as an actual decoding pass.
-5. Exercise affected user flows in the official MSX runtime. Use the integrated
-   browser consistently; agent UI control goes through the supported browser tool.
+5. Exercise affected user flows in the official MSX runtime. Use the connected
+   Chrome extension consistently for all browser tests and Jellyfin media inspection.
+   Do not use the integrated browser or native Chrome app automation.
    Do not copy runtime code, inject player state or switch to native Arc automation.
 6. Run the physical-device gate for device/codec/audio/remote claims. A browser or
    USB player cannot establish native MSX-on-TV compatibility.

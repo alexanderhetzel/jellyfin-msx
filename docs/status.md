@@ -463,6 +463,519 @@ succeeded and both tabs closed. Session naturally expired during cleanup Back;
 no logout claim. Original600-second bound preserved. No operator/Ultra, vendor
 code, renewal/cache, security or deployment changes.
 
+## Remembered-device client preparation — issue #12
+
+**Corrected-helper run12 — actual startup failed / device-unverified:** fixed
+`8e1ba5e` / main `e1a6bcd` used explicit tab/origin/state/projector/classifier/phase.
+Early Page.getFrameTree returned valid root metadata/expected origin; no matching
+own-plugin URL/HTML flag in that early bounded snapshot, child coverage unknown.
+This validates the local repair's API path, not plugin absence or execution.
+UI then showed Data Load Error. The second planned Page invocation threw class
+Error at local command_invocation, object/name+message string/code undefined,
+code/reason unknown. Terminal frame metadata was not obtained; no later retry.
+
+Initial ASGI allzero; final root/HTML each received1 / start200-send-returned1 /
+final-body-send-returned1, others0, aborted/incomplete0. No own-JS/auth/home request
+observed at this boundary; no browser-receipt, timeout-log or cause inference.
+Finite reports and inspected sanitized2560x1249 error image retained before stop,
+raw pixels RAM-only. Sole tab closed, session83283 exit0/stopped; cleanup17:40:02 UTC
+/18:40:02 Vienna all nine owned PIDs/listener18092/control/helpers absent. Original
+bounds/candidate-off policy retained, no source/product/auth/restart variant.
+See [run12 evidence](remembered-startup-observations.md#corrected-helper-attempt--run12-2026-10-31).
+Both independent evidence/source reviews found no privacy/claim blocker and no
+new own-code/response-contract defect justifying a further variant. Local fake
+second-call validation passed getter1/Page2 without browser actions; real tool
+handle lifetime/cause remains unknown. Earliest unresolved boundary is attributable
+own-document browser state/execution and accepted init, not server send completion.
+No further useful source discriminant or runtime run is authorized by this evidence;
+#12 stays OPEN / PR64 DRAFT, no platform-block or completion claim.
+
+**Page-only run11 — diagnostic blocked before command / device-unverified:**
+fixed `c9705af` / main `e1a6bcd` used one normal startup. Initial UI unsettled,
+current official origin verified. The helper failed while preparing acquisition before explicit
+Page.getFrameTree invocation: stage capability_acquisition / class other / code
+unknown / reason unknown, Page invocations0. No frame metadata or second snapshot,
+alternate/Target/Network/enable/attachment/Fetch/marker/identity substitution.
+No actual required prompt observed; implicit tool behavior unknown. This does
+not refute settled-public-page snapshot success or identify an application cause.
+
+Initial local ASGI allzero; final root/HTML each received1 / start200-send-returned1
+/ final-body-send-returned1; others0, aborted/incomplete0. Stopped at the diagnostic
+block, so no terminal UI/error/timeout/screenshot claim belongs to run11. Fixed
+projection and ASGI retained before cleanup; sole tab closed, session14025
+exit0/stopped, exact nine PIDs/listener18092/control/helpers absent at17:13:43 UTC
+/18:13:43 Vienna. Original bounds retained, no source or application variant.
+See [run11 evidence](remembered-startup-observations.md#first-attempt--run11-2026-10-31).
+
+**Local helper defect after run11 — reproduced / repaired locally:** a helper
+defined before tab/origin declarations in a later REPL call cannot resolve those
+forward free bindings in this installed runtime. Two-call fake acquisition raised
+ReferenceError with getter0/Page0; the old classifier mapped it to other/unknown.
+The immutable run11 artifact does not establish actual getter invocation or its
+discarded exception type. This corrects the earlier capability-failure attribution.
+Explicit parameters for tab/origin/state/projector/classifier/phase reached fake
+getter1/Page1 with finite, redacted same-frame projection. Error output now safely
+distinguishes ReferenceError and thrown-string shapes without text. Browser actions0,
+no product change or new runtime run. See the
+[reviewable helper contract and limits](remembered-startup-observations.md#local-helper-correction-after-run11).
+
+**Standalone public Page snapshot — observed / device-unverified:** a separate
+browser-only control verified public wiki heading/current origin, made one
+Page.getFrameTree call without Target/enable/Network and returned the expected
+root-frame structure, matching public URL and HTML MIME metadata. Seven fixed
+booleans true; error stage/class/code none, no prompt observed; owned tab closed
+in about0.5 seconds, within60 total. Raw tree/URL/IDs discarded, fixed report
+`.lab/reports/issue12-public-frame-snapshot.json` ignored. Independent reviews
+accepted public-root snapshot metadata only; app/child/parsing/execution/Network
+support and startup cause remain unresolved. The proposed
+[Page-only application observation](remembered-startup-observations.md#proposed-page-only-application-observation)
+stopped before its first command in run11; further work needs a separate grant.
+
+**Rebase union on main `e1a6bcd` — automated-tested:** preserve the candidate CLI,
+resume-only option/readiness markers and all scenarios alongside remembered
+continuous listener, JobObject/EOF, Selector loop and deadline containment.
+Two candidate Config regressions first failed on an unrelated explicit loop=auto;
+the loop override now applies only to remember, retaining default kwargs elsewhere.
+A candidate-plus-restart regression first returned local-preparation-error and
+now rejects the incompatible mode before control-state access. Remember is also
+explicitly tested as candidate-ineligible. Production source is byte-identical
+to the pre-rebase remembered candidate; no application variant is introduced.
+
+Full `uv run --no-sync pytest -W error`: **755 passed / 1 POSIX skip**; candidate
+focused **35 passed**. Ruff check/format **127 files**, diff check and current-source
+exact **28-member** wheel validation passed. Independent affected protocol/union
+review passed **92 tests**. Exact-head security review and CI are recorded in PR64;
+these checks do not establish startup or physical-device acceptance.
+
+**Public capability control — observed, cause unknown:** a separate browser-only
+grant used one fresh public MSX wiki tab, verified heading/current HTTPS origin,
+then attempted the single intended root metadata command. Usable identity false;
+retained class Error / code unknown / reason unknown. No actual platform prompt
+observed, no raw message/result/URL/ID output. The tab closed in finally within
+the 60-second total bound (about one second). No relay/start/private/plugin/auth,
+Page/Network/Fetch/attachment/alternate command or settings change. The fixed
+report and [limits](remembered-startup-observations.md#public-document-capability-control--2026-10-31)
+are retained; this is neither a method/platform diagnosis nor an application pass.
+
+**Conditional metadata run10 — support unestablished / startup unaccepted /
+device-unverified:** fixed `c98ae26` on main `13ad0ba` performed one normal entry.
+The initial `Target.getTargetInfo` attempt did not yield usable root identity;
+the retained outcome is unsupported/joins withheld, with coverage unknown. No
+alternate command, Page/Network enable, child observation, event collection or
+identity substitution followed. Initial ASGI allzero; final remembered root and
+HTML each received1 / start200-send-returned1 / final-body-send-returned1; others
+zero, aborted/incomplete zero. The final ordinary DOM read showed Data Load Error.
+No runtime timeout log, HTTP browser stage or cause is claimed. See the
+[conditional run record](remembered-startup-observations.md#first-conditional-run--2026-10-31).
+The preflight threw before root assignment; the bounded catch discarded its
+text and retained no finer reason. Method/tool-policy/paused-document/transport/
+permission subcategories remain unknown; no retry recovered or replaced evidence.
+
+Only fixed JSON reports retained, no raw protocol/error/URL/IDs or screenshot.
+No Retry/warm-up/login/restart/matrix. Normal stop: session19886 exit0/stopped;
+cleanup16:37:10 UTC /17:37:10 Vienna confirmed all nine owned PIDs, listener18092,
+control/helpers absent and sole tab closed. Original total/startup bounds retained.
+Rebase onto subsequent fixture-only main `224adc2` occurred after cleanup, with
+no running-source mixture. The diagnostic support result is not a startup cause
+or an external/platform root-cause finding; investigation remains active.
+After-rebase affected tests (remembered client, ASGI/protocol diagnostics,
+synthetic File/HTTPS/lab/resume): **128 passed** with `-W error`. This is union
+validation, not a new runtime pass or a recounted full-suite result.
+
+**Browser metadata reducer — implemented / automated-tested / device-unverified:**
+source-only work now distinguishes positive frame snapshots, observed navigation,
+matched response and loading terminal metadata without body retrieval or browser
+control. Full bounded cursor/filter draining is required before joined evidence;
+session/request/redirect/frame/loader identity, retired epochs and descendant
+invalidation prevent false joins. Unknown child coverage and the initial-enable
+race remain explicit. See the [observation contract](remembered-startup-observations.md)
+for installed/public API evidence, finite output, counterexamples and the future
+single-run procedure. Its first conditional attempt stopped as recorded above.
+
+Rebased onto main `13ad0ba`, preserving default-off authenticated File candidate,
+fresh Full admission, profile/body/policy/fixture unions and remember deadlines.
+The remembered synthetic scenario does not enable that candidate. Full Windows
+`uv run --no-sync pytest -W error`: **703 passed / 1 POSIX skip**, including
+**37 new reducer tests**. Ruff check/format **125 files**, diff check, offline
+wheel build and exact **28-member** package validation passed. Product/startup
+source, CSP/body/order/timing and locked dependencies remain unchanged by this
+diagnostic milestone. Independent review and current-head CI are recorded in PR64.
+
+**Fixed-source diagnostic run 9 — actual entry failed / device-unverified:**
+exact `25ff60f` (main `e46a4de`) had both independent exact-head reviews and all
+12 CI/CodeQL checks successful before the single granted normal entry. Startup
+source was unchanged. Initial local-only `remember_asgi` counts were all zero.
+The post-timeout snapshot, retained before stop, showed `entry_content` and
+`plugin_html` each received1 / response-start-send-returned200=1 /
+final-body-send-returned1. `start_config`, own `plugin_script`, authorization
+pair/renew and private home remained zero. All aborted/incomplete counters were
+zero at the snapshot. No browser delivery/execution or timeout cause follows.
+The direct content launch does not require start configuration. See the
+[per-category table and limits](durable-authorization.md#foreground-result-and-synthetic-observation-boundary--2026-10-31).
+
+Actual UI again settled on Load Error / Data Load Error; existing sanitized logs
+showed root Data ready, startup action, interaction init/plugin-load attempt to
+the correct target, then Request timed out. Own marker selector deadline leaves
+lifecycle/handler/storage/callback unknown. No Network/CDP, Retry, ForceInit,
+warm-up, credentials, restart or full matrix. Count-only snapshots were retained
+under ignored `.lab/reports/issue12-run9-{initial,final}-asgi.json`; the sanitized
+2560x1249 error capture was inspected at
+`.lab/reports/issue12-run9-asgi-start-data-load-error.png`, with raw pixels RAM-only.
+Original900-total/180-startup bound retained. Session93439 exited0/stopped after
+normal stop; cleanup at15:57:22 UTC /16:57:22 Vienna confirmed all nine exact owned
+PIDs, listener18092, control and own helpers absent, sole owned Chrome tab closed.
+No test resources remain; the observation gap is narrower but software acceptance
+and timeout cause remain unresolved. #12 OPEN / #64 DRAFT, no merge readiness.
+
+**Post-run9 source audit — automated-tested / device-unverified:** remembered,
+lifecycle and subtitle HTML share vendor-first blocking SDK / deferred own-adapter
+order, consistent with the published MSX example. Speculative fetching prevents
+deducing an SDK stall from zero own-script requests. Two added JavaScript-only
+missing-interface witnesses and the prior withheld-readiness guard distinguish
+markers3/7 and no API work; `node --test tools/remember_client.test.cjs` passed
+**24 tests**. This is no browser/parser/fetch model or product fix. The actual
+marker probe depended on finding `body`, which appears after the blocking SDK,
+before reading the earlier root attribute. A future read-only probe should target
+`html` directly; previous selector deadlines remain UNKNOWN. Full reasoning,
+primary references and distinguishing browser evidence are in the
+[source audit](durable-authorization.md#source-audit-after-run-9). No production
+source, CSP/body/order/timing/dependency variant or further runtime activation.
+The read-only observation plan now targets the own marked root without body,
+visibility or load-complete prerequisites. A local standard-library constructed
+head-only DOM counterexample returned old lookup unavailable / direct root1;
+this is no browser/parser/target-accessibility test. Future output is restricted
+to validated fixed marker bits, categorical readyState and two exact script-element
+presence flags, with unreadable/about:blank remaining unknown. No runtime grant.
+
+**Foreground run 8 — actual entry failed / device-unverified:** source `e5e2153`
+parsed root content and dispatched startup interaction `init` to the correct own
+HTTPS plugin target, then settled on Load Error / Data Load Error and Request
+timed out. The own-frame selector reached its deadline: HTML/JS/SDK/handler/
+storage/callback stages remain unknown. No Network/CDP observation, HTTP status
+or paused-document evidence belongs to this run. No Retry, ForceInit, warm-up,
+credentials, restart or restore matrix ran. Sanitized 2560x1249 error capture was
+inspected at ignored `.lab/reports/issue12-run8-foreground-start-data-load-error.png`;
+raw pixels remained RAM-only. Explicit stop returned exit zero/stopped; cleanup
+at 15:39:51 UTC / 16:39:51 Vienna confirmed all nine exact owned PIDs, listener
+18092, control and helpers absent, and the sole owned Chrome tab closed.
+
+**Synthetic ASGI diagnostic milestone — implemented / automated-tested /
+device-unverified:** rebased onto main `e46a4de`, preserving fresh Full permission
+admission and synthetic fixture unions. The existing report gains fixed
+`remember_asgi` counters only for the remembered synthetic scenario. Seven exact
+method/route categories distinguish startup config/root, HTML, own JS, pairing,
+renewal and private home; request entry, response-start send returned, final-body
+send returned, aborted and incomplete are separate. Status keys and saturating
+counts are bounded. No production app/startup, CSP/body/timer or dependency change.
+See [semantics and limits](durable-authorization.md#foreground-result-and-synthetic-observation-boundary--2026-10-31).
+
+Focused `uv run --no-sync pytest tests/test_remember_observations.py -q -W error`:
+**17 passed**, covering streaming, cancellation/send errors, duplicate messages,
+concurrency, disconnect after final send, adversarial redaction, non-HTTP passthrough,
+outer-generated 500 and HTTP200 with an MSX401 body. The last two explicitly disprove
+equating server counters with delivered/authenticated UI. Existing report fields
+are preserved; ordinary real-loopback and other synthetic scenarios lack these
+counters. No runtime diagnostics run has occurred with them, and the automatic
+entry/restore/revoke/re-pair acceptance remains unmet. The cause is unknown and
+investigation continues; #12 remains OPEN and #64 DRAFT/unmerged/no auto-merge.
+
+Full `uv run --no-sync pytest -W error`: **612 passed / 1 POSIX skip** on Windows
+Python 3.12.14. Ruff check and format check: **120 files passed**. Independent
+protocol review passed **23 affected tests** and confirmed a wrong-Host 400 can
+bypass even `received` because TrustedHostMiddleware is outer; this counterexample
+is now retained in the integration test. Received means observer entry, not every
+socket/backend request. Final source/security review and current-head CI are
+recorded in the PR; no new browser/relay activation is implied by these checks.
+`node --test tools/remember_client.test.cjs`: **22 passed**. Offline
+`uv build --wheel --no-build-isolation --offline` and exact **27-member**
+`tools.package_check.wheel_files` validation passed; `git diff --check` passed.
+
+**Startup-only foreground design — implemented / automated-tested /
+device-unverified; actual entry failed above:** a second independent protocol audit
+confirmed the previous root reference grammar was valid but ignored fallback
+items. The chosen ordinary root has no reference/ready and executes the published
+startup-only `[home|content:request:interaction:init@...]` action. Private Pair,
+home and disconnect pages do not inherit it. Context-menu/restored-data exceptions,
+fresh-scene home behavior and error/Back recovery remain actual runtime criteria;
+no local scene/replacement model substitutes for them. Callback completion,
+exact-save, storage, deadline/epoch, singleflight and transient ownership remain
+unchanged. No CSP/body/timing or CommonJS proposal is mixed into this design.
+
+The generated-root contract regression first failed with the prior reference,
+then passed with ordered foreground dispatch and private-page hook isolation.
+On main `b9199f0`, full `uv run --no-sync pytest -W error`: **553 passed /
+1 POSIX skip**; **22 remembered-client Node guards**, Ruff check/format
+**114 files**, diff check and rebuilt offline wheel/exact **27-member** allowlist
+passed. All prior failed normal-entry/body/callback-order observations and unknown
+stages remain recorded below. No browser/relay was used for this source milestone;
+the source design is not a proven fix for their timeout.
+
+**Bounded source-comparison milestone — implemented / automated-tested /
+device-unverified, runtime still unaccepted:** main `e21d103` now includes accepted
+#18/#19. Comparing their registered request handler with #12 identified an extra
+handler-ready ordering dependency after outer SDK readiness. A delivered init now
+starts the existing actual-storage readiness checks directly; no background work
+is triggered by either readiness callback. The new regression failed on the old
+gate and now completes pairing or exact-save/renewal/home without a handler-ready
+notification; later notifications do not repeat work. Deadline/epoch/singleflight,
+authentication, storage and failure boundaries are unchanged. See the
+[source comparison and limits](durable-authorization.md).
+
+Rebase preserved lifecycle/resume/subtitle resources, body limits, policies and
+all startup-only synthetic scenarios. Windows `uv run --no-sync pytest -W error`:
+**527 passed / 1 POSIX skip**; **22 Node remembered-client guards**, Ruff
+check/format **107 files**, diff check and offline wheel/exact **27-member**
+allowlist passed. No dependency/lock change. No browser/relay or new source
+environment variant ran. This repair does not identify the previous transport
+failure's cause; original automatic entry/reload/restart/re-pair acceptance and
+all negative runtime evidence below remain outstanding.
+
+**Focused normal entry at `e597045`: failed / no runtime acceptance.** Under
+the granted unchanged 900-second total/180-second startup bounds, verified HTTPS
+became ready and official MSX 0.1.167 was opened directly with normal startup
+parameters. No ForceInit, Retry or top-level test-origin warm-up occurred. After
+ordinary settling, the visible UI showed Load Error / Data Load Error and the
+existing runtime error reported Request timed out, before any pairing page.
+The fixed own-frame body marker returned only a selector deadline; its value
+and handler/boot entry remain unknown. No CDP, Network collection or viewport
+override was used, so this run supplies neither HTTP status categories nor an
+explicit paused-document error. Earlier transport observations are not imported.
+
+The readable sanitized 2560x1249 error PNG was inspected after excluding a
+full-page CSS-gradient mask from the conservative privacy rectangles; raw capture
+stayed in RAM only. The initial overmasked preview is not evidence. Initial REPL
+bindings had reset; fresh inventory selected connected Chrome profile Mein Chrome
+before the sole test tab opened. No IAB/native app or MCP App tab was used.
+Explicit supervisor stop at **14:51:04 UTC / 15:51:04 Vienna** exited zero/stopped;
+all **nine** recorded owned PIDs, listener18092, control directory and own helpers
+were absent, and the one owned Chrome tab closed. No credentials, restore matrix,
+source change, new budget or operator state was used. The callback-order repair
+remains automated evidence; it is not a verified fix for automatic entry or the
+previous unknown document boundary. #12 remains open and the PR remains draft.
+
+Post-run rebase onto actual main `bc4599a` preserved #19/#23 source-selection
+and recovery code, request body limits (including playback options), lifecycle/
+resume/subtitle assets and the recovery/remember scenario union. No source was
+changed during the run. Final local `uv run --no-sync pytest -W error` passed
+**537 tests / 1 POSIX skip**; remembered/lifecycle/subtitle Node guards passed
+**72 tests**, Ruff check/format **108 files**, diff check and rebuilt offline
+wheel/exact **27-member** allowlist passed. Final affected source/evidence review
+and exact-head CI are recorded in PR64. These checks retain a reviewable draft;
+they do not supersede the failed actual automatic-entry observation.
+
+**Request/response startup correction — implemented / automated-tested /
+runtime acceptance pending:** rebased onto subtitle milestone `1594bf63`, keeping
+its bridge, policies, packaging and synthetic scenario. Startup now uses the
+published content-reference interaction request. SDK readiness alone does not
+renew; one init callback waits for the terminal pair/recovery/library page after
+exact save/readback. Intermediate progress is not pushed against that request.
+Duplicate/unknown init is bounded, later explicit init refreshes authority, and
+the aggregate 25-second deadline blocks late replies and uncertain replay.
+The old fallback items are ignored for a startup reference; runtime delivery-error
+handling must be observed separately. No paused-transport fix is inferred.
+
+Five new contract regressions failed on the old premature callback, then passed
+after the correction. Independent review then found a delayed-timer ordering gap;
+an absolute deadline check at readiness/dispatch/completion/render boundaries
+corrected it, with a new red-to-green late-renewal/late-home regression.
+All **21 Node client guards**, **45 affected Python tests**,
+full `uv run --no-sync pytest -W error` **437 passed / 1 POSIX skip**, Ruff
+check/format **97 files**, diff check and offline wheel/exact **24-member**
+allowlist passed. No dependency/lock change. An initial affected-test command
+named a nonexistent file and ran no tests; the corrected command above passed.
+Earlier runtime observations below belong to their recorded source, not this
+new request contract. Independent affected review precedes the next actual run.
+
+**Actual request-contract run at `cb0f162`: not accepted.** Normal startup without
+ForceInit reached a visible Data Load Error. Sanitized existing runtime logs
+confirmed Data ready, an init content request, plugin-load attempt and Request
+timed out. No pairing page or credentials/enrollment step was reached; the run
+stopped at that first functional block. Generic own-frame body evaluation yielded
+only a selector deadline, not a lifecycle value. Main Network categories were
+untruncated: one HTML request, no responseReceived/completion/failure, no observed
+own-JS/SDK events. Matching ExtraInfo reported HTTP 200 in a historical buffer
+marked truncated; parent/OOPIF coverage was not established. This is no proof of
+script nonexecution or an authorization failure. Network.disable and viewport
+reset explicitly reported Browser Use resolving a paused document response;
+closing the owned tab removed those scopes. At 12:27 Vienna time explicit stop
+exited zero/stopped; all nine recorded PIDs, listener/control/own helpers were
+absent. The readable 1920x1080 public error capture was inspected. No Retry,
+login, restart, source variant or remaining acceptance matrix was attempted.
+
+**Observation normalization — actual entry still fails:** the plugin now has an
+ordinary empty body, matching the published plugin template and subtitle bridge.
+The prior hidden body was a concrete markup difference, not a proven cause of
+the timeout or selector failure. Scripts, fixed marker, CSP, authentication and
+scheduling are unchanged; guards protect the empty body and exact script policy.
+No successful startup is claimed from this markup change. At exact `cde5574`,
+one normal automatic comparison again reached Data Load Error / Request timed
+out before pairing. Generic body reads still timed out; lifecycle remained
+unknown. Main category capture was untruncated: HTML requested once with no
+responseReceived/completion/failure, no observed own-JS/SDK. Matching ExtraInfo
+showed HTTP 200 in a historical buffer marked truncated; child event coverage
+remained unknown. Network.disable/viewport reset explicitly reported paused
+document response, then the one owned tab closed. At 12:35 Vienna time explicit
+stop exited zero/stopped; all nine recorded PIDs/listener/control/helpers were
+absent. Settled DOM/runtime errors and safe categories are the evidence; the
+blank/outgoing screenshot is excluded. No credentials, Retry, restart or full
+matrix ran. This ends the body comparison without another markup/script/CSP
+variant; it does not identify a product cause or establish an external cause.
+
+Retained run-2 action history also rules out the simple claim that every failed
+automatic run lacked a prior top-level origin visit: healthz, then the public
+plugin shell with ready/script-count inspection, preceded its normal MSX launch;
+that automatic start still showed fallback. A later public-shell visit followed
+by explicit Retry correlated with manual generation-one renewal. The subtitle
+flow's prior companion-page visit is a workflow difference, not a demonstrated
+cause. These visits are not equivalent tests of necessity; no warm-up requirement
+or further variant follows. Final run-6 cleanup was 11:35:24 UTC / 12:35:24 Vienna.
+
+**Focused diagnostic preparation:** a fixed RAM-only numeric bitmask on the own
+plugin document now records parsed/script/SDK/handler/boot/content-call boundaries
+without values, logging, telemetry, storage, timers or scheduling/auth changes.
+The focused automatic-iframe read did not yield a value (details below). A new delayed-SDK guard failed
+before implementation and now passes with all **13 Node client guards**;
+`uv run --no-sync pytest tests/test_remembered_client.py -q` passed **3 tests**,
+Ruff check/format **94 files** and diff check passed. Earlier full-suite results
+below are reused, not recounted as a new integration pass.
+
+**Focused Chrome observation, source `fecdc4e`:** normal automatic startup again
+displayed the original two-control Opening Jellyfin fallback. DOM inspection
+confirmed one iframe whose public source matched our remember HTML. The
+documented own-frame/test-ID attribute query failed with Playwright selector
+deadline exceeded; no numeric lifecycle value was obtained. A DOM-only check
+reported that the frame's `contentDocument` was unavailable across origins.
+These facts cannot distinguish missing document/script execution from inaccessible
+inspection or content delivery. **The result is unknown, not stage zero.** No
+request/response categories for remember HTML/JS or vendor SDK were captured;
+the existing server counter allowlist does not cover those files. No Network
+observation, console changes, credentials, Retry, restart or full matrix ran.
+
+The first local preparation failed because the default vendor-binary path was
+absent. The known external binary passed the pinned hash check and exclusive-bind
+preflight; one retry used 830 seconds, retaining the original total deadline.
+Verified HTTPS readiness occurred within the original 180-second startup window.
+At 11:57 Vienna time the relay explicitly stopped, session exit zero/stopped;
+all nine recorded PIDs, listener/control and own helpers were absent. The one
+owned Chrome tab closed. The public fallback capture was inspected. No source
+fix follows from this unsuccessful observation; startup cause remains unresolved.
+
+**Next focused observation, unchanged source `fecdc4e` / docs `74c1577`:**
+Network observation started before normal navigation from the official public
+info page. The generic own-frame body evaluation also failed with a selector
+deadline after ordinary settling; no lifecycle value was obtained. The main
+filtered buffer was not truncated: one HTML request, no responseReceived,
+loadingFinished or loadingFailed; no own-script/SDK events were observed.
+A matching HTML responseReceivedExtraInfo event reported HTTP 200; its historical
+buffer was flagged truncated. This establishes observed response headers, not
+completed document delivery. Parent/OOPIF event coverage was not established;
+absent events cannot prove scripts did not run. The unchanged fallback remained.
+
+Network.disable explicitly reported Browser Use resolving a paused document
+response; earlier body reads reported only selector deadlines. No interception,
+override or source scheduling change was attempted. Closing the owned tab removed
+the observation scope. At 12:10 Vienna time explicit stop exited zero/stopped;
+all nine recorded PIDs, listener/control/own helpers were absent. No credentials,
+Retry, restart or full matrix ran. Only category counts/statuses and a public
+fallback capture were retained, without raw URLs/IDs. Root cause and acceptance
+remain unresolved; these observations do not justify an authentication-code fix.
+
+**Current Chrome follow-up:** the maintainer now requires connected Chrome for
+all browser tests. The first bounded synthetic HTTPS run displayed normal startup's
+Opening Jellyfin fallback; ordinary Retry loaded pairing and Continue displayed
+Waiting. No credentials, enrollment or renewal were exercised, and automatic
+startup is not accepted. An initial synthetic-code screenshot mask miss was
+contained: the retained capture was overwritten with a whole private-panel mask,
+visually verified, and the approved restart request ultimately destroyed the
+pending server/key/temp state on fixed readiness timeout. Nine recorded owned
+PIDs, listener/control and own Python relay helpers were absent; both test tabs
+closed. No operator state, real Jellyfin or TV action occurred.
+
+A local-only ephemeral-port test reproduced Windows Proactor shared-socket
+restart failure. A remember-synthetic-only SelectorEventLoop factory fixes it:
+two actual Uvicorn processes now serve health, exit zero and preserve exclusive
+reservation across restart. Independent source/security review passed six
+targeted tests; guards and default/other-scenario loop selection remain unchanged.
+After this correction, full Windows `uv run --no-sync pytest -W error` passed
+**423 tests / 1 POSIX skip**, and Ruff/format passed **94 files**.
+This is a local server restart correction, not an MSX restoration pass. The actual
+browser matrix was partially exercised in a second master-granted slot below.
+
+**Second Chrome run, source `95f1405`:** official hosted MSX with normal startup
+parameters again stayed on Opening Jellyfin. Ordinary Retry reached pairing;
+the normal two-stage synthetic companion login and Continue reached Jellyfin
+libraries at 1920x1080. The encrypted-store aggregate was one record/generation
+zero. After normal reload, startup again remained on the fallback. Ordinary Retry
+and a normal public-plugin-shell load eventually reached libraries without another
+credential submission; the aggregate advanced to one record/generation one.
+This supports manual renewal through the exact-save/readback gate, not automatic
+startup. Its DOM observation is retained; the blank/outgoing renewal screenshot
+is excluded from visual evidence. The enrollment library capture is usable.
+
+Closing/reopening the MSX tab again left the fallback. The actual supervised
+backend-process restart then succeeded under the same origin, key, reserved port
+and original deadline. Post-restart Retry did not reach libraries; generation
+remained one. Browser Use reported a paused-document condition on several CDP/key
+operations. Its cause is unresolved; no runtime interception, security override or
+product scheduling workaround was applied. A separately pending pairing tab
+displayed Waiting without inheriting authorization; same-profile tabs are not
+independent device storage. Normal Disconnect/re-pair was not exercised.
+
+At 09:55 UTC the relay was explicitly stopped before its original 900-second
+deadline; session exited zero/stopped. All twelve recorded original/replacement
+PIDs, listener 18092, control directory and own relay helpers were absent. All
+three owned Chrome tabs closed; the second-tab viewport override was reset.
+Only synthetic fixture state was used. **Runtime acceptance remains incomplete:**
+automatic startup/reload/reopen, post-restart UI restoration and visible
+Disconnect/re-pair are outstanding. No real-server, playback or device pass follows.
+
+**Implemented / automated-tested / device-unverified; runtime acceptance deferred:**
+the explicit `MSX_REMEMBER_DEVICES` option requires the existing external key and
+encrypted store. Its own-origin public-MS​​X client performs ordinary pending
+pairing, body-only enrollment/renewal, exact new secret/generation readback and
+bounded storage polling after plugin readiness and bounded requests, with one
+in-flight operation. Timeout/conflict/save
+failure gives recovery without automatic replay or overwriting a newer context
+record. Normal server Disconnect is independent of transient interaction ownership.
+Default pairing, CSRF, strict generation/revocation and single-worker policy remain.
+See [client/security/recovery details](durable-authorization.md).
+
+The startup-only synthetic `remember` scenario uses only a supervisor-RAM key,
+private temporary encrypted state, hashed synthetic upstream sessions and strict
+MockTransport. Its local restart signal retains the original 900-second bound
+including startup, verified TLS and no operator state. Independent review caught
+a draft restart listener gap; retaining exclusive sockets in the supervisor and
+vendor wrapper corrected it before any relay run. Actual Windows ephemeral-port
+child restarts deny competing binds; mock EOF cleanup stops the vendor before
+releasing its reservation. At that pre-launch stage no public relay had been
+launched for this client; the later Chrome run is recorded above.
+
+Earlier preparation checks on Windows/Python 3.12.14, rebased onto `3bfc60b`: frozen dev/build
+sync passed; full `uv run --no-sync pytest -W error` with isolated temp/cache
+**421 passed / 1 POSIX skip**, no warnings; Ruff check/format **94 files**,
+**12 Node client guards** and diff checks passed. Offline wheel build and exact
+**22-member** source/license/template/script allowlist passed. No dependency or
+lock versions changed. An initial strict descriptor decoder rejected its newline;
+stripping the owned IPC line and closing test pipes fixed the new test harness.
+Final review also tightened the post-probe restart readiness deadline; a new
+crossing-deadline regression verifies denial and cleanup without extending lifetime.
+
+Independent pre-launch source/security review found no blockers for bounded
+synthetic verification and independently ran 65 affected Python tests/one POSIX
+skip, 12 Node guards and Ruff/format/diff checks, including actual Windows
+socket/process and EOF-ordering cases. It ran no relay/browser and established
+no application acceptance.
+
+**Earlier availability history / issue remains open:** integrated-browser-only verification was
+required by the maintainer. Inventory exposed only Chrome, and the documented
+IAB creation call returned Browser is not available: iab. No tab, supervisor,
+shared listener or control directory was created; the slot was released. No Chrome
+fallback, trust/security change, operator/Jellyfin access or TV action occurred
+in that earlier attempt. The later Chrome-for-all instruction removes the IAB
+availability blocker. Keep the client PR a draft until actual automatic startup, exact-save/readback,
+normal reload/reopen, backend restart, second-device denial and visible
+disconnect/re-pair pass. Tests and older storage/QR evidence do not satisfy them.
+
 ## Authenticated hosted series navigation — issue #7
 
 **Implemented / automated-tested / browser-tested / device-unverified:** the

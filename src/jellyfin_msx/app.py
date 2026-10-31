@@ -164,6 +164,13 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
             )
         if not settings.allow_http:
             response.headers["Strict-Transport-Security"] = "max-age=31536000"
+        if request.url.path == "/msx/remember.html" and settings.remember_devices:
+            # Only our non-secret plugin shell is frameable by the official web runtime.
+            response.headers["Content-Security-Policy"] = (
+                "default-src 'none'; script-src 'self' https://msx.benzac.de/js/tvx-plugin.min.js; "
+                "connect-src 'self'; frame-ancestors https://msx.benzac.de "
+                "https://www.msx.benzac.de; base-uri 'none'; form-action 'none'"
+            )
         if request.url.path.startswith("/api/device/") and "/subtitles/" in request.url.path:
             # Override the general read-only MSX CORS policy for private subtitle bytes.
             for header in ("Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"):
@@ -583,8 +590,47 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
             "name": "Jellyfin MSX",
             "version": "0.1.0",
             "welcome": "none",
-            "parameter": "content:" + url("/msx/pair.json"),
+            "parameter": "content:"
+            + url("/msx/remember.json" if settings.remember_devices else "/msx/pair.json"),
         }
+
+    def require_remember():
+        if not settings.remember_devices:
+            raise PortalError(404, "Remembered devices are disabled.")
+
+    @app.get("/msx/remember.json")
+    async def remember_start():
+        require_remember()
+        page = content(
+            "Opening Jellyfin",
+            [
+                button(
+                    "Retry remembered sign-in",
+                    "content:request:interaction:init@" + url("/msx/remember.html"),
+                ),
+                button("Pair without remembering", "content:" + url("/msx/pair.json")),
+            ],
+        )
+        page.update(
+            action="[home|content:request:interaction:init@" + url("/msx/remember.html") + "]",
+            restore=False,
+        )
+        return page
+
+    @app.get("/msx/remember.html")
+    async def remember_html():
+        require_remember()
+        return HTMLResponse(
+            Path(__file__).with_name("templates").joinpath("remember.html").read_text("utf-8")
+        )
+
+    @app.get("/msx/remember.js")
+    async def remember_script():
+        require_remember()
+        return Response(
+            Path(__file__).with_name("templates").joinpath("remember.js").read_bytes(),
+            media_type="application/javascript",
+        )
 
     async def authorization_input(request, field):
         limit(request, "authorization", 12)
@@ -596,6 +642,8 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
             data = await request.json()
         except (ValueError, UnicodeError, RecursionError):
             raise PortalError(400, "Invalid authorization request.") from None
+        if field is None and data == {}:
+            return None
         if (
             not isinstance(data, dict)
             or set(data) != {field}
@@ -604,6 +652,24 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
         ):
             raise PortalError(400, "Invalid authorization request.")
         return data[field]
+
+    @app.post("/api/device-authorization/pair")
+    async def remembered_pair(request: Request):
+        require_remember()
+        await authorization_input(request, None)
+        limit(request, "new_pair", 10)
+        secret, device = state.pair()
+        return {"session": secret, "page": activation_page(secret, device)}
+
+    @app.post("/api/device-authorization/status")
+    async def remembered_status(request: Request):
+        require_remember()
+        secret = await authorization_input(request, "session")
+        device = state.get(secret, authenticated=False)
+        return {
+            "paired": bool(device.token),
+            "page": None if device.token else activation_page(secret, device, waiting=True),
+        }
 
     @app.post("/api/device-authorization/enroll")
     async def enroll_authorization(request: Request):

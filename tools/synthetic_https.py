@@ -5,6 +5,8 @@ separate human authorization; merely preparing this tool is not that approval.
 """
 
 import argparse
+import asyncio
+import base64
 import hashlib
 import json
 import logging
@@ -22,6 +24,7 @@ from urllib.parse import urlsplit
 
 import httpx
 import uvicorn
+from cryptography.fernet import Fernet
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from jellyfin_msx.app import create_app
@@ -29,6 +32,7 @@ from jellyfin_msx.config import Settings
 from jellyfin_msx.original_file import MODE
 from tools.lab import ROOT, TrafficRecorder, attach_observations
 from tools.navigation_fixture import EPISODES, NavigationJellyfin
+from tools.remember_observations import RememberObservations
 from tools.synthetic_failures import FailureJellyfin
 from tools.synthetic_lab import SyntheticJellyfin, attach_fixture_media
 from tools.synthetic_lifecycle import RECOVERY_BAD_SOURCE, LifecycleJellyfin, RecoveryJellyfin
@@ -86,6 +90,8 @@ def build_public_synthetic_lab(
     allow_public_synthetic=False,
     scenario="baseline",
     authenticated_file_candidate=False,
+    authorization_key=None,
+    state_directory=None,
 ):
     if allow_public_synthetic is not True:
         raise PreparationError("public-synthetic-opt-in-required")
@@ -99,6 +105,7 @@ def build_public_synthetic_lab(
         "lifecycle",
         "resume",
         "recovery",
+        "remember",
     }:
         raise PreparationError("invalid-synthetic-scenario")
     raw = CLIP.read_bytes()
@@ -120,23 +127,48 @@ def build_public_synthetic_lab(
             else {}
         ),
     )
-    fixture_type = {
-        "baseline": SyntheticJellyfin,
-        "failures": FailureJellyfin,
-        "navigation": NavigationJellyfin,
-        "subtitles": SubtitleJellyfin,
-        "lifecycle": LifecycleJellyfin,
-        "resume": ResumeJellyfin,
-        "recovery": RecoveryJellyfin,
-    }[scenario]
-    fixture = (
-        CandidateResumeJellyfin(origin, raw)
-        if authenticated_file_candidate
-        else fixture_type(origin)
-    )
+    if scenario == "remember":
+        from tools.synthetic_authorization import RememberedSyntheticJellyfin
+
+        if not authorization_key or state_directory is None:
+            raise PreparationError("synthetic-authorization-config-required")
+        state_directory = Path(state_directory)
+        if not state_directory.is_absolute() or not state_directory.is_dir():
+            raise PreparationError("invalid-synthetic-state-directory")
+        settings = Settings(
+            origin,
+            origin + "/jellyfin",
+            session_ttl=900,
+            max_states=32,
+            authorization_db=str(state_directory / "synthetic-authorization.sqlite"),
+            authorization_key=authorization_key,
+            authorization_ttl=900,
+            remember_devices=True,
+        )
+        fixture = RememberedSyntheticJellyfin(origin, state_directory / "synthetic-upstream.sqlite")
+    else:
+        fixture_type = {
+            "baseline": SyntheticJellyfin,
+            "failures": FailureJellyfin,
+            "navigation": NavigationJellyfin,
+            "subtitles": SubtitleJellyfin,
+            "lifecycle": LifecycleJellyfin,
+            "resume": ResumeJellyfin,
+            "recovery": RecoveryJellyfin,
+        }[scenario]
+        fixture = (
+            CandidateResumeJellyfin(origin, raw)
+            if authenticated_file_candidate
+            else fixture_type(origin)
+        )
     recorder = TrafficRecorder(httpx.MockTransport(fixture.handle))
     app = create_app(settings, transport=recorder)
-    app, launch = attach_observations(app, settings, recorder)
+    app, launch = attach_observations(
+        app,
+        settings,
+        recorder,
+        remember_observations=RememberObservations() if scenario == "remember" else None,
+    )
     if scenario == "navigation":
         attach_fixture_media(app, fixture, raw, None, item_ids=EPISODES)
     elif scenario == "subtitles":
@@ -294,8 +326,15 @@ def tunnel_args(binary, directory):
     ]
 
 
-def tunnel_helper(binary, directory, seconds):
+def tunnel_helper(binary, directory, seconds, scenario="baseline"):
     verify_binary(binary)
+    # Keep a second reservation alive until cloudflared has stopped, including EOF
+    # cleanup if the supervisor disappears before the backend exits.
+    held_listener = (
+        socket.fromshare(base64.b64decode(sys.stdin.buffer.readline(8192).strip(), validate=True))
+        if scenario == "remember"
+        else None
+    )
     stopped = threading.Event()
     watch_parent(sys.stdin.buffer, stopped)
     deadline = time.monotonic() + seconds
@@ -320,25 +359,73 @@ def tunnel_helper(binary, directory, seconds):
                 print(origins.get_nowait(), flush=True)
                 sent = True
     finally:
-        stop_process(process)
+        try:
+            stop_process(process)
+        finally:
+            if held_listener is not None:
+                held_listener.close()
 
 
-def backend_helper(seconds, scenario="baseline", *, authenticated_file_candidate=False):
-    candidate_option(scenario, authenticated_file_candidate)
-    # Reserve our exclusive listener BEFORE the tunnel can start: never expose an
-    # unrelated existing listener. Keep ownership while waiting for fixed IPC config.
-    with socket.socket() as listener:
+def reserve_listener():
+    listener = socket.socket()
+    try:
         if os.name == "nt":
             listener.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
         listener.bind(("127.0.0.1", PORT))
         listener.listen(128)
+        return listener
+    except BaseException:
+        listener.close()
+        raise
+
+
+def share_listener(backend, listener):
+    if listener is not None:
+        # Windows duplicates this continuously owned socket for this exact child PID.
+        # The protocol descriptor travels only through the owned private stdin pipe.
+        backend.stdin.write(base64.b64encode(listener.share(backend.pid)) + b"\n")
+        backend.stdin.flush()
+
+
+def remember_loop_factory():
+    # Windows Proactor associates a shared socket with one process's IOCP. A fresh
+    # process cannot reuse that association. Selectors preserve the continuously
+    # owned listening endpoint without any close/rebind or security-policy change.
+    return asyncio.SelectorEventLoop()
+
+
+def backend_helper(seconds, scenario="baseline", *, authenticated_file_candidate=False):
+    candidate_option(scenario, authenticated_file_candidate)
+    # In restart tests the supervisor keeps exclusive ownership continuously, even
+    # while a backend process is absent. Never leave a live tunnel targeting a free port.
+    listener = (
+        socket.fromshare(base64.b64decode(sys.stdin.buffer.readline(8192).strip(), validate=True))
+        if scenario == "remember"
+        else reserve_listener()
+    )
+    with listener:
         print("RESERVED", flush=True)
         origin = sys.stdin.buffer.readline(256).decode("ascii").strip()
+        authorization = {}
+        if scenario == "remember":
+            directory = Path(os.environ["HOME"])
+            if directory.parent.resolve() != CONTROL.resolve() or not directory.name.startswith(
+                "sandbox-"
+            ):
+                raise PreparationError("invalid-synthetic-state-directory")
+            configuration = json.loads(sys.stdin.buffer.readline(256))
+            if set(configuration) != {"key"}:
+                raise PreparationError("invalid-synthetic-authorization-config")
+            authorization = {
+                "authorization_key": configuration["key"],
+                "state_directory": directory,
+            }
         app, _, _ = build_public_synthetic_lab(
             origin,
             allow_public_synthetic=True,
             scenario=scenario,
             **({"authenticated_file_candidate": True} if authenticated_file_candidate else {}),
+            **authorization,
         )
         logging.getLogger("uvicorn.error").disabled = True
         logging.getLogger("uvicorn.access").disabled = True
@@ -349,6 +436,11 @@ def backend_helper(seconds, scenario="baseline", *, authenticated_file_candidate
                 proxy_headers=False,
                 log_config=None,
                 timeout_graceful_shutdown=2,
+                **(
+                    {"loop": "tools.synthetic_https:remember_loop_factory"}
+                    if scenario == "remember"
+                    else {}
+                ),
             )
         )
         stopped = threading.Event()
@@ -373,6 +465,27 @@ def await_value(process, values, deadline, stop_file):
         except queue.Empty:
             pass
     raise PreparationError("startup-timeout")
+
+
+def reservation_queue(backend):
+    reserved = queue.Queue(maxsize=1)
+
+    def read():
+        try:
+            if backend.stdout.readline(32).strip() == b"RESERVED":
+                reserved.put("RESERVED")
+        except (OSError, ValueError):
+            pass
+
+    threading.Thread(target=read, daemon=True).start()
+    return reserved
+
+
+def configure_backend(backend, origin, authorization_key):
+    backend.stdin.write((origin + "\n").encode("ascii"))
+    if authorization_key:
+        backend.stdin.write((json.dumps({"key": authorization_key}) + "\n").encode("ascii"))
+    backend.stdin.flush()
 
 
 def ready_local(*, authenticated_file_candidate=False):
@@ -412,12 +525,14 @@ def activate(
         "lifecycle",
         "resume",
         "recovery",
+        "remember",
     }:
         raise PreparationError("invalid-synthetic-scenario")
     verify_binary(binary)
     CONTROL.parent.mkdir(parents=True, exist_ok=True)
     CONTROL.mkdir()  # Exclusive; never overwrite another run's containment state.
     processes = []
+    owned_listener = None
     stop_file = CONTROL / "stop"
     deadline = time.monotonic() + seconds
     startup = min(deadline, time.monotonic() + STARTUP_SECONDS)
@@ -425,6 +540,11 @@ def activate(
         (CONTROL / "owner.json").write_text(json.dumps({"supervisor_pid": os.getpid()}))
         with tempfile.TemporaryDirectory(prefix="sandbox-", dir=CONTROL) as temporary:
             directory = Path(temporary)
+            directory.chmod(0o700)
+            # Generated ONLY for this synthetic lifetime; kept in RAM/owned stdin pipes.
+            authorization_key = Fernet.generate_key().decode() if scenario == "remember" else None
+            if scenario == "remember":
+                owned_listener = reserve_listener()
             (directory / "empty.yml").write_text("{}\n")
             try:
                 base = [sys.executable, "-m", "tools.synthetic_https", "--seconds", str(seconds)]
@@ -444,22 +564,16 @@ def activate(
                     output=True,
                 )
                 processes.append(backend)
-                reserved = queue.Queue(maxsize=1)
-
-                def read_reserved():
-                    try:
-                        if backend.stdout.readline(32).strip() == b"RESERVED":
-                            reserved.put("RESERVED")
-                    except (OSError, ValueError):
-                        pass
-
-                threading.Thread(target=read_reserved, daemon=True).start()
+                share_listener(backend, owned_listener)
+                reserved = reservation_queue(backend)
                 await_value(backend, reserved, startup, stop_file)
                 print('{"status":"starting","stage":"listener-reserved"}', flush=True)
                 tunnel = spawn(
                     [
                         *base,
                         "--tunnel-helper",
+                        "--scenario",
+                        scenario,
                         "--cloudflared",
                         str(binary),
                         "--directory",
@@ -469,6 +583,7 @@ def activate(
                     output=True,
                 )
                 processes.append(tunnel)
+                share_listener(tunnel, owned_listener)
                 origins = queue.Queue(maxsize=1)
                 drain_origins(tunnel.stdout, origins)
                 origin = await_value(tunnel, origins, startup, stop_file)
@@ -478,8 +593,7 @@ def activate(
                     ),
                     flush=True,
                 )
-                backend.stdin.write((origin + "\n").encode("ascii"))
-                backend.stdin.flush()
+                configure_backend(backend, origin, authorization_key)
                 while True:
                     if time.monotonic() >= startup:
                         raise PreparationError("relay-readiness-timeout")
@@ -503,6 +617,7 @@ def activate(
                             "supervisor_pid": os.getpid(),
                             "backend_pid": backend.pid,
                             "tunnel_helper_pid": tunnel.pid,
+                            "scenario": scenario,
                         }
                     )
                 )
@@ -521,6 +636,54 @@ def activate(
                 while time.monotonic() < deadline and not stop_file.exists():
                     if any(p.poll() is not None for p in processes):
                         raise PreparationError("owned-helper-exited")
+                    restart = CONTROL / "restart-backend"
+                    if scenario == "remember" and restart.exists():
+                        restart.unlink()
+                        stop_process(backend)
+                        processes.remove(backend)
+                        remaining = max(1, int(deadline - time.monotonic()))
+                        backend = spawn(
+                            [
+                                sys.executable,
+                                "-m",
+                                "tools.synthetic_https",
+                                "--seconds",
+                                str(remaining),
+                                "--backend-helper",
+                                "--scenario",
+                                scenario,
+                            ],
+                            directory,
+                            output=True,
+                        )
+                        processes.append(backend)
+                        share_listener(backend, owned_listener)
+                        restart_deadline = min(deadline, time.monotonic() + 30)
+                        await_value(
+                            backend, reservation_queue(backend), restart_deadline, stop_file
+                        )
+                        configure_backend(backend, origin, authorization_key)
+                        while not (ready_local() and ready_public(origin)):
+                            if (
+                                time.monotonic() >= restart_deadline
+                                or stop_file.exists()
+                                or backend.poll() is not None
+                            ):
+                                raise PreparationError("synthetic-restart-readiness-timeout")
+                            time.sleep(0.1)
+                        if time.monotonic() >= restart_deadline:
+                            raise PreparationError("synthetic-restart-readiness-timeout")
+                        (CONTROL / "owner.json").write_text(
+                            json.dumps(
+                                {
+                                    "supervisor_pid": os.getpid(),
+                                    "backend_pid": backend.pid,
+                                    "tunnel_helper_pid": tunnel.pid,
+                                    "scenario": scenario,
+                                }
+                            )
+                        )
+                        print('{"status":"backend-restarted"}', flush=True)
                     time.sleep(0.1)
             finally:
                 # Stop all owned helpers BEFORE removing their isolated cwd/config.
@@ -533,7 +696,10 @@ def activate(
                 if failed:
                     raise PreparationError("owned-helper-cleanup-failed")
     finally:
-        for name in ("owner.json", "stop"):
+        # All owned backend/tunnel helpers have been stopped before releasing the port.
+        if owned_listener is not None:
+            owned_listener.close()
+        for name in ("owner.json", "stop", "restart-backend"):
             (CONTROL / name).unlink(missing_ok=True)
         CONTROL.rmdir()
 
@@ -544,6 +710,7 @@ def main():
     modes.add_argument("--check", action="store_true")
     modes.add_argument("--activate-public-synthetic", action="store_true")
     modes.add_argument("--stop", action="store_true")
+    modes.add_argument("--restart-backend", action="store_true")
     modes.add_argument("--backend-helper", action="store_true", help=argparse.SUPPRESS)
     modes.add_argument("--tunnel-helper", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--cloudflared", type=Path, default=BINARY)
@@ -558,6 +725,7 @@ def main():
             "lifecycle",
             "resume",
             "recovery",
+            "remember",
         ],
         default="baseline",
     )
@@ -571,7 +739,9 @@ def main():
     args = parser.parse_args()
     try:
         candidate_option(args.scenario, args.authenticated_file_candidate)
-        if args.authenticated_file_candidate and (args.stop or args.tunnel_helper):
+        if args.authenticated_file_candidate and (
+            args.stop or args.tunnel_helper or args.restart_backend
+        ):
             raise PreparationError("candidate-incompatible-mode")
         candidate_options = (
             {"authenticated_file_candidate": True} if args.authenticated_file_candidate else {}
@@ -579,10 +749,18 @@ def main():
         if not 1 <= args.seconds <= MAX_SECONDS:
             raise PreparationError("invalid-lifetime")
         if args.backend_helper:
+            if args.scenario == "remember":
+                _owned_backend_job = enter_kill_on_close_job()
             backend_helper(args.seconds, args.scenario, **candidate_options)
         elif args.tunnel_helper:
             _owned_job = enter_kill_on_close_job()
-            tunnel_helper(args.cloudflared.resolve(), args.directory, args.seconds)
+            tunnel_helper(args.cloudflared.resolve(), args.directory, args.seconds, args.scenario)
+        elif args.restart_backend:
+            owner = json.loads((CONTROL / "owner.json").read_text())
+            if owner.get("scenario") != "remember":
+                raise PreparationError("no-owned-remember-run")
+            (CONTROL / "restart-backend").touch()
+            print('{"status":"backend-restart-requested"}')
         elif args.stop:
             if not (CONTROL / "owner.json").is_file():
                 raise PreparationError("no-owned-run")
