@@ -85,6 +85,10 @@ access returns1. Count-only result is retained at ignored
 `.lab/reports/issue12-head-only-dom-witness.json`. This verifies the lookup
 prerequisite, not browser parsing, attachment, child-target accessibility or a
 live SDK stall. It does not turn any historical unknown marker into a value.
+Earlier direct own-root/test-ID queries also failed. Removing body alone is not
+an adequate reason for another attempt. The separately tested
+[metadata observation contract](remembered-startup-observations.md) adds explicit
+session/frame/network coverage and positive-stage separation; it has not run.
 
 A future connected-Chrome observation should use the exact observed own iframe
 and its marked `html[data-testid="jellyfin-msx-lifecycle"]`, then documented

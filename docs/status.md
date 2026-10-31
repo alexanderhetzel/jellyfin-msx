@@ -465,6 +465,25 @@ code, renewal/cache, security or deployment changes.
 
 ## Remembered-device client preparation — issue #12
 
+**Browser metadata reducer — implemented / automated-tested / device-unverified:**
+source-only work now distinguishes positive frame snapshots, observed navigation,
+matched response and loading terminal metadata without body retrieval or browser
+control. Full bounded cursor/filter draining is required before joined evidence;
+session/request/redirect/frame/loader identity, retired epochs and descendant
+invalidation prevent false joins. Unknown child coverage and the initial-enable
+race remain explicit. See the [observation contract](remembered-startup-observations.md)
+for installed/public API evidence, finite output, counterexamples and the future
+single-run procedure. No new runtime attempt or grant has occurred.
+
+Rebased onto main `13ad0ba`, preserving default-off authenticated File candidate,
+fresh Full admission, profile/body/policy/fixture unions and remember deadlines.
+The remembered synthetic scenario does not enable that candidate. Full Windows
+`uv run --no-sync pytest -W error`: **702 passed / 1 POSIX skip**, including
+**36 new reducer tests**. Ruff check/format **125 files**, diff check, offline
+wheel build and exact **28-member** package validation passed. Product/startup
+source, CSP/body/order/timing and locked dependencies remain unchanged by this
+diagnostic milestone. Independent review and current-head CI are recorded in PR64.
+
 **Fixed-source diagnostic run 9 — actual entry failed / device-unverified:**
 exact `25ff60f` (main `e46a4de`) had both independent exact-head reviews and all
 12 CI/CodeQL checks successful before the single granted normal entry. Startup
