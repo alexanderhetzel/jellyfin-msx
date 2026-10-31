@@ -131,8 +131,12 @@ The preferred original-with-progress flow now uses authenticated generation-boun
 [playback reporting](playback-reporting.md). Requested samples must echo the
 native resolver's public generation marker; only observed advancing samples
 establish Start. Stop confirmation or a 45-second last-safe lease ends reporting.
-The legacy Try original and HTML5X subtitle entries remain unreported. Resume and
-automatic fallback remain separate work. Source-pinned official-runtime Chrome
+The legacy Try original and HTML5X subtitle entries remain unreported.
+[Saved progress](saved-progress.md) adds source-pinned Resume/Start over using
+fresh authorized Jellyfin progress, bounded by selected duration, PlaybackInfo
+StartTimeTicks and native resume:position. Actual official-runtime Chrome
+observations verify the scoped synthetic flow; automatic fallback remains
+separate work. Source-pinned official-runtime Chrome
 observations now verify the supported original flow; physical device behavior
 and genuine suspension remain unverified.
 

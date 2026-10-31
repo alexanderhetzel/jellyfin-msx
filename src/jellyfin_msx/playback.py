@@ -23,6 +23,34 @@ def lower(value):
     return value.lower() if isinstance(value, str) else ""
 
 
+def resume_ticks(item, source):
+    """Bound item-wide progress to the selected cut; malformed data starts over.
+
+    These are client UX thresholds, not Jellyfin watched-status rules. A source's
+    explicit duration takes precedence over the item's aggregate duration.
+    """
+    duration = source.get("RunTimeTicks", item.get("RunTimeTicks"))
+    user = item.get("UserData")
+    if not isinstance(user, dict) or user.get("Played") is True:
+        return 0
+    position = user.get("PlaybackPositionTicks")
+    if (
+        type(duration) is not int
+        or not 0 < duration <= 864000 * 10_000_000
+        or type(position) is not int
+        or not 5 * 10_000_000 <= position < duration
+        or position * 10 >= duration * 9
+        or duration - position <= 5 * 10_000_000
+    ):
+        return 0
+    return position
+
+
+def position_label(ticks):
+    seconds = ticks // 10_000_000
+    return f"{seconds // 3600:02}:{seconds // 60 % 60:02}:{seconds % 60:02}"
+
+
 def choose_source(item, bitrate, allow_transcoding=False, *, candidate_profile=PHILIPS):
     sources = item.get("MediaSources") or []
     if not sources:
@@ -230,8 +258,12 @@ async def resolve(
     subtitle: int,
     media_source_id: str | None = None,
     playback_context: dict | None = None,
+    *,
+    resume: bool = False,
 ):
-    allow_transcoding = jellyfin.settings.allow_transcoding
+    # Saved-progress resume is an original-file contract. HLS may have a
+    # server-shifted timeline, so it cannot share the native absolute offset.
+    allow_transcoding = jellyfin.settings.allow_transcoding and not resume
     if not allow_transcoding and (force or subtitle >= 0):
         raise PortalError(409, "Transcoding and subtitle burn-in are disabled for this server.")
     item = await jellyfin.item(device, item_id)  # enforce user access before negotiation
@@ -253,6 +285,7 @@ async def resolve(
                 409, "Selected version is no longer eligible. Reopen the item details."
             )
     source_id = identifier(selected.get("Id"))
+    start_ticks = resume_ticks(item, selected) if resume else 0
     body = {
         "UserId": device.user_id,
         "DeviceProfile": profile(jellyfin.settings.max_bitrate, allow_transcoding),
@@ -262,7 +295,7 @@ async def resolve(
         "AllowVideoStreamCopy": False,
         "AllowAudioStreamCopy": False,
         "SubtitleStreamIndex": subtitle,
-        "StartTimeTicks": 0,
+        "StartTimeTicks": start_ticks,
         "MediaSourceId": source_id,
     }
     if jellyfin.settings.max_bitrate is not None:
@@ -344,6 +377,8 @@ async def resolve(
         if not urlsplit(url).path.lower().endswith(".m3u8"):
             raise PortalError(502, "Jellyfin did not return an HLS manifest.")
         mode = "TranscodeHLS"
+    if start_ticks and resume_ticks(item, source) != start_ticks:
+        raise PortalError(409, "Selected version duration changed. Reopen the item details.")
     if playback_context is not None:
         # Transport correlation is private state, never a diagnostic field.
         playback_context.update(
@@ -351,6 +386,7 @@ async def resolve(
             play_session_id=info.get("PlaySessionId"),
             duration_ticks=source.get("RunTimeTicks", item.get("RunTimeTicks")),
             mode=mode,
+            start_ticks=start_ticks,
         )
     diagnostic = {
         "id": secrets.token_hex(8),
