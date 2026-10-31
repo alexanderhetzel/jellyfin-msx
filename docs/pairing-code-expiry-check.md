@@ -1,4 +1,4 @@
-# Pending-code expiry and normal recovery � issue #9
+# Pending-code expiry and normal recovery — issue #9
 
 **Implemented / automated-tested with mocks / actual browser subset /
 recovery deferred / device-unverified.** This independent test entry covers the unused pending TV
@@ -112,11 +112,11 @@ then identified unbounded awaits and the missing post-wait budget check; both
 were corrected and the expanded tests passed. Review also caught the zero-action
 allowance edge, now rejected before scheduling; seventeen focused tests passed,
 including refusal of a candidate delivery marker.
-## Granted browser observation � 2026-10-31
+## Granted browser observation — 2026-10-31
 
 The one expiry-only baseline/candidate-off run used reviewed head
 `b43ad558bb9cf275ec18bdaef1cc6ddab0742b5c`. The original supervisor window was
-18:28:56�18:43:56 UTC; execution stopped and cleanup completed at 18:37:14 UTC.
+18:28:56–18:43:56 UTC; execution stopped and cleanup completed at 18:37:14 UTC.
 The published official MSX runtime was controlled through the granted Chrome
 extension. No runtime source variant, clock override or live retry was used.
 
