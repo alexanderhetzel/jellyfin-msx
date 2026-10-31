@@ -46,6 +46,29 @@ the running source was never rebased or mixed. No active test resources remain.
 
 ## Supported contracts and limits
 
+### Public-document capability control — 2026-10-31
+
+A separate browser-only grant allowed one fresh tab on the public
+Interaction_Plugin wiki page at the official HTTPS origin, without a relay,
+startup parameter, application/plugin navigation or authentication. The expected
+heading and exact origin were verified through ordinary DOM/current-URL reads
+before the single intended metadata-command attempt. It returned no usable
+identity: the retained error class is Error, structured code unknown and reason
+unknown. None of the conservative unambiguous reason signatures matched. No
+raw message/result/URL/identifier was retained or emitted, and no actual required
+platform prompt was observed. This is not evidence that permission was irrelevant.
+
+The fixed report is ignored
+`.lab/reports/issue12-public-capability-check.json`. The owned tab closed in the
+terminal finally path; creation through cleanup took about one second, within
+the 60-second total bound. No Page/Network/Fetch/attachment/alternate command,
+setting change or relay operation followed. No implicit tool behavior is assumed
+absent. The control establishes failure to obtain metadata in a verified public
+document context; it does not prove the underlying method is unsupported,
+identify the failing component, explain run10 or establish app/child coverage.
+Whether any command reached protocol wire dispatch is also unknown. Page/Network
+support remains untested by this control; failure is not a universal capability claim.
+
 The installed connected-Chrome `cdp.documentation()` was read without sending
 live commands. It exposes `send(method, params, {target})` and filtered
 `readEvents({afterSequence, methods, limit, target})`, returning a cursor,

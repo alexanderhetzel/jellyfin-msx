@@ -465,6 +465,16 @@ code, renewal/cache, security or deployment changes.
 
 ## Remembered-device client preparation — issue #12
 
+**Public capability control — observed, cause unknown:** a separate browser-only
+grant used one fresh public MSX wiki tab, verified heading/current HTTPS origin,
+then attempted the single intended root metadata command. Usable identity false;
+retained class Error / code unknown / reason unknown. No actual platform prompt
+observed, no raw message/result/URL/ID output. The tab closed in finally within
+the 60-second total bound (about one second). No relay/start/private/plugin/auth,
+Page/Network/Fetch/attachment/alternate command or settings change. The fixed
+report and [limits](remembered-startup-observations.md#public-document-capability-control--2026-10-31)
+are retained; this is neither a method/platform diagnosis nor an application pass.
+
 **Conditional metadata run10 — support unestablished / startup unaccepted /
 device-unverified:** fixed `c98ae26` on main `13ad0ba` performed one normal entry.
 The initial `Target.getTargetInfo` attempt did not yield usable root identity;
