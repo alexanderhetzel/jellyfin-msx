@@ -404,6 +404,20 @@ tests / 1 POSIX skip**, Ruff check/format (**117 files**), syntax and diff passe
 No new runtime verified this adapter. The [source audit and limits](hosted-session-check.md#source-only-attribute-adapter-and-exact-image-contract)
 retain the possibility that ordinary DOM attributes expose no safe authority.
 
+**Third separately granted execution found no exact authority:** exact `7ed21b5`
+stopped at A poster target selection. Attribute counts were five IMG elements,
+zero URL-bearing inline backgrounds and two nonempty source values; both values
+were classified wrong-shape-or-item, with zero exact/distinct candidates and all
+other rejection counts zero. The underlying values and invalid-URL versus
+path/item distinction remain unknown. No resource observations, B flow,
+retained-target denial, re-pairing or negative control ran. Normal A UI cleanup
+was corroborated by paired_sessions=0/logout204=1; authentication=1, poster=1
+and PlaybackInfo=0. All three tabs and nine owned PIDs were gone, supervisor
+exit0/stopped and listener/control absent at 16:19:27 UTC. The slot was released
+at the first blocker without a source variant or relaxed target. See the
+[third attempt record](hosted-session-check.md#third-bounded-hosted-attempt--2026-10-31);
+#9 remains open without hosted A/B acceptance.
+
 ## Revocation source evidence and mocked observer subset — issue #32
 
 **Source-reviewed / automated-tested in part / device-unverified.**

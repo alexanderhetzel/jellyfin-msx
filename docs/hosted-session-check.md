@@ -291,3 +291,36 @@ Local checks passed **74 Node tests** (55 observer/session guards), **586 Python
 tests / 1 POSIX skip**, Ruff check/format (**117 files**), syntax and diff checks.
 No runtime retry tested this adapter; it is not a proven fix for either live
 capture failure, and retained-resource/two-session acceptance remains open.
+
+## Third bounded hosted attempt — 2026-10-31
+
+**Executed / unavailable exact authority / normal cleanup observed /
+device-unverified.** The master separately granted exact attribute-adapter head
+`7ed21b5e556818cec680a77a4bf22e07c59006a9`, based on `e46a4de`. One baseline
+supervisor started at 16:17:04 UTC with a single 900-second total deadline
+(16:32:04 UTC), including at-most-180-second startup. Public health became ready
+within that bound; no source change or rebase occurred during the runtime.
+
+The command stopped at `A-poster-target-selection`. Documented attribute reads
+reported five IMG elements, zero URL-bearing inline-style elements and zero
+unsupported backgrounds. Two nonempty source values were supplied; both fell in
+the combined wrong-shape-or-item class, with zero exact or distinct candidates.
+The transformed, foreign, pending-grant, decorated and noncanonical counts were
+all zero. That class includes invalid absolute URLs as well as unexpected paths
+or item IDs; these counts do not identify the actual values or the renderer's
+representation. No capability or resource target was selected, and checks and
+resource observations remained empty. No opaque capture, B pairing, retained A
+denial, B survival, re-pairing or negative control ran. No approval was surfaced.
+
+Normal UI cleanup again completed without a deferred flag. Separate fixed
+server counters were paired_sessions=0, logout204=1, authentication=1, poster=1
+and PlaybackInfo=0. These support normal A logout, not retained-resource denial
+or two-session acceptance. No broader root cause or rendering fix is inferred.
+
+The retained supervisor exited zero/stopped. All three owned Chrome extension
+tabs were closed, all nine exact owned PIDs were absent, and listener18092 and
+the control directory were absent at 16:19:27 UTC. Four fixed local reports
+retain entry classifications, server counters, tab counts and cleanup. The slot
+was released after this first blocker without a source variant, relaxed target,
+extra page action, raw private value output, matrix replay or budget reset.
+Issue #9 remains open and PR #73 remains draft without A/B hosted acceptance.
