@@ -170,6 +170,20 @@ test("deadline after save suppresses late home and unknown IDs never disclose th
     x.request("unknown");assert.equal(x.replies.at(-1),null);assert.equal(x.requests.length,0);
 });
 
+test("delayed timer delivery cannot admit late renewal or home responses",()=>{
+    for(const afterSave of [false,true]){
+        const x=browserLab();x.sdk();x.ready();x.init();
+        if(afterSave)x.reply({renewal:next,generation:3,expires:2000,session});
+        x.now+=26000; // Deliberately do NOT deliver the timeout callback first.
+        x.reply(afterSave?{headline:"Jellyfin libraries",items:[]}:
+            {renewal:next,generation:3,expires:2000,session});
+        assert.equal(x.replies.length,1);assert.equal(x.replies[0].headline,"Remembered sign-in unavailable");
+        assert.equal(x.value,afterSave?raw(next,3):raw());
+        assert.equal(x.requests.length,0);assert.equal(x.pages.length,0);
+        x.tick(1);assert.equal(x.replies.length,1);
+    }
+});
+
 test("missing SDK or storage readiness cannot leave init hanging or start late renewal",()=>{
     for(const missing of ["sdk","storage"]){
         const x=browserLab();x.sdk();if(missing==="storage"){x.storageReady=false;x.ready();}

@@ -26,6 +26,9 @@ Storage polling retains its five-second bound and each XHR its fifteen-second
 bound. An aggregate 25-second init deadline also covers delayed SDK/storage and
 sequential requests. Timeout returns recovery, blocks silent renewal replay and
 invalidates the attempt's late callbacks, preventing delayed save/navigation.
+Absolute deadline checks at readiness, dispatch, completion and rendering also
+reject late work if the timer callback itself has not run. The deadline uses the
+monotonic performance clock where available, otherwise the local wall clock.
 An upstream renewal may already have committed; uncertain authority requires
 explicit re-pairing. A plugin that never loads cannot run this deadline: normal
 runtime request error/retry is the delivery boundary. The reference ignores most
