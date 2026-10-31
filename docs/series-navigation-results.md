@@ -1,10 +1,113 @@
-# Series navigation renderer milestone — 2026-10-30
+# Series navigation verification
+
+## Authenticated hosted software acceptance — 2026-10-31
+
+**Implemented / automated-tested / browser-tested / device-unverified:** the
+remaining #7 software flow was exercised in official hosted MSX using normal
+production two-stage CSRF pairing, expiring session capabilities, private
+navigation/posters/details, PlaybackInfo resolution and authenticated original
+episode media. No public-export navigation, poster or media URL substitutions
+were used in this run. The older renderer-only limitation below is historical.
+Physical Philips/audio/remote acceptance remains unchecked in #4.
+
+The source exercised was `c20e8b64000b8c5628f89e0056f0c8fa55e141d6`, based on
+`72b3e1976a863d8f165fc83f04e2817f3881bf42`. Only the isolated lab adds a trusted
+startup `navigation` scenario using the existing strict `NavigationJellyfin`.
+Its original-file fixture route admits only the frozen fifty episode IDs and
+checks login token, selected source and Static flag. All approved media is the
+checksum-verified synthetic clip snapshotted in RAM; no directory, operator
+configuration, real server/account, secret store or network fallback is used.
+The old fixture synopsis still mentions the public renderer probe; that is
+inherited synthetic text, not a description of this run's actual URL plumbing.
+The production application and its authentication/media policies were unchanged.
+
+The approved supervisor retained exclusive loopback binding, verified HTTPS with
+no redirects, isolated child environment, EOF/Windows JobObject cleanup,
+180-second startup and original **900-second total** bound. Public readiness
+initially waited while local readiness was already true; verified public readiness
+passed before pairing at approximately 08:40 UTC. No resolver, trust, browser
+permission or TLS security setting was changed.
+
+Reproduction after authorization and with the reviewed binary available:
+
+```sh
+uv run python -m tools.synthetic_https --activate-public-synthetic --seconds 900 --scenario navigation
+```
+
+Open the ready service's public pairing launcher in the official hosted runtime,
+use the normal companion form and synthetic credentials from the lab runbook,
+then Continue. This is a supervised manual browser recipe, not a complete
+unattended E2E command. Shared browser/relay use requires the master's exclusive
+slot during an orchestrated run. Never reuse old relay addresses.
+
+### Actual actions and observations
+
+Connected Chrome extension on Windows, existing `Mein Chrome` profile, official
+unmodified runtime at `https://msx.benzac.de`; measured **1920x1080** viewport.
+The runtime/browser version was not independently reread in this follow-up;
+earlier runs recorded MSX 0.1.167 web. No physical parity or audible-output claim.
+
+| Flow | Actual observation |
+| --- | --- |
+| Normal pairing → Continue | Current code stayed in RAM; normal code check and credential POST reached TV paired, then private Jellyfin libraries / Synthetic television. No state injection or public fixture callback. |
+| Series → seasons → episodes | Correct series/season labels and loaded gradient posters. Native arrows traversed all fifty distinct episode labels across 24/24/2 backend records and MSX's four-poster pages. Not every episode detail was opened in the browser. |
+| Next / Previous | Next reached 25–48, then 49–50 with no further Next. Previous returned to 25–48 and 01–24; new backend pages start at their first item. |
+| Detail / Back / metadata | Episode 24 and 50 details showed correct title, 2026, Episode and synopsis. Real Back retained Episode 24 at 24/26 and Episode 50 at 2/4; inspected screenshots also showed loaded posters. |
+| Original Episode 50 | Real Try original invoked the private resolver and native original endpoint. URL-free boolean checks confirmed the intended synthetic origin, episode 50 original path and authenticated source. Browser response observations recorded resolver JSON/200 and original MP4/206. |
+| Native player | Actual visible test-pattern frame; 1280x720, duration 30, readyState 4, error null, paused false, time 8.134782 → 16.153150 seconds. Real pause icon produced paused=true at 21.222331. Escape Stop returned to detail with paused=true, time=0, readyState=0 and decoded dimensions zero. |
+| Empty season | No items available / Libraries, then Back retained empty-season focus at 2/4. |
+| Restricted season | Actual upstream mock 403 travelled through production HTTP error handling. MSX displayed Data Load Error plus **401 Error: Jellyfin denied access. Check permissions or pair again.** This resolves the old callback-wrapper observation for the normal synthetic HTTP flow; no polished error/retry UI is claimed. |
+| Denial recovery | First Back dismissed the error notification; second restored restricted-season focus at 3/4. Season 1 reopened; Episode 01 played its own authenticated original path at 1280x720/readyState4/error-null/time4.779449, and a recovery frame was inspected before Stop. |
+| Own-session cleanup | Normal Disconnect TV / Confirm disconnect displayed settled Disconnected / Pair again. Server report showed zero paired sessions and one successful upstream logout. |
+
+Snapshots sometimes showed an outgoing/empty transition before the requested
+screen settled. Subsequent DOM observations and inspected settled screenshots,
+not the outgoing frame, support the results above. The native media time was
+read-only; no player state was assigned. No raw QR, code, bearer URL or request
+trace was written or emitted. Retained screenshots start at secret-free libraries.
+
+### Separate sanitized request and automated evidence
+
+The live browser Network sample retained only route categories/status/MIME:
+17 private browse JSON/200, 33 private poster PNG/200, 3 private detail JSON/200,
+2 private resolver JSON/200 and 2 original MP4/206 responses, plus home/disconnect
+responses. It did **not** retain the 401 in that responseReceived sample. A later
+full-buffer query was truncated and is not complete network evidence. The specific
+401 message is observed UI evidence. Independently, the live redacted server
+report counted one mock upstream library403, 57 library200, 33 poster200,
+two PlaybackInfo200, one authentication200 and one logout204. Both negotiations
+enabled Direct Play and disabled DirectStream/transcoding with subtitle index -1.
+These counters corroborate requests; they do not by themselves prove decoding.
+
+Sanitized local evidence is in ignored `.lab/reports/issue7-private-*`: `seasons`,
+`episode24-detail`, `episode24-back`, `final-page`, `episode50-back`, `empty`,
+`denied`, `denial-back`, `play-frame`, `paused`, `recovery-frame`, `disconnected`
+and `observations.json`. Process identity-only cleanup records are separate.
+Browser observation stopped, the viewport override cleared (measured 2560x1215),
+and both owned tabs closed. At **08:45:18 UTC**, the supervisor had exited 0/stopped;
+all nine recorded exact owned helper/console/vendor PIDs, listener 18092 and control
+directory were absent, within the original total lifetime. Raw in-memory network
+records and code/tab bindings were discarded. No production resource or TV action.
+
+Windows/Python 3.12.14: locked dev/build sync, `uv run --no-sync pytest -W error`
+**414 passed / 1 POSIX skip**, Ruff check/format **92 files**, whitespace check,
+locked offline wheel build and exact **20-member** package allowlist passed.
+New mocked tests cover private paging/media/source/ranges/auth/logout and reject
+request-driven scenario selection; the actual helper EOF test includes navigation.
+The first added assertion accidentally duplicated the origin in its expected
+private prefix; correcting the assertion restored the suite. An independent
+pre-activation source/security review passed 52 affected tests/Ruff and confirmed
+unchanged supervision/security boundaries. Final-head review and CI are recorded
+in the linked PR. These automated checks remain separate from actual UI evidence.
+
+## Historical public renderer milestone — 2026-10-30
 
 **Implemented / automated-tested / browser-tested / device-unverified:** isolated
 series catalogue, production empty-state row and application-derived public
 navigation graph for part of [#7](https://github.com/alexanderhetzel/jellyfin-msx/issues/7).
-Issue #7 remains open for the normal hosted private flow and its permission-error
-delivery. This public renderer result is not complete client integration.
+At this historical checkpoint, issue #7 remained open for the normal hosted
+private flow and its permission-error delivery, now exercised above. This public
+renderer result itself is not complete client integration.
 
 ## Provenance and reproduction
 
@@ -112,9 +215,10 @@ six boundary PlaybackInfo negotiations and revocation denial for browse/detail/i
 Wheel/source allowlist checks exclude fixtures/tools/public media; CI additionally
 checks the actual filtered Docker context and final image.
 
-**Deferred:** normal hosted pairing → authenticated private series → private
+**Historically deferred at this checkpoint:** normal hosted pairing → authenticated private series → private
 poster/detail/resolver/file and correct permission failure/recovery in that same
 flow. The controlled private HTTPS-origin limitation from #9/#12/#13 remains;
 this fixture neither resolves it nor establishes dynamic authorization transitions.
 Physical Philips/audio/remote/firmware evidence remains in final device gate #4.
-Keep #7 open until its full requested flow is actually verified.
+The authenticated synthetic follow-up above addresses this #7 software flow;
+real-server and physical-device verification remain separate.

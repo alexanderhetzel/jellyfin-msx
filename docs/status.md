@@ -1,5 +1,44 @@
 # Verification status — 2026-10-31
 
+## Authenticated hosted series navigation — issue #7
+
+**Implemented / automated-tested / browser-tested / device-unverified:** the
+trusted startup-only navigation scenario connects the existing fifty-episode
+catalogue to normal production pairing/private JSON/posters/resolver and fixed
+authenticated RAM original-media routes. Baseline/failure scenarios, production
+app/security policies and supervisor 180-second startup/900-second total bound
+are unchanged. No public action/media URL substitutions were used for acceptance.
+The [actual matrix and evidence limits](series-navigation-results.md) supersede
+the old renderer-only private-delivery gap for this synthetic software flow.
+
+Official hosted MSX in connected Chrome at measured 1920x1080 reached all fifty
+labels/three backend pages, Next/Previous, representative metadata and loaded
+posters, retained Back focus, actual episode 50 original decoded frame/time/pause/
+Stop, empty season and actual HTTP permission-error message/Back recovery.
+Episode 01 original played afterward. Normal confirmed disconnect yielded zero
+paired sessions. Browser route-only response samples and redacted server counters
+are separate: the 401 was visible in UI and mock 403 in server counts, not retained
+in the responseReceived sample; a later buffer read was truncated. No inference
+from missing network events or previous public-export playback is used.
+
+Windows/Python 3.12.14: locked dev/build sync; full `uv run --no-sync pytest -W error`
+**414 passed / 1 POSIX skip**, no warnings; Ruff check/format **92 files**; diff
+check; locked offline wheel and exact 20-member source/license/template allowlist
+passed. Initial duplicate-origin test expectation was corrected. Independent
+pre-activation review passed 52 affected checks and accepted unchanged supervisor/
+auth/no-fallback/allowlisted RAM-media boundaries. Final source/evidence review and
+required CI are recorded in the PR before merge. Physical Philips/audio/remote
+remain unchecked in #4; this does not establish a real Jellyfin release pass.
+
+At 08:45:18 UTC own supervisor exit 0/stopped, all 9 recorded exact helper/console/vendor
+PIDs, listener 18092 and control directory were absent; both owned tabs closed,
+Network observation disabled and viewport restored to 2560x1215. Code/URLs/raw
+records stayed in RAM and were discarded; saved evidence is secret-free.
+
+The maintainer-requested concurrency policy is also documented: up to three
+independent issue chats/worktrees; one master-controlled shared browser/relay slot
+and serialized merge slots; the global human-input gate is unchanged.
+
 ## QR-first activation layout — issue #16
 
 **Implemented / automated-tested / browser-tested / device-unverified:** the

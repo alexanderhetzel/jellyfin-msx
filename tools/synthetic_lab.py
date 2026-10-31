@@ -158,12 +158,16 @@ def build_synthetic_lab(settings, *, media=MEDIA, fault=None):
     return app, launch, fixture
 
 
-def attach_fixture_media(app, fixture, media, fault):
+def attach_fixture_media(app, fixture, media, fault, *, item_ids=(MOVIE,)):
     """Attach only the fixture's explicitly supplied media, never a directory mount."""
 
-    @app.api_route(f"/jellyfin/Videos/{MOVIE}/stream.mp4", methods=["GET", "HEAD"])
-    async def stream(request: Request):
+    allowed_items = frozenset(item_ids)
+
+    @app.api_route("/jellyfin/Videos/{item_id}/stream.mp4", methods=["GET", "HEAD"])
+    async def stream(request: Request, item_id: str):
         # This is the fixture's original-file endpoint, not a production media proxy.
+        if item_id not in allowed_items:
+            return Response(status_code=404)
         if (
             request.query_params.get("ApiKey") not in fixture.tokens
             or request.query_params.get("MediaSourceId") != SOURCE

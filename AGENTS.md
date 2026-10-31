@@ -32,6 +32,9 @@ one separate Codex chat per issue, each in its own worktree. Subagents may help
 inside a ticket chat; they do not replace the separate ticket chats. Read
 `docs/agent-orchestration.md` before coordinating a run. The master may create,
 read, wait for and send follow-up instructions to those chats within that run.
+Run up to three independent ticket chats concurrently. The master grants an
+exclusive slot for the shared browser/HTTPS relay and serializes merges; workers
+prepare independently and report readiness before using either shared resource.
 If any ticket chat needs human input, stop dispatching and pause all active ticket
 work until the maintainer responds. Elapsed time, retries and automation wake-ups
 are never approval. A workflow-setup request does not start ticket implementation.

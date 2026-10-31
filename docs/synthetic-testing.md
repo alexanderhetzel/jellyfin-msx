@@ -21,8 +21,10 @@ preparation does not authorize or prove any hosted private integration.
 
 For the separate fifty-episode/three-page application-derived public navigation
 probe, empty-state and actual official-MSX observations/limitations, see
-[series navigation results](series-navigation-results.md). The original launcher
-below remains a movie-only fixture; neither preview establishes private hosted E2E.
+[series navigation results](series-navigation-results.md). Its later trusted
+`navigation` HTTPS scenario verifies normal authenticated series software flow
+without public URL substitutions. The original loopback launcher below remains a
+movie-only fixture; the public renderer preview alone is not private hosted E2E.
 
 For actual official-MSX rendering and encoded-video control observations with
 public substituted assets, see [the public renderer/player milestone](msx-public-fixture-results.md).

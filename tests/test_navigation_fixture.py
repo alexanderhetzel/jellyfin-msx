@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from urllib.parse import urlsplit
 
 import httpx
 from fastapi.testclient import TestClient
@@ -9,6 +10,76 @@ from jellyfin_msx.config import Settings
 from tools.navigation_fixture import DENIED, EMPTY, EPISODES, LIBRARY, NavigationJellyfin
 from tools.public_navigation_fixture import export_pages
 from tools.synthetic_check import action, pair
+from tools.synthetic_https import MEDIA_SHA256, build_public_synthetic_lab
+from tools.synthetic_lab import MOVIE, SOURCE
+
+
+def test_hosted_navigation_uses_authenticated_original_episode_media(monkeypatch):
+    import hashlib
+
+    def forbid(*args, **kwargs):
+        raise AssertionError("Unexpected real network")
+
+    monkeypatch.setattr(httpx.AsyncHTTPTransport, "handle_async_request", forbid)
+    origin = "https://synthetic-navigation.trycloudflare.com"
+    app, _, fixture = build_public_synthetic_lab(
+        origin, allow_public_synthetic=True, scenario="navigation"
+    )
+    with TestClient(app, base_url=origin) as client:
+        episode_path = f"/jellyfin/Videos/{EPISODES[0]}/stream.mp4"
+        assert client.get(episode_path).status_code == 401
+        home = pair(client, origin).removeprefix("content:")
+        private = home.rsplit("/", 1)[0]
+        library = client.get(action(client.get(home).json(), "Synthetic television")[8:]).json()
+        seasons = client.get(action(library, "Synthetic series")[8:]).json()
+        first = client.get(action(seasons, "Season 1")[8:]).json()
+        ids = []
+        page = first
+        for count in (24, 24, 2):
+            rows = [row for row in page["items"] if row["title"].startswith("Episode ")]
+            assert len(rows) == count
+            ids += [row["title"] for row in rows]
+            assert all(row["action"].startswith("content:" + private) for row in rows)
+            assert client.get(rows[-1]["image"]).status_code == 200
+            if count != 2:
+                page = client.get(action(page, "Next page")[8:]).json()
+        assert ids == [f"Episode {i:02d}" for i in range(1, 51)]
+        for index in (0, 23, 24, 47, 48, 49):
+            detail = client.get(
+                private + "/detail.json", params={"item_id": EPISODES[index]}
+            ).json()
+            resolved = client.get(action(detail, "Try original")[14:]).json()["response"]
+            assert resolved["status"] == 200
+            media_url = resolved["data"]["url"]
+            assert urlsplit(media_url).path == f"/jellyfin/Videos/{EPISODES[index]}/stream.mp4"
+            media = client.get(media_url)
+            assert hashlib.sha256(media.content).hexdigest() == MEDIA_SHA256
+            assert client.get(media_url, headers={"Range": "bytes=0-31"}).status_code == 206
+            assert client.head(media_url).content == b""
+        assert client.get(f"/jellyfin/Videos/{MOVIE}/stream.mp4").status_code == 404
+        assert (
+            client.get(
+                episode_path,
+                params={"ApiKey": "invalid", "MediaSourceId": SOURCE, "Static": "true"},
+            ).status_code
+            == 401
+        )
+        denied = client.get(action(seasons, "Restricted season")[8:]).json()
+        assert denied["response"]["status"] == 401
+        assert "Jellyfin denied access" in denied["response"]["message"]
+        assert "Synthetic television" in client.get(home).text
+        client.get(private + "/logout.json")
+        assert not fixture.tokens
+        assert client.get(media_url).status_code == 401
+
+
+def test_request_cannot_select_navigation_scenario():
+    origin = "https://synthetic-navigation.trycloudflare.com"
+    app, _, _ = build_public_synthetic_lab(origin, allow_public_synthetic=True)
+    with TestClient(app, base_url=origin) as client:
+        home = pair(client, origin).removeprefix("content:")
+        response = client.get(home + "?scenario=navigation", headers={"X-Scenario": "navigation"})
+        assert "Synthetic movies" in response.text and "Synthetic television" not in response.text
 
 
 def test_public_graph_reaches_all_episodes_and_preserves_paging(monkeypatch):
