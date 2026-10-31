@@ -1,4 +1,57 @@
-# Private subtitle UI: simple cues pass; reopening pending — issue #22
+# Private subtitle selection — issue #22 software evidence
+
+## Accepted software/browser scope and limits
+
+**Implemented / automated-tested / browser-tested / device-unverified.**
+Independent final review maps all four original issue22 criteria to actual
+official Chrome/MSX observations and mocked boundary tests: selected-source
+Off/language/index choices, authenticated bounded delivery, sampled position/
+seek/Stop behavior, and clear unsupported-track recovery without conversion.
+The declared simple-cue subset is two explicit lines, at most32 display-budget
+units per line; this is client policy, not a font/hardware/language guarantee.
+Physical Philips/audio/remote/overscan verification remains in issue4.
+
+This acceptance does **not** erase prior intermittent Data Load Errors or claim
+a causal fix. The public document-marker comparison failed and was removed.
+Its proposed extended test sequence was specific to that historical comparison,
+not an additional original feature criterion or a zero-transient-errors promise.
+Late native subtitle denial has no specific per-track notice; manual Off/Stop
+and expired-video replay recovery were observed. Private capability URLs remain
+bearer credentials; already delivered cue bytes cannot be recalled.
+
+## Final unchanged-source observation at `e4e1ef97` — 2026-10-31
+
+Exact `e4e1ef97ab0452fb2814e458563295479e548bd0` restores production/test source
+to `0dc1688`. Official MSX0.1.167(web) in connected Chrome at1920x1080; one normal
+synthetic pairing, no public-shell warming, reset, re-pair or source change.
+Original600-second total/180-second startup bounds were preserved.
+
+Initial healthy preparation, retained layout rejection and return to healthy
+all completed in this run. The documented generic-body DOM read returned a
+complete document, diagnostic output, both script elements and init1/all other
+counters0 at each stage. These script elements are not independent execution
+proof; the known initialization counter establishes the request was handled.
+No Data Load Error occurred in this reproduction. Body reads preceded eventual
+healthy UI; this is correlation, not proof of a tool or application fix.
+
+One normal Back-to-details/reopen retained the exact full bridge URL and context
+(equality checked in RAM, neither value saved). Init increased to2. The healthy
+menu was not visible at a976ms sample and was visible by9355ms. This is a sampled
+upper bound, not an exact load duration. Parent Network observation retained
+three bridge HTML200/text-html responses; child script/preparation response
+categories were not captured, and their absence is not proof of missing requests.
+
+At11:05:55UTC explicit stop returned supervisor exit0/stopped. All nine recorded
+owned PIDs/listener18092/control were absent; Network observation disabled,
+viewport reset succeeded and both owned tabs closed. The session naturally
+expired during cleanup Back, showing strict401; no logout is claimed. Fixed
+safe categories/counters in ignored `issue22-body-read-diagnostics.json` and
+menu capture `issue22-body-read-reopen.png` support this observation only.
+
+The same independent reviewer accepted the four original software criteria with
+these precise limits, correcting its earlier over-attribution of the removed
+marker proposal's sequence. Historical passes and failures below are retained;
+they are not superseded by a claim of fault-free runtime operation.
 
 ## Focused marker comparison failed at `6fad503` — 2026-10-31
 

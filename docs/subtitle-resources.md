@@ -3,7 +3,7 @@
 ## Private subtitle menu implementation — 2026-10-31
 
 **Implemented / automated-tested / partial browser-tested / device-unverified;
-issue22 open, PR65 draft.** With the existing opt-in enabled, source-pinned
+issue22 software/browser criteria accepted with the limits below.** With the existing opt-in enabled, source-pinned
 preparation validates up to eight tracks within twelve seconds. Default remains
 Off. Rejected tracks explain their unsupported format/layout and retain original
 playback/Back; no conversion, burn-in, silent truncation or timing change.
@@ -32,12 +32,16 @@ expired-video replay recovery worked. No renewal/cache; delivered cues cannot
 be recalled. Fixed numeric frame-local counters record attempted handoff only,
 never identifiers, URLs, payloads or errors.
 
-**Remaining integration blocker:** repeated healthy preparation after other
-source contexts produces Data Load Error. A public-document-marker comparison
-at `6fad503` did not fix it and was removed. Failed-frame SDK/init/XHR/callback
-stages were not captured; no root cause or platform-wide limitation is proven.
+**Known runtime observations:** repeated healthy preparation after other source
+contexts intermittently produced Data Load Error. A public-document-marker
+comparison at `6fad503` did not fix it and was removed. The unchanged-source
+`e4e1ef97` run completed ordinary cross-context and same-cached-context reopening.
+Body-read precedence is correlation only; no root cause or universal reliability
+claim is proven. The failed historical marker proposal's extended sequence is
+not an extra original feature criterion. Independent final review accepted the
+four original software criteria with these runtime and device limits.
 See [source-pinned actual actions and limits](private-subtitle-results.md).
-The full software feature remains unaccepted.
+No physical device or fault-free hosted-runtime behavior is inferred.
 
 An independently authored transient interaction bridge uses only the published
 [interaction interface](https://msx.benzac.de/wiki/index.php?title=Interaction_Plugin)
