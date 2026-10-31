@@ -35,7 +35,15 @@ retrieve it without a cross-chat message.
    dispatch or recovery. Reuse the existing chat for an issue; never start duplicate
    workers or merge a PR merely because it exists.
 2. Select the highest-priority dependency-ready issue in the authorized scope.
-   Run up to three independent ticket chats at a time. Respect native dependencies
+   Keep three independent ticket chats active whenever three authorized,
+   dependency-ready tickets have useful work available. Three is the operating
+   target, not just a maximum. After a completion or blocker, immediately reconcile
+   and refill the free slot; do not wait for a maintainer reminder or heartbeat.
+   Run fewer only when fewer tickets are independently actionable or the global
+   human-input gate is open, and record the concrete reason. A shared browser or
+   merge-slot wait does not prevent independent source, test or review work.
+   Never invent work, repeat an exhausted blocked investigation, weaken acceptance
+   or bypass dependencies just to fill a slot. Respect native dependencies
    and reuse idle issue chats in their existing worktrees. Use the app's project
    and chat tools to create a separate chat in a worktree. Resolve pending creation before using its
    final chat ID. Record the issue/chat mapping in the master's context; keep public
@@ -125,7 +133,9 @@ Use this after the workflow changes are available on `main`:
 ```text
 Act as the master chat for alexanderhetzel/jellyfin-msx. Read AGENTS.md and
 docs/agent-orchestration.md. Create a Goal for this run. Start implementing the open issues in the GitHub
-Project in priority and dependency order, up to three independent tickets at a time.
+Project in priority and dependency order. Keep three independent ticket chats active
+whenever three authorized, dependency-ready tickets have useful work available;
+immediately refill a free slot after a completion or blocker.
 
 Create a separate Codex chat with its own worktree for every ticket. You are
 authorized to create, inspect and message these chats and to send follow-up
