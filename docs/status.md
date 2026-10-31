@@ -68,6 +68,26 @@ all nine recorded PIDs, listener/control and own helpers were absent. The one
 owned Chrome tab closed. The public fallback capture was inspected. No source
 fix follows from this unsuccessful observation; startup cause remains unresolved.
 
+**Next focused observation, unchanged source `fecdc4e` / docs `74c1577`:**
+Network observation started before normal navigation from the official public
+info page. The generic own-frame body evaluation also failed with a selector
+deadline after ordinary settling; no lifecycle value was obtained. The main
+filtered buffer was not truncated: one HTML request, no responseReceived,
+loadingFinished or loadingFailed; no own-script/SDK events were observed.
+A matching HTML responseReceivedExtraInfo event reported HTTP 200; its historical
+buffer was flagged truncated. This establishes observed response headers, not
+completed document delivery. Parent/OOPIF event coverage was not established;
+absent events cannot prove scripts did not run. The unchanged fallback remained.
+
+Network.disable explicitly reported Browser Use resolving a paused document
+response; earlier body reads reported only selector deadlines. No interception,
+override or source scheduling change was attempted. Closing the owned tab removed
+the observation scope. At 12:10 Vienna time explicit stop exited zero/stopped;
+all nine recorded PIDs, listener/control/own helpers were absent. No credentials,
+Retry, restart or full matrix ran. Only category counts/statuses and a public
+fallback capture were retained, without raw URLs/IDs. Root cause and acceptance
+remain unresolved; these observations do not justify an authentication-code fix.
+
 **Current Chrome follow-up:** the maintainer now requires connected Chrome for
 all browser tests. The first bounded synthetic HTTPS run displayed normal startup's
 Opening Jellyfin fallback; ordinary Retry loaded pairing and Continue displayed

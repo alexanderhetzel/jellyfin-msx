@@ -145,6 +145,22 @@ the original startup/total limits. Explicit cleanup at 11:57 Vienna time reporte
 session exit zero/stopped and all nine owned PIDs/listener/control/helpers absent;
 the one owned tab closed. No speculative scheduling fix is inferred.
 
+A further focused run at unchanged source `fecdc4e` used the documented generic
+own-frame body evaluation to read the same root attribute; that also hit a
+selector deadline. Network was enabled before normal startup navigation.
+Its untruncated main category buffer observed one HTML request but no
+responseReceived/completion/failure and no own-JS/SDK events. A matching
+responseReceivedExtraInfo event reported HTTP 200 in a historical buffer marked
+truncated. That proves an observed response-header status, not document completion.
+Parent/OOPIF event coverage was not established, so absent events do not establish
+absent execution. The root fallback remained and no lifecycle value was obtained.
+Network.disable explicitly reported Browser Use resolving a paused document
+response; body reads themselves reported selector deadlines. No interception or
+security/scheduling change was used. The owned tab closed; explicit stop at
+12:10 Vienna time exited zero/stopped with all nine PIDs/listener/control/helpers
+absent. Only safe category/status evidence was retained. No credentials, Retry,
+backend restart or broad matrix ran; no own-code root cause follows yet.
+
 At source `95f1405`, official hosted MSX in connected Chrome used normal startup
 without `init=1`. Automatic startup displayed Opening Jellyfin. Ordinary Retry
 opened pairing; normal two-stage companion login with the synthetic account and
