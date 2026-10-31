@@ -107,6 +107,21 @@ media playback. This focused pass establishes current-layout command entry,
 normal sign-in/Continue/disconnect; the two-session resource command above remains
 in-process HTTP evidence, not a new hosted resource-isolation pass.
 
+After that checkpoint, the branch was rebased onto
+`bc4599a12f0a746c4e3c5b035013f9ae82855c05`, preserving #19 saved progress and
+the accepted #23 recovery subset at `7204161`, plus the three-active-ticket
+coordination rule. The #9 browser driver, session command/tests and CI step are
+byte-identical to the focused source. Baseline, failures, navigation, subtitles,
+lifecycle, resume and recovery scenarios remain present. No further runtime run
+or claim about the combined recovery/native-classification matrix was made.
+
+Affected source integration validation passed: `uv run pytest -W error`
+**532 passed / 1 POSIX skip**; all three explicit Node suites **57 passed**;
+Ruff and formatting **109 files** passed; normal session CLI passed; locked
+offline wheel build and exact **25-member** production allowlist passed.
+The later coordination merge changed only two instruction documents, so source
+validation was not needlessly repeated for that documentation-only rebase.
+
 ## Reconciliation with accepted feature evidence
 
 The audit starts from main `e21d10307ee4ed166b9e0939168a8da4713ee6ef`:

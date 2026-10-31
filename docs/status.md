@@ -50,8 +50,9 @@ Windows/Python 3.12.14 locked offline dev/build sync passed. `uv run pytest -W
 error`: **522 passed / 1 POSIX skip**, no warnings; four focused session checks,
 seven Node browser guards, Ruff, format **108 files**, syntax/diff checks passed.
 The normal command passed with browser/device flags false; its negative CLI
-returned the fixed failed stage. At that local checkpoint no browser, relay, listener, secret store or
-external transport was used. Current accepted #7/#16/#18/#19/#22 evidence is
+returned the fixed failed stage. At that local checkpoint no browser, relay,
+listener, secret store or external transport was used. Current accepted
+#7/#16/#18/#19/#22 evidence is
 referenced rather than replayed; #8 real cases, #12 startup and #23 native
 classification remain open. Overall #9 acceptance is not claimed.
 
@@ -61,6 +62,15 @@ listener18092/control absent at 14:47:09UTC, within the original900-second total
 The shared slot was released immediately. No media, alternative-start, source
 variant, new budget or CDP/Network/viewport override was used. Exact actions,
 private-evidence boundaries and limited scope are in the linked runbook.
+
+The post-checkpoint source-only rebase preserves #19 plus the accepted #23
+subset/scenario at `7204161` and the coordination rule at `bc4599a`. The #9
+driver, session command/tests and CI step are unchanged from the focused source.
+Combined source validation passed **532 pytest / 1 POSIX skip**, **57 Node tests**,
+Ruff/format **109 files**, normal session CLI, locked offline wheel and exact
+**25-member** production allowlist. No further browser resource was used;
+documentation-only coordination changes did not trigger redundant broader tests.
+#23 original native classification and overall #9 gaps remain open.
 
 ## Saved progress — issue #19
 
