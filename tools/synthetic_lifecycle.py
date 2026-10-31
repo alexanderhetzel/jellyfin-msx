@@ -119,6 +119,7 @@ class RecoveryJellyfin(LifecycleJellyfin):
                         "Id": item_id,
                         "Name": self.names[item_id],
                         "Type": "Movie",
+                        "PlayAccess": "Full",
                         "MediaSources": sources,
                     },
                 )

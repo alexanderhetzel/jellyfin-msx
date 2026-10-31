@@ -82,6 +82,7 @@ class SubtitleJellyfin(SyntheticJellyfin):
                     "Id": path.rsplit("/", 1)[-1],
                     "Type": "Movie",
                     "Name": "Synthetic subtitles",
+                    "PlayAccess": "Full",
                     "MediaSources": [subtitle_source()],
                 },
             )

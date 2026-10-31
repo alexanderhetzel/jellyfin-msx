@@ -269,6 +269,12 @@ async def resolve(
     item = await jellyfin.item(device, item_id)  # enforce user access before negotiation
     if item.get("Type") not in {"Movie", "Episode", "Video"}:
         raise PortalError(400, "Select a movie or episode to play.")
+    if item.get("PlayAccess") == "None":
+        raise PortalError(403, "Jellyfin does not allow playback of this item.")
+    if item.get("PlayAccess") != "Full":
+        raise PortalError(
+            502, "Jellyfin playback permission is unavailable. Reopen the item details."
+        )
     if media_source_id is None:
         selected = choose_source(item, jellyfin.settings.max_bitrate, allow_transcoding)
     else:

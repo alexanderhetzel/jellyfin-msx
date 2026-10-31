@@ -71,6 +71,7 @@ class NavigationJellyfin(SyntheticJellyfin):
                     "Id": item_id,
                     "Name": f"Episode {EPISODES.index(item_id) + 1:02d}",
                     "Type": "Episode",
+                    "PlayAccess": "Full",
                     "ProductionYear": 2026,
                     "Overview": (
                         "Independent synthetic episode; public clip substituted in renderer probe."

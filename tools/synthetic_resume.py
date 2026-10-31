@@ -74,6 +74,7 @@ class ResumeJellyfin(LifecycleJellyfin):
                     "Id": item,
                     "Name": "Resume episode" if item == EPISODE else "Resume clip",
                     "Type": "Episode" if item == EPISODE else "Movie",
+                    "PlayAccess": "Full",
                     "MediaSources": [source()],
                     "UserData": self.progress(token, item),
                 },
