@@ -330,13 +330,18 @@ The authorized-B native positive control fails the unchanged A denial predicate
 at actual mocked HTTP 200 without buffering a video. This is detector evidence,
 not a real logout leak or hosted pass.
 
-`uv run --no-sync pytest -q -W error`: **544 passed / 1 POSIX skip**;
+After rebasing onto PR #74 (`e46a4de`),
+`uv run --no-sync pytest -q -W error`: **586 passed / 1 POSIX skip**;
 `node --test tools/*.test.mjs`: **51 passed**, including 32 new mocked observer
-and command guards. Ruff check and format check passed (**113 files**).
+and command guards. Ruff check and format check passed (**117 files**).
 Syntax and `git diff --check` passed. CI now runs mocked Node guards separately
 from the Python suite; it launches no browser or public service. Independent
 source review identified and corrected rejection of production's DeviceId and
 PlaySessionId query fields; malformed/foreign/duplicate targets remain rejected.
+The fresh Full-only playback admission, explicit synthetic permission fixtures,
+tools-only original-file prototype and complete #32/#47 evidence sections are
+preserved. Both synthetic HTTP and two-session commands passed after the rebase
+with browser/device flags false; the native-expiry limitation remains explicit.
 
 The installed Cua wrapper reference was read without browser actions; no new
 runtime, listener, relay, tab navigation or CDP command was run for this milestone.
