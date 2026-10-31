@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import vm from "node:vm";
 import test from "node:test";
-import { createResourceProbe } from "./browser_resource_probe.mjs";
-import { checkSessions } from "./browser_session_check.mjs";
+import { captureFailure, createResourceProbe } from "./browser_resource_probe.mjs";
+import { checkSessions, collectRenderedImages, disconnectSession, selectOwnPoster } from "./browser_session_check.mjs";
 
 // Non-live authorities made entirely in this mocked test; no browser or HTTP.
 const origin = "https://synthetic-only.trycloudflare.com";
@@ -173,7 +174,7 @@ test("only own distinct capabilities can be captured; raw capture exceptions are
   const probe = await createResourceProbe(f.tab, origin);
   await probe.capture("A", f.poster("A"));
   for (const [role, url] of [["B", f.poster("A")], ["B", origin + "/msx/pair/image/" + "C".repeat(43) + ".png"], ["B", "https://foreign.invalid/secret"]]) {
-    await assert.rejects(probe.capture(role, url), value => JSON.stringify(value) === '{"probeCode":"capture-unavailable"}');
+    await assert.rejects(probe.capture(role, url), value => value.probeCode === "capture-unavailable" && value.captureStage === "poster-target" && !JSON.stringify(value).includes("https://"));
   }
   f.foreign();
   const before = f.commands.length;
@@ -230,4 +231,115 @@ test("entry rejects arbitrary destinations and closes owned tabs on observer fai
   assert.equal(result.stage, "scoped-observer-availability");
   assert.equal(closed, 1);
   assert.doesNotMatch(JSON.stringify(result), /private URL/);
+});
+
+for (const stage of ["home-response", "home-shape", "browse-target", "browse-response", "movie-selection", "detail-target", "detail-response", "resolver-target", "resolver-response", "native-target"]) test("fixed capture substage identifies " + stage + " without raw values", async () => {
+  const f = fixture();
+  const probe = await createResourceProbe(f.tab, origin);
+  f.body((body, current) => {
+    const value = JSON.parse(body);
+    const at = endpoint => current.includes(endpoint + ".json");
+    if ((stage === "home-response" && at("home")) || (stage === "browse-response" && at("browse")) || (stage === "detail-response" && at("detail"))) return { body: "not JSON: private-secret", base64Encoded: false };
+    if (stage === "home-shape" && at("home")) value.headline = "unexpected private-secret";
+    if (stage === "browse-target" && at("home")) value.items[0].action = "content:https://foreign.invalid/private-secret";
+    if (stage === "movie-selection" && at("browse")) value.items = [];
+    if (stage === "detail-target" && at("browse")) value.items[0].action = "content:https://foreign.invalid/private-secret";
+    if (stage === "resolver-target" && at("detail")) value.items = [];
+    if (stage === "resolver-response" && at("play")) value.response.status = 401;
+    if (stage === "native-target" && at("play")) value.response.data.url = "https://foreign.invalid/private-secret";
+    return { body: JSON.stringify(value), base64Encoded: false };
+  });
+  await assert.rejects(probe.capture("A", f.poster("A")), error => {
+    const result = captureFailure(error);
+    assert.equal(result.stage, stage);
+    assert.doesNotMatch(JSON.stringify(result), /private-secret|foreign|https:/);
+    return true;
+  });
+});
+
+test("external or forged capture diagnostics cannot serialize arbitrary text", () => {
+  assert.deepEqual(captureFailure(new Error("private-secret")), { stage: "unknown", problem: "unknown" });
+  assert.deepEqual(captureFailure({ captureStage: "https://private-secret", problem: "private-secret" }), { stage: "unknown", problem: "unknown" });
+});
+
+test("public DOM shape needs no HTMLImageElement constructor; old predicate throws", () => {
+  const f = fixture();
+  const image = { tagName: "IMG", src: f.poster("A"), background: "none" };
+  const background = { tagName: "DIV", background: `url("${f.poster("A")}")` };
+  const context = { document: { querySelectorAll: () => [image, background] }, getComputedStyle: element => ({ backgroundImage: element.background }) };
+  assert.throws(() => vm.runInNewContext("document.querySelectorAll('*')[0] instanceof HTMLImageElement", context), /HTMLImageElement/);
+  const values = vm.runInNewContext(`(${collectRenderedImages.toString()})()`, context);
+  assert.equal(selectOwnPoster(origin, Array.from(values)), f.poster("A"));
+  // This is a public mock counterexample, never a diagnosis of the live failure.
+});
+
+test("DOM bounds and absent/ambiguous/QR/foreign poster selections fail closed", () => {
+  const f = fixture();
+  for (const elements of [Array(4001).fill({}), Array(129).fill({ tagName: "IMG", src: f.poster("A") }), [{ tagName: "IMG", src: "x".repeat(4097) }]]) {
+    const values = vm.runInNewContext(`(${collectRenderedImages.toString()})()`, { document: { querySelectorAll: () => elements }, getComputedStyle: () => ({ backgroundImage: "none" }) });
+    assert.equal(values, null);
+  }
+  for (const values of [null, [], [f.poster("A"), f.poster("B")], [origin + "/msx/pair/image/fake.png"], [f.poster("A").replace(origin, "https://foreign.invalid")], [f.poster("A").replace("https://", "https://user:pass@")]]) assert.equal(selectOwnPoster(origin, values), null);
+});
+
+function catalogSession() {
+  let page = "catalog";
+  const actions = [];
+  const locator = pattern => {
+    const text = String(pattern);
+    const name = text.includes("Confirm disconnect") ? "confirm" : text.includes("Disconnect TV") ? "disconnect" : text === "Libraries" ? "libraries" : text.includes("Pair again") ? "pair-again" : text.includes("Disconnected") ? "disconnected" : "other";
+    const visible = () => name === "libraries" ? page === "catalog" : name === "disconnect" ? page === "home" : name === "confirm" ? page === "confirm" : ["pair-again", "disconnected"].includes(name) ? page === "disconnected" : true;
+    return {
+      waitFor: async () => { if (!visible()) throw new Error("private-secret"); },
+      click: async () => {
+        if (!visible()) throw new Error("private-secret");
+        actions.push(name);
+        if (name === "libraries") page = "home";
+        if (name === "disconnect") page = "confirm";
+        if (name === "confirm") page = "disconnected";
+      },
+    };
+  };
+  return { session: { authenticated: true, msx: { playwright: { getByText: locator } } }, actions, unavailable: () => { page = "unavailable"; } };
+}
+
+test("capture-failure cleanup must navigate visible Libraries before confirmed Disconnect", async () => {
+  const f = catalogSession();
+  await assert.rejects(f.session.msx.playwright.getByText(/Disconnect TV/i).click()); // Old home-only cleanup fails in this state.
+  assert.equal(f.session.authenticated, true);
+  await disconnectSession(f.session);
+  assert.deepEqual(f.actions, ["libraries", "disconnect", "confirm"]);
+  assert.equal(f.session.authenticated, false);
+});
+
+test("missing Libraries and Disconnect cannot manufacture cleanup success", async () => {
+  const f = catalogSession();
+  f.unavailable();
+  await assert.rejects(disconnectSession(f.session));
+  assert.deepEqual(f.actions, []);
+  assert.equal(f.session.authenticated, true);
+});
+
+for (const mode of ["DOM", "selection", "capture"]) test("entry preserves fixed " + mode + " failure and still cleans catalog session", async () => {
+  const f = fixture();
+  const ui = catalogSession();
+  let closed = 0;
+  const msx = { ...ui.session.msx, goto: async () => {}, close: async () => { closed++; } };
+  msx.playwright.evaluate = async fn => {
+    if (fn.name === "readPairingCode") return "12345678"; // Non-live mocked form value.
+    if (mode === "DOM") throw new Error("https://private-secret.invalid/");
+    return mode === "selection" ? [] : [f.poster("A")];
+  };
+  const companion = { goto: async () => {}, close: async () => { closed++; }, playwright: { getByText: () => ({ waitFor: async () => {} }), getByLabel: () => ({ fill: async () => {} }), getByRole: () => ({ click: async () => {} }) } };
+  f.tab.close = async () => { closed++; };
+  if (mode === "capture") f.body({ body: "https://private-secret.invalid/", base64Encoded: false });
+  const queue = [f.tab, msx, companion];
+  const result = await checkSessions({ origin, newTab: async () => queue.shift() });
+  const expected = { DOM: "A-poster-DOM-collection", selection: "A-poster-target-selection", capture: "A-capture-home-response" };
+  assert.equal(result.stage, expected[mode]);
+  assert.equal(result.status, "failed");
+  assert.equal(result.browser_verified, false);
+  assert.equal(closed, 3);
+  assert.deepEqual(ui.actions.slice(-3), ["libraries", "disconnect", "confirm"]);
+  assert.doesNotMatch(JSON.stringify(result), /private-secret|trycloudflare|12345678|ApiKey/);
 });

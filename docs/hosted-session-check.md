@@ -1,4 +1,4 @@
-# Hosted two-session authority check — source preparation
+# Hosted two-session authority check
 
 **Implemented / automated-tested with mocks / hosted-runtime-unverified /
 device-unverified.** This entry extends issue #9's
@@ -104,7 +104,7 @@ permission refusal, redaction and the unchanged denial predicate's actual-200
 counterexample. They execute no browser and contact no server. A future granted
 run must separately record exact reviewed source, UI actions, sanitized observed
 statuses, detector failure and owned-resource cleanup. Until then this command
-has no hosted acceptance result.
+has no hosted acceptance pass. The first bounded execution is recorded below.
 
 Run the offline guards with `node --test tools/*.test.mjs`; repository CI runs
 the same command using the runner's Node installation, with no npm dependencies.
@@ -121,3 +121,81 @@ the existing local expiry counterexample remains unchanged. No real Jellyfin
 version/logout guarantee (#32), source/version acceptance (#8), startup result
 (#12), or native cause classification (#23) is inferred. Accepted earlier media,
 QR and navigation evidence is referenced instead of replayed.
+
+## First bounded hosted attempt — 2026-10-31
+
+**Executed / failed / device-unverified.** The master granted exact source
+`41031bc5a867291c6d592878534af1848342779d`, based on PR #74 merge `e46a4de`.
+One baseline supervisor started at 15:46:25 UTC with a single 900-second total
+deadline (16:01:25 UTC), including the existing at-most-180-second startup bound.
+Public health became ready within that bound. No new scenario or policy was used.
+
+The command initialized the scoped observer and reached normal A sign-in,
+Continue and Synthetic movies, then returned fixed failed stage
+`A-own-rendered-poster`. It returned no resource observations and no passed
+pairing/capture stage. That stage includes the bounded DOM image selection and
+private capture sequence; it does not identify which operation failed. No raw
+browser exception or private DOM/network data was emitted to diagnose it. No
+approval prompt was surfaced, and no human-input gate was raised. Initialization
+alone establishes neither per-resource freshness nor response-body availability.
+
+The command stopped at this first blocker. B pairing, A retained-resource
+denial, B survival, re-pairing and the authorized-B negative control were **not
+run**. No HTTP or wrapped denial status was measured for those targets. Accepted
+media, QR and navigation matrices were not replayed. No runtime cause or fix is
+inferred from mocked tests or this fixed-stage result.
+
+Separate fixed server counters before shutdown were paired_sessions=1,
+logout204=0, PlaybackInfo=0, authentication=1 and poster=1. Normal UI cleanup
+did not complete; the report says cleanup was deferred to the bounded service.
+Terminating the synthetic service destroyed the remaining RAM session. This is
+not a successful normal Disconnect or upstream logout observation.
+
+All three owned Chrome extension tabs were confirmed closed. The retained
+supervisor exited zero/stopped; all nine exact owned PIDs were absent, with no
+listening socket on 18092 and no control directory at 15:49:27 UTC. Two residual
+TCP TIME_WAIT entries had owner PID zero; they were not listeners. The slot was
+released without retry, replacement relay, budget reset, private screenshot,
+AX dump or raw credential-bearing output. Safe local reports retain only the
+fixed entry result, counters and owned-tab counts. PR #73 remains draft and
+overall issue #9 acceptance remains open.
+
+## Source-only observability and cleanup follow-up
+
+**Implemented / automated-tested with mocks / hosted-runtime-unverified.**
+After that stopped attempt, source changes split DOM collection, own-target
+selection, opaque capture and Libraries return into fixed driver stages. The
+observer adds fixed home/browse/detail/resolver/native-target substages and
+reduces internal failures to a finite problem allowlist. Unknown external errors
+remain unknown; URLs, bodies, raw exception messages and request IDs cannot be
+inserted into these report fields. The original failed attempt cannot be
+retrospectively assigned one of these new substages.
+
+The collector uses standard IMG tag/src reads and computed background-image
+reads without requiring an HTMLImageElement constructor. A public DOM-shaped
+mock without that constructor makes the former predicate throw and the new
+collector succeed. This is a concrete selector fragility counterexample, **not
+the observed live cause**. The actual read-only DOM surface may still lack a
+needed standard read; that fails at the new collection stage. Absent, foreign,
+QR-derived, oversized or ambiguous own-poster candidates still fail closed.
+No hidden runtime cache, fallback authority guess or alternate transport is used.
+
+Cleanup now checks the normal Disconnect control with documented bounded
+`waitFor({state: "visible", timeoutMs: 500})`. If absent, it requires and clicks
+the visible Libraries control, waits for home, and performs normal confirmed
+Disconnect. If both are absent or navigation fails, authentication is not marked
+cleaned; the report retains the bounded-service cleanup limitation. Independent
+review caught an unsupported `isVisible` locator method in the first source
+draft; it was replaced with documented waitFor, and the stateful test no longer
+offers that unsupported helper.
+
+Meaningful mocked counterexamples cover the old home-only cleanup failure from
+the movie catalog, successful normal Libraries return, unavailable controls,
+each catalog failure substage, DOM/selection/capture entry failures and hostile
+diagnostic text. Local validation: **69 total Node tests passed** (50 observer/
+session guards), **586 Python tests passed / 1 POSIX skip**, Ruff check/format
+passed (**117 files**), syntax and diff checks passed. Independent source review
+reran all 69 Node tests and found no remaining source blocker. No new browser,
+relay, CDP command, runtime retry or replacement budget was used to verify these
+changes. They improve failure location and cleanup coherence; they do not prove
+the previous runtime cause is fixed or establish any retained-resource denial.

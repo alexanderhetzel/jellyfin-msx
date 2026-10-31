@@ -9,6 +9,15 @@ const ORIGINAL_PREFIX = Buffer.from("000000206674797069736f6d0000020069736f6d697
 const PNG_PREFIX = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
 const CATEGORIES = new Set(["home", "browse", "detail", "poster", "resolver", "media"]);
 const ROLES = new Set(["A", "B", "repaired-A"]);
+const CAPTURE_STAGES = new Set(["poster-target", "home-response", "home-shape", "browse-target", "browse-response", "movie-selection", "detail-target", "detail-response", "resolver-target", "resolver-response", "native-target", "save-authority"]);
+const PROBLEMS = new Set(["invalid-role", "invalid-resource-target", "origin-binding-changed", "events-unavailable", "redirect-or-method", "ambiguous-request", "response-mismatch", "cached-or-unknown", "body-unavailable-or-large", "fresh-response-unavailable", "catalog-response", "catalog-shape", "catalog-selection", "private-poster-unavailable", "authority-mismatch"]);
+
+export function captureFailure(error) {
+  return {
+    stage: CAPTURE_STAGES.has(error?.captureStage) ? error.captureStage : "unknown",
+    problem: PROBLEMS.has(error?.problem) ? error.problem : "unknown",
+  };
+}
 
 function fail(code) { throw { probeCode: code }; }
 function mime(value) {
@@ -151,6 +160,7 @@ export async function createResourceProbe(tab, origin) {
 
   return {
     async capture(role, poster) {
+      let captureStage = "poster-target";
       try {
         if (!ROLES.has(role) || roles.has(role)) fail("invalid-role");
         const image = own(poster);
@@ -164,22 +174,34 @@ export async function createResourceProbe(tab, origin) {
           return url.href;
         };
         const home = origin + prefix + "/home.json";
+        captureStage = "home-response";
         const homePage = await portal(home);
+        captureStage = "home-shape";
         if (homePage.headline !== "Jellyfin libraries") fail("catalog-shape");
+        captureStage = "browse-target";
         const browse = scoped(select(homePage, "Synthetic movies").action?.replace(/^content:/, ""), "browse.json", ["parent_id"]);
         if (new URL(browse).searchParams.get("parent_id") !== "2".repeat(32)) fail("authority-mismatch");
-        const movie = select(await portal(browse), "Synthetic clip");
+        captureStage = "browse-response";
+        const catalog = await portal(browse);
+        captureStage = "movie-selection";
+        const movie = select(catalog, "Synthetic clip");
         if (own(movie.image).href !== image.href) fail("authority-mismatch");
+        captureStage = "detail-target";
         const detail = scoped(movie.action?.replace(/^content:/, ""), "detail.json", ["item_id"]);
         if (new URL(detail).searchParams.get("item_id") !== match[2]) fail("authority-mismatch");
-        const play = select(await portal(detail), "Try original").action;
+        captureStage = "detail-response";
+        const details = await portal(detail);
+        captureStage = "resolver-target";
+        const play = select(details, "Try original").action;
         if (typeof play !== "string" || !play.startsWith("video:resolve:")) fail("catalog-selection");
         const resolver = scoped(play.slice("video:resolve:".length), "play.json", ["item_id", "media_source_id", "force", "subtitle", "platform", "player"]);
         const resolverQuery = new URL(resolver).searchParams;
         const source = resolverQuery.get("media_source_id");
         if (resolverQuery.get("item_id") !== match[2] || !/^[a-f0-9]{32}$/.test(source ?? "") || resolverQuery.get("force") !== "false" || resolverQuery.get("subtitle") !== "-1") fail("authority-mismatch");
+        captureStage = "resolver-response";
         const resolved = await portal(resolver);
         if (resolved.response?.status !== 200) fail("catalog-response");
+        captureStage = "native-target";
         const media = own(resolved.response?.data?.url);
         const token = media.searchParams.get("ApiKey");
         const validMedia = media.pathname === `/jellyfin/Videos/${match[2]}/stream.mp4`
@@ -191,13 +213,16 @@ export async function createResourceProbe(tab, origin) {
           && /^[A-Za-z0-9_-]{16,512}$/.test(token ?? "")
           && !mediaAuthorities.has(token);
         if (!validMedia) fail("invalid-resource-target");
+        captureStage = "save-authority";
         const handle = Object.freeze({ role }); // Serializes only the role, never authority.
         plans.set(handle, Object.freeze({ home, browse, detail, poster: image.href, resolver, media: media.href }));
         roles.add(role);
         authorities.add(prefix);
         mediaAuthorities.add(token);
         return handle;
-      } catch { fail("capture-unavailable"); }
+      } catch (error) {
+        throw { probeCode: "capture-unavailable", captureStage, problem: PROBLEMS.has(error?.probeCode) ? error.probeCode : "unknown" };
+      }
     },
     async check(handle, category, expectation, substitute = null) {
       if (!CATEGORIES.has(category) || !["served", "denied"].includes(expectation)) return { ok: false, problem: "invalid-probe" };

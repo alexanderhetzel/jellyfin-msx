@@ -350,6 +350,33 @@ access remain conditional runtime prerequisites. A source-ready command is not
 an unattended authorization guarantee. Existing expiry/native limitations, #32's
 real-server gap and #8/#12/#23 ownership remain unchanged; #9 stays open.
 
+**Later bounded execution failed:** exact `41031bc` received one master-granted
+baseline attempt. Scoped observer initialization completed; normal A sign-in,
+Continue and movies reached fixed failure stage `A-own-rendered-poster` with no
+resource observations. Its internal cause is unknown. B, revocation, re-pairing
+and the negative control were not run. No hosted acceptance pass follows.
+Server counters were paired_sessions=1, logout204=0, PlaybackInfo=0,
+authentication=1 and poster=1; normal UI session cleanup did not complete.
+Stopping the bounded service removed its remaining RAM session. All three owned
+tabs closed; supervisor exit0/stopped, all nine owned PIDs absent, listener18092
+and control directory absent at 15:49:27 UTC. Two ownerless TIME_WAIT sockets
+were not listeners. The slot was released without retry or a new budget.
+See the [runbook's failed-attempt record](hosted-session-check.md#first-bounded-hosted-attempt--2026-10-31).
+
+**Source-only follow-up / automated-tested / runtime-unverified:** the driver
+now distinguishes DOM collection, own-target selection and fixed opaque-capture
+substages, with finite sanitized observer problems. The DOM collector avoids
+an HTMLImageElement constructor dependency; a public mocked counterexample
+demonstrates that fragility without identifying the live failure cause. Cleanup
+uses normal visible Libraries navigation before confirmed Disconnect when the
+home control is absent. Review corrected an unsupported isVisible helper to
+documented bounded waitFor, and stateful regressions cover the old catalog-state
+cleanup failure and missing-control refusal. **69 Node tests**, **586 Python
+tests / 1 POSIX skip**, Ruff check/format (**117 files**), syntax and diff checks
+passed. Independent review reran all 69 Node tests with no source blocker.
+No live retry or new budget verified this follow-up; the old capture cause and
+hosted acceptance remain unresolved. See the runbook's source-only follow-up.
+
 ## Revocation source evidence and mocked observer subset — issue #32
 
 **Source-reviewed / automated-tested in part / device-unverified.**

@@ -1,9 +1,58 @@
 // Source-only entry until an exclusive browser/relay slot is explicitly granted.
 import { readPairingCode } from "./browser_pairing_check.mjs";
-import { createResourceProbe } from "./browser_resource_probe.mjs";
+import { captureFailure, createResourceProbe } from "./browser_resource_probe.mjs";
 
 const ORIGIN = /^https:\/\/[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.trycloudflare\.com$/;
 const CATEGORIES = ["home", "browse", "detail", "poster", "resolver", "media"];
+
+// Self-contained read-only DOM function: no browser constructor dependency.
+export function collectRenderedImages() {
+  const elements = Array.from(document.querySelectorAll("*"));
+  if (elements.length > 4000) return null;
+  const values = [];
+  for (const element of elements) {
+    if (element.tagName === "IMG" && typeof element.src === "string" && element.src) values.push(element.src);
+    const background = getComputedStyle(element).backgroundImage;
+    const match = background.match(/^url\(["']?([^"')]+)["']?\)$/);
+    if (match) values.push(match[1]);
+    if (values.length > 128 || values.some(value => value.length > 4096)) return null;
+  }
+  return values;
+}
+
+export function selectOwnPoster(origin, images) {
+  if (!Array.isArray(images) || images.length > 128) return null;
+  const candidates = [...new Set(images.filter(value => {
+    if (typeof value !== "string" || value.length > 4096) return false;
+    try {
+      const url = new URL(value);
+      // Public baseline MOVIE ID; never a QR's pending activation authority.
+      return url.origin === origin && !url.username && !url.password && !url.search && !url.hash && /^\/msx\/device\/[A-Za-z0-9_-]{43}\/image\/33333333333333333333333333333333$/.test(url.pathname);
+    } catch { return false; }
+  }))];
+  return candidates.length === 1 ? candidates[0] : null;
+}
+
+export async function disconnectSession(session) {
+  const visible = async pattern => session.msx.playwright.getByText(pattern).waitFor({ state: "visible", timeoutMs: 15000 });
+  const available = async locator => {
+    try { await locator.waitFor({ state: "visible", timeoutMs: 500 }); return true; }
+    catch { return false; }
+  };
+  const disconnect = session.msx.playwright.getByText(/Disconnect TV/i);
+  if (!await available(disconnect)) {
+    const libraries = session.msx.playwright.getByText("Libraries", { exact: true });
+    if (!await available(libraries)) throw null;
+    await libraries.click();
+    await visible(/Disconnect TV/i);
+  }
+  await disconnect.click();
+  await visible(/Confirm disconnect/i);
+  await session.msx.playwright.getByText(/Confirm disconnect/i).click();
+  await visible(/Pair again/i);
+  await visible(/Disconnected/i);
+  session.authenticated = false;
+}
 
 export async function checkSessions({ origin, newTab, fault = "none" } = {}) {
   const report = { status: "failed", stage: "invalid-options", fault: ["none", "authorized-target"].includes(fault) ? fault : "invalid", category: "hosted-session-authority", checks: [], observations: [], browser_verified: false, device_verified: false };
@@ -47,43 +96,27 @@ export async function checkSessions({ origin, newTab, fault = "none" } = {}) {
     await visible(msx, /Synthetic movies/i);
     await msx.playwright.getByText(/Synthetic movies/i).click();
     await visible(msx, /Synthetic clip/i);
-    report.stage = role + "-own-rendered-poster";
+    report.stage = role + "-poster-DOM-collection";
     // Read standard DOM rendering only, never vendor caches, QR grants or AX.
-    const images = await msx.playwright.evaluate(() => {
-      const elements = Array.from(document.querySelectorAll("*"));
-      if (elements.length > 4000) return null;
-      const values = [];
-      for (const element of elements) {
-        if (element instanceof HTMLImageElement && element.src) values.push(element.src);
-        const background = getComputedStyle(element).backgroundImage;
-        const match = background.match(/^url\(["']?([^"')]+)["']?\)$/);
-        if (match) values.push(match[1]);
-        if (values.length > 128 || values.some(value => value.length > 4096)) return null;
-      }
-      return values;
-    });
+    const images = await msx.playwright.evaluate(collectRenderedImages);
     if (!Array.isArray(images)) throw null;
-    const candidates = [...new Set(images.filter(value => {
-      try {
-        const url = new URL(value);
-        // The baseline fixture's public MOVIE ID, not a guessed bearer/QR grant.
-        return url.origin === origin && !url.search && !url.hash && /^\/msx\/device\/[A-Za-z0-9_-]{43}\/image\/33333333333333333333333333333333$/.test(url.pathname);
-      } catch { return false; }
-    }))];
-    if (candidates.length !== 1) throw null;
-    const handle = await probe.capture(role, candidates[0]);
+    report.stage = role + "-poster-target-selection";
+    const poster = selectOwnPoster(origin, images);
+    if (!poster) throw null;
+    report.stage = role + "-opaque-capture";
+    let handle;
+    try { handle = await probe.capture(role, poster); }
+    catch (error) {
+      const failure = captureFailure(error);
+      report.stage = role + "-capture-" + failure.stage;
+      report.capture_problem = failure.problem;
+      throw null;
+    }
+    report.stage = role + "-Libraries-return";
     await msx.playwright.getByText("Libraries", { exact: true }).click();
     await visible(msx, /Disconnect TV/i);
     report.checks.push(role + "-normal-pairing-and-capture");
     return { session, handle };
-  };
-  const disconnect = async session => {
-    await session.msx.playwright.getByText(/Disconnect TV/i).click();
-    await visible(session.msx, /Confirm disconnect/i);
-    await session.msx.playwright.getByText(/Confirm disconnect/i).click();
-    await visible(session.msx, /Pair again/i);
-    await visible(session.msx, /Disconnected/i);
-    session.authenticated = false;
   };
   const check = async (handle, category, expectation, substitute = null) => {
     report.stage = handle.role + "-" + category + "-" + expectation;
@@ -100,7 +133,7 @@ export async function checkSessions({ origin, newTab, fault = "none" } = {}) {
     const b = await pair("B");
     for (const handle of [a.handle, b.handle]) for (const category of CATEGORIES) await check(handle, category, "served");
     report.stage = "A-confirmed-disconnect";
-    await disconnect(a.session);
+    await disconnectSession(a.session);
     report.checks.push(report.stage);
     for (const category of CATEGORIES) await check(a.handle, category, "denied", fault === "authorized-target" && category === "media" ? b.handle : null);
     for (const category of CATEGORIES) await check(b.handle, category, "served");
@@ -113,7 +146,7 @@ export async function checkSessions({ origin, newTab, fault = "none" } = {}) {
   } catch { /* Raw browser/permission/network errors may contain credentials. */ }
   finally {
     for (const session of sessions) if (session.authenticated) {
-      try { await disconnect(session); } catch {
+      try { await disconnectSession(session); } catch {
         report.checks.push("session-cleanup-deferred-to-bounded-service");
         report.status = "failed";
         report.browser_verified = false;
