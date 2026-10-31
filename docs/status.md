@@ -466,7 +466,7 @@ code, renewal/cache, security or deployment changes.
 ## Remembered-device client preparation — issue #12
 
 **Current Chrome follow-up:** the maintainer now requires connected Chrome for
-all browser tests. One bounded synthetic HTTPS run displayed normal startup's
+all browser tests. The first bounded synthetic HTTPS run displayed normal startup's
 Opening Jellyfin fallback; ordinary Retry loaded pairing and Continue displayed
 Waiting. No credentials, enrollment or renewal were exercised, and automatic
 startup is not accepted. An initial synthetic-code screenshot mask miss was
@@ -484,7 +484,35 @@ targeted tests; guards and default/other-scenario loop selection remain unchange
 After this correction, full Windows `uv run --no-sync pytest -W error` passed
 **423 tests / 1 POSIX skip**, and Ruff/format passed **94 files**.
 This is a local server restart correction, not an MSX restoration pass. The actual
-browser matrix remains pending a new master-granted slot.
+browser matrix was partially exercised in a second master-granted slot below.
+
+**Second Chrome run, source `95f1405`:** official hosted MSX with normal startup
+parameters again stayed on Opening Jellyfin. Ordinary Retry reached pairing;
+the normal two-stage synthetic companion login and Continue reached Jellyfin
+libraries at 1920x1080. The encrypted-store aggregate was one record/generation
+zero. After normal reload, startup again remained on the fallback. Ordinary Retry
+and a normal public-plugin-shell load eventually reached libraries without another
+credential submission; the aggregate advanced to one record/generation one.
+This supports manual renewal through the exact-save/readback gate, not automatic
+startup. Its DOM observation is retained; the blank/outgoing renewal screenshot
+is excluded from visual evidence. The enrollment library capture is usable.
+
+Closing/reopening the MSX tab again left the fallback. The actual supervised
+backend-process restart then succeeded under the same origin, key, reserved port
+and original deadline. Post-restart Retry did not reach libraries; generation
+remained one. Browser Use reported a paused-document condition on several CDP/key
+operations. Its cause is unresolved; no runtime interception, security override or
+product scheduling workaround was applied. A separately pending pairing tab
+displayed Waiting without inheriting authorization; same-profile tabs are not
+independent device storage. Normal Disconnect/re-pair was not exercised.
+
+At 09:55 UTC the relay was explicitly stopped before its original 900-second
+deadline; session exited zero/stopped. All twelve recorded original/replacement
+PIDs, listener 18092, control directory and own relay helpers were absent. All
+three owned Chrome tabs closed; the second-tab viewport override was reset.
+Only synthetic fixture state was used. **Runtime acceptance remains incomplete:**
+automatic startup/reload/reopen, post-restart UI restoration and visible
+Disconnect/re-pair are outstanding. No real-server, playback or device pass follows.
 
 **Implemented / automated-tested / device-unverified; runtime acceptance deferred:**
 the explicit `MSX_REMEMBER_DEVICES` option requires the existing external key and
@@ -504,9 +532,10 @@ including startup, verified TLS and no operator state. Independent review caught
 a draft restart listener gap; retaining exclusive sockets in the supervisor and
 vendor wrapper corrected it before any relay run. Actual Windows ephemeral-port
 child restarts deny competing binds; mock EOF cleanup stops the vendor before
-releasing its reservation. No public relay was launched for this client.
+releasing its reservation. At that pre-launch stage no public relay had been
+launched for this client; the later Chrome run is recorded above.
 
-Windows/Python 3.12.14, implementation rebased onto `3bfc60b`: frozen dev/build
+Earlier preparation checks on Windows/Python 3.12.14, rebased onto `3bfc60b`: frozen dev/build
 sync passed; full `uv run --no-sync pytest -W error` with isolated temp/cache
 **421 passed / 1 POSIX skip**, no warnings; Ruff check/format **94 files**,
 **12 Node client guards** and diff checks passed. Offline wheel build and exact

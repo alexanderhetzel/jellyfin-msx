@@ -118,7 +118,42 @@ Two actual fresh Uvicorn processes then both served health, exited zero and deni
 competitor binds throughout. No global event-loop/security policy or reservation,
 TLS, EOF, JobObject or original lifetime guard changed. Independent affected
 source review repeated six focused loop/socket/EOF/deadline tests successfully.
-Actual MSX restart/restoration still requires a new slotted browser run.
+The following slotted run exercised the corrected real backend restart.
+
+### Second actual Chrome run — 2026-10-31
+
+At source `95f1405`, official hosted MSX in connected Chrome used normal startup
+without `init=1`. Automatic startup displayed Opening Jellyfin. Ordinary Retry
+opened pairing; normal two-stage companion login with the synthetic account and
+Continue reached private Jellyfin libraries at 1920x1080. The readonly encrypted
+store aggregate was one record/generation zero. No raw renewal, key, token or
+private capability was inspected or printed.
+
+Normal reload again left the fallback. Ordinary Retry and a normal navigation to
+the public plugin shell eventually reached libraries without a second credential
+submission. The aggregate advanced to one record/generation one. Together with
+the source's exact-save/readback navigation gate, this supports a manual renewal
+observation. The settled DOM showed libraries; its blank/outgoing screenshot is
+excluded. It does not establish automatic restoration. The enrollment library,
+masked pairing and separate pending-context screenshots were visually inspected.
+
+A normal close/reopen again left the fallback. The local supervised backend
+restart succeeded with a fresh process, same origin/key/state/reserved listener
+and original deadline. Subsequent Retry did not restore libraries and the
+aggregate remained generation one. Several CDP/key operations reported Browser
+Use resolving a paused-document response. The cause remains unresolved; no
+runtime interception, trust/security bypass or bootstrap scheduling workaround
+was used. Backend restart readiness is established; post-restart MSX restoration
+is not. Normal Disconnect/re-pair was not exercised.
+
+A third owned tab with an independently pending RAM pairing capability displayed
+Waiting for pairing without inheriting access. This is capability separation in
+the same Chrome profile, not independent remembered-storage/device attestation.
+The relay was explicitly stopped around 09:55 UTC within its original 900-second
+budget. Session exit was zero/stopped; all twelve recorded original/replacement
+PIDs, port 18092 listener, control directory and own relay helpers were absent.
+All three owned tabs closed and the second-tab viewport override was reset.
+No operator state, real Jellyfin, media playback or physical TV was involved.
 
 ### Earlier browser-availability limitation — 2026-10-31
 
@@ -128,9 +163,9 @@ The documented `cua.createBrowserTab("iab", "about:blank")` call returned
 **Browser is not available: iab**. No tab or public relay was created. The browser
 slot was released without a Chrome fallback, permission change or repeated call.
 
-Automatic startup, actual exact-generation storage, normal reload/reopen, MSX
-restoration after backend-process restart, second pending-context denial and
-visible revoke/re-pair are therefore **not accepted** for this client. API restart/
+At that earlier stage automatic startup, actual exact-generation storage, normal
+reload/reopen, MSX restoration after backend-process restart, second pending-context
+denial and visible revoke/re-pair were **not accepted** for this client. API restart/
 isolation and real ephemeral Windows socket/process tests are not MSX passes.
 The later instruction requires connected Chrome for all browser verification;
 the unavailable IAB surface is no longer a blocker. Keep the client in a draft PR
@@ -229,7 +264,7 @@ paths or arbitrary upstream messages.
 
 ## Client and actual browser limits
 
-No production plugin is included. A future plugin must use a stable controlled
+The opt-in plugin above still requires runtime acceptance. Any deployment must use a stable controlled
 HTTPS origin, published MSX storage API, and privately compare the **exact newly
 saved renewal value and generation**. Presence alone is insufficient. Never log
 that record, put it in startup/query URLs or store Jellyfin passwords/tokens in
