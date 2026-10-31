@@ -1,5 +1,35 @@
 # Verification status — 2026-10-31
 
+## uv bootstrap update — PR #47
+
+**Implemented / automated-tested locally / device-unverified:** the existing
+Dependabot PR is refreshed onto current main with uv 0.13.4, corrected provenance
+and four reviewed binary-wheel hashes covering the existing Linux amd64/arm64
+and Windows amd64 scope. All four actual wheel downloads match official PyPI
+SHA256 values; official Astral release/advisory, Python minimum and Windows
+wheel metadata/licenses were reviewed. [Evidence and failure paths](build-supply-chain.md#uv-bootstrap-update--pr-47-2026-10-31).
+Application/build constraints and `uv.lock` bytes are unchanged.
+
+Windows/Python 3.12.14, task-private hash-verified uv 0.13.4:
+`pip install --require-hashes --only-binary=:all: -r tools/requirements.txt`,
+`uv lock --check`, `uv sync --frozen --only-group build` and
+`uv sync --frozen --extra dev --group build --no-build-isolation` passed.
+`uv run --no-sync pytest -W error`: **544 passed / 1 POSIX skip**, no warnings;
+Ruff check and format **112 files** passed. Synthetic HTTP and two-session
+contract commands passed with browser/device flags false. Locked offline wheel
+build with explicit `.venv/Scripts/python.exe`, exact **25-member** source/license/
+template manifest and exclusion canaries passed. A fresh separate environment
+installed hash-required binary runtime exports and the built wheel without
+resolution; outside-checkout template/app/Fernet/SQLite restart/rotation/replay
+smoke passed. Diff/lock checks passed.
+
+Python/uv are not on this shell's default PATH; the commands explicitly selected
+the existing bundled Python and task-private uv. No global installation changed.
+Local Docker is unavailable; actual Linux 3.12/3.13, Docker/proxy/context/image,
+secret-scan CI and independent final-head review remain required before merge.
+No browser/relay, real Jellyfin, credentials, production, trust-store or physical
+device action/pass is part of this tooling update.
+
 ## Revocation source evidence and mocked observer subset — issue #32
 
 **Source-reviewed / automated-tested in part / device-unverified.**
