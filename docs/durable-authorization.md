@@ -62,6 +62,12 @@ Vienna time left all nine PIDs/listener/control/helpers absent. The blank captur
 is excluded; settled DOM/runtime-error/category evidence is retained. No Retry,
 credentials, restart or matrix ran. This comparison ends without another source
 variant, a successful startup claim or a proven external/product root cause.
+Retained run-2 actions show healthz and a top-level public plugin-shell visit
+before normal MSX startup, which still left fallback. A later shell visit plus
+explicit Retry correlated with manual renewal. Thus prior top-level visit was
+not sufficient in that run; the subtitle workflow's earlier companion visit is
+only a correlation, not a warm-up prerequisite or source-fix justification.
+Run-6 cleanup was verified at 11:35:24 UTC / 12:35:24 Vienna.
 
 Normal current companion QR/manual two-stage CSRF pairing is unchanged. The
 plugin uses same-origin body-only pair/status endpoints and keeps the pending
