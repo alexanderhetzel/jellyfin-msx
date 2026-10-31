@@ -8,6 +8,42 @@ server-side root/HTML send returns and unknown browser stages remain in
 Earlier direct-root/test-ID queries also failed; dropping the later body
 prerequisite alone does not justify another startup attempt.
 
+## First conditional run — 2026-10-31
+
+**Run10 at exact `c98ae26` / main `13ad0ba`: observation support unestablished;
+startup unaccepted / device-unverified.** The single granted intended normal
+official-MS​​X startup was followed by the documented `Target.getTargetInfo`
+attempt. It did not produce usable root identity; the fixed recorded outcome
+was unsupported. No alternate command, tab-ID substitution or identity
+normalization followed. Page/Network enable, child commands and event collection
+were not reached. No root/frame/resource snapshot or network stage is claimed.
+The reducer was not instantiated with an invented identity. A fixed support
+projection instead records root unavailable, joins withheld, initial gap and
+child coverage unknown. No actual platform approval prompt was observed.
+The attempt threw before root identity assignment. Its catch retained no error
+text or finer reason: unsupported method, tool policy, paused document, transport
+and permission causes cannot now be distinguished. The broad unsupported label
+does not establish which component rejected the attempt. No retry was made to
+recover the discarded exception or test an alternate API.
+
+The initial local ASGI report was all zero. Before cleanup, remembered root JSON
+and plugin HTML each had received1 / start200-send-returned1 / final-body-send-
+returned1; other categories and aborted/incomplete were zero. At the final
+ordinary DOM read, the UI showed Load Error / Data Load Error. No runtime timeout
+log was collected, and no historical Request timed out/HTTP/paused-response fact
+is imported. The support result does not explain the application's load error or
+establish an external/tool/platform cause. HTML/JS/SDK/handler stages stay unknown.
+
+Only fixed JSON reports were retained under ignored
+`.lab/reports/issue12-run10-{initial-asgi,final-asgi,projection}.json`; no raw
+protocol payload, identifier, URL, error string or screenshot was emitted or
+retained. No Retry, ForceInit, warm-up, credentials, restart or matrix ran. The
+sole owned tab was closed; normal stop returned session19886 exit0/stopped.
+Cleanup at16:37:10 UTC /17:37:10 Vienna found all nine recorded owned PIDs,
+listener18092, control and helpers absent. Original900-total/180-startup bounds
+were preserved. Main's later fixture merge was assessed only after cleanup;
+the running source was never rebased or mixed. No active test resources remain.
+
 ## Supported contracts and limits
 
 The installed connected-Chrome `cdp.documentation()` was read without sending
@@ -88,7 +124,9 @@ identifiers, headers, bodies, timestamps, initiators or exception text.
 
 ## Proposed single-run procedure
 
-This requires a new exclusive master grant; it has not run. Keep the reviewed
+The first conditional attempt above stopped at its initial support boundary;
+no further attempt is authorized here. A future run requires a new exclusive
+master grant. Keep the reviewed
 startup/HTML/JS/CSP, fixture policy, original total/startup budget and application
 actions fixed. No Retry, ForceInit, origin previsit, credentials or restart matrix.
 

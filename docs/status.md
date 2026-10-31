@@ -465,6 +465,31 @@ code, renewal/cache, security or deployment changes.
 
 ## Remembered-device client preparation — issue #12
 
+**Conditional metadata run10 — support unestablished / startup unaccepted /
+device-unverified:** fixed `c98ae26` on main `13ad0ba` performed one normal entry.
+The initial `Target.getTargetInfo` attempt did not yield usable root identity;
+the retained outcome is unsupported/joins withheld, with coverage unknown. No
+alternate command, Page/Network enable, child observation, event collection or
+identity substitution followed. Initial ASGI allzero; final remembered root and
+HTML each received1 / start200-send-returned1 / final-body-send-returned1; others
+zero, aborted/incomplete zero. The final ordinary DOM read showed Data Load Error.
+No runtime timeout log, HTTP browser stage or cause is claimed. See the
+[conditional run record](remembered-startup-observations.md#first-conditional-run--2026-10-31).
+The preflight threw before root assignment; the bounded catch discarded its
+text and retained no finer reason. Method/tool-policy/paused-document/transport/
+permission subcategories remain unknown; no retry recovered or replaced evidence.
+
+Only fixed JSON reports retained, no raw protocol/error/URL/IDs or screenshot.
+No Retry/warm-up/login/restart/matrix. Normal stop: session19886 exit0/stopped;
+cleanup16:37:10 UTC /17:37:10 Vienna confirmed all nine owned PIDs, listener18092,
+control/helpers absent and sole tab closed. Original total/startup bounds retained.
+Rebase onto subsequent fixture-only main `224adc2` occurred after cleanup, with
+no running-source mixture. The diagnostic support result is not a startup cause
+or an external/platform root-cause finding; investigation remains active.
+After-rebase affected tests (remembered client, ASGI/protocol diagnostics,
+synthetic File/HTTPS/lab/resume): **128 passed** with `-W error`. This is union
+validation, not a new runtime pass or a recounted full-suite result.
+
 **Browser metadata reducer — implemented / automated-tested / device-unverified:**
 source-only work now distinguishes positive frame snapshots, observed navigation,
 matched response and loading terminal metadata without body retrieval or browser
@@ -473,7 +498,7 @@ session/request/redirect/frame/loader identity, retired epochs and descendant
 invalidation prevent false joins. Unknown child coverage and the initial-enable
 race remain explicit. See the [observation contract](remembered-startup-observations.md)
 for installed/public API evidence, finite output, counterexamples and the future
-single-run procedure. No new runtime attempt or grant has occurred.
+single-run procedure. Its first conditional attempt stopped as recorded above.
 
 Rebased onto main `13ad0ba`, preserving default-off authenticated File candidate,
 fresh Full admission, profile/body/policy/fixture unions and remember deadlines.
