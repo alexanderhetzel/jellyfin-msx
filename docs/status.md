@@ -469,7 +469,8 @@ code, renewal/cache, security or deployment changes.
 the explicit `MSX_REMEMBER_DEVICES` option requires the existing external key and
 encrypted store. Its own-origin public-MS​​X client performs ordinary pending
 pairing, body-only enrollment/renewal, exact new secret/generation readback and
-bounded readiness/requests with one in-flight operation. Timeout/conflict/save
+bounded storage polling after plugin readiness and bounded requests, with one
+in-flight operation. Timeout/conflict/save
 failure gives recovery without automatic replay or overwriting a newer context
 record. Normal server Disconnect is independent of transient interaction ownership.
 Default pairing, CSRF, strict generation/revocation and single-worker policy remain.
@@ -484,13 +485,15 @@ vendor wrapper corrected it before any relay run. Actual Windows ephemeral-port
 child restarts deny competing binds; mock EOF cleanup stops the vendor before
 releasing its reservation. No public relay was launched for this client.
 
-Windows/Python 3.12.14, source `2e658c8` rebased onto `3bfc60b`: frozen dev/build
+Windows/Python 3.12.14, implementation rebased onto `3bfc60b`: frozen dev/build
 sync passed; full `uv run --no-sync pytest -W error` with isolated temp/cache
-**420 passed / 1 POSIX skip**, no warnings; Ruff check/format **94 files**,
+**421 passed / 1 POSIX skip**, no warnings; Ruff check/format **94 files**,
 **12 Node client guards** and diff checks passed. Offline wheel build and exact
 **22-member** source/license/template/script allowlist passed. No dependency or
 lock versions changed. An initial strict descriptor decoder rejected its newline;
 stripping the owned IPC line and closing test pipes fixed the new test harness.
+Final review also tightened the post-probe restart readiness deadline; a new
+crossing-deadline regression verifies denial and cleanup without extending lifetime.
 
 Independent pre-launch source/security review found no blockers for bounded
 synthetic verification and independently ran 65 affected Python tests/one POSIX

@@ -652,7 +652,7 @@ def activate(
                             ):
                                 raise PreparationError("synthetic-restart-readiness-timeout")
                             time.sleep(0.1)
-                        if time.monotonic() >= deadline:
+                        if time.monotonic() >= restart_deadline:
                             raise PreparationError("synthetic-restart-readiness-timeout")
                         (CONTROL / "owner.json").write_text(
                             json.dumps(

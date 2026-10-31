@@ -14,8 +14,10 @@ runtime is copied, and no inline/eval exception or cross-origin POST is added.
 The published [multiple-action/startup contract](https://msx.benzac.de/wiki/index.php?title=Internal_Actions)
 shows the public fallback content, then loads the interaction plugin. Its public
 readiness callback reads `TVXServices.storage`, then shows normal pairing or
-renews authorization. Readiness is bounded to five seconds, requests to fifteen
-seconds and one operation per plugin instance. Actual automatic startup and
+renews authorization. Storage readiness polling after `handler.ready` is bounded
+to five seconds, requests to fifteen seconds and one operation per plugin instance.
+Vendor/plugin readiness itself has no timeout; the public fallback content remains.
+Actual automatic startup and
 normal reopen acceptance must be recorded separately; these API choices alone
 do not establish an MSX integration pass.
 
