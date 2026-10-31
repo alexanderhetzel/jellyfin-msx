@@ -15,8 +15,11 @@ credential-free CORS and its native subtitle panel. Distinct keys such as
 track labels. Switching uses the official panel rather than starting a new video.
 The [partial private Chrome run and remaining browser gates](private-subtitle-results.md)
 establish initial callback/menu/resource operation, not a full software pass.
-Placement remains unaccepted. Generated-output layout/completion candidates and
-delayed failures need connected-Chrome checks under the latest explicit instruction.
+The `3cee411` HTTPS comparison rendered DE7 umlauts/two-line text and correctly
+timed EN cues after seek; Off/Stop/replay and video-expiry recovery were observed.
+Placement remains unaccepted for admitted long/four-line cues: the alternate
+fixture clipped at the right and bottom without wrapping. A stricter supported
+subset cannot be claimed without review and an affected actual check.
 The post-run candidate stops completion rather than advancing to the separate
 original-playback row, and disables next/previous mode changes. These published
 extended properties also remain browser-unverified.

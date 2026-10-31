@@ -2,6 +2,18 @@
 
 ## Private subtitle controls draft — issue #22
 
+**Latest partial Chrome result, exact `3cee411`:** HTTPS callback delivery works;
+DE7 umlauts/two-line text, DE→EN unchanged paused position, EN timing after seeks10
+and20, distinct DE18 choice, Off at5 and Stop/replay were observed. Expired replay
+retained the native recovery page. **Long/four-line cue layout failed:** no wrap,
+right clipping and bottom clipping. Issue remains open/PR draft; no full software
+or device pass. Late native subtitle GET racing expiry was not exercised. Exact
+cleanup10:24:17UTC: supervisor exit0/stopped, all9PIDs/listener/control absent,
+viewport reset succeeded, both tabs closed. The session had naturally expired.
+The [source-pinned evidence](private-subtitle-results.md) separates these results
+from earlier failures and retains their limits. No guessed font/decoder limits
+or silent text truncation are used to declare this accepted.
+
 **Implemented / automated-tested / device-unverified; unaccepted draft:** opt-in
 source-pinned preparation UI and first-party transient resolver bridge for official
 HTML5X, avoiding an upstream-token-bearing vendor URL query. Normal default stays

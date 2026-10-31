@@ -1,4 +1,49 @@
-# Private subtitle UI: partial evidence and resumed Chrome acceptance — issue #22
+# Private subtitle UI: HTTPS delivery passes; cue layout incomplete — issue #22
+
+## Latest actual result at `3cee411` — 2026-10-31
+
+**Implemented / automated-tested / partial browser-tested / device-unverified;
+issue open, PR draft.** The single reviewed HTTPS comparison used exact
+`3cee41185827a881009b42b079b4a3a13e3c61c6`, official hosted MSX in connected
+Chrome, measured 1920x1080, normal pairing and the unchanged strict synthetic
+subtitle scenario. Public readiness succeeded within 180 seconds; the total
+supervisor allowance stayed 900 seconds. No source changed during the run.
+
+| Actual action | Result |
+| --- | --- |
+| Start Off, pause, choose DE7 | HTTPS track source assigned; selected native track loaded (`readyState=2`). At paused5.305378, German umlauts and both lines visibly rendered with bottom margin. |
+| DE7 → EN12 | Settled selection retained paused5.305378. Immediate reads sometimes preceded completion; the settled read establishes the switch. |
+| Native seek forward | EN B rendered at10 seconds within8–16, EN C at20 within16–25; both lower-centred with visible margins, without the historical top-edge failure. |
+| Rewind, choose alternate DE18 | At paused5, the distinct alternate source/index was selected. **Failed layout:** long second line did not wrap and clipped at the right; the fourth input line reached/clipped the bottom. No four-line/wrapping pass. |
+| Off | At the same paused5, all three tracks disabled and a controls-free image showed no captions. |
+| Stop, replay | Stop returned to subtitle menu. Replay decoded1280x720/readyState4 at6.875956 with all tracks disabled initially. |
+| Completion / expired replay | Replay returned to the subtitle menu; no original video autoplay was observed. Subsequent replay after natural expiry showed persistent Playback unavailable/Pair again/Back, also after the temporary information notice disappeared. A late native subtitle GET racing expiry was **not exercised**. |
+
+After Stop, own counters were init1/video1/subtitle3/fetch3/HTTP2003/URLcallback3,
+unknown0/null0. After replay and expired replay: video3/subtitle6/fetch6/ok6/
+URLcallback6/unknown0/null0. Counter handoff is an attempt, while actual caption
+images/native loaded state establish this run's successful delivery. This
+controlled comparison establishes data-URL rejection as the prior delivery
+problem for the tested callback shape, not universal support for every URL kind.
+
+At 10:24:17 UTC explicit stop returned supervisor exit0/stopped. All nine
+recorded owned PIDs, listener18092 and control directory were absent. Viewport
+reset succeeded and both owned tabs closed. The session had naturally expired;
+no logout is claimed. No renewal, cache, proxy, vendor code change or security
+override. Previously delivered cue bytes remain ordinary delivered data and
+cannot be recalled; a native GET after preflight must still authenticate.
+
+Ignored, secret-free captures: `issue22-https-de-a.png`, `issue22-https-en-b.png`,
+`issue22-https-en-c.png`, `issue22-https-de18-wrap.png`, `issue22-https-off-5.png`,
+`issue22-https-expired-recovery.png`; fixed numeric categories only in
+`issue22-https-counters.json`. The alternate capture proves the failure, not
+readability of its clipped text. No hardware/audio/remote/overscan result.
+
+The admitted four-line/long-line subset is too broad for this actual runtime.
+Any narrower fail-closed client policy must preserve all accepted text/times,
+explain rejection and recover to Off/original, be documented as a client policy
+rather than a decoder limit, and receive independent review plus an affected
+actual Chrome check. No guessed numeric font/layout limit is accepted here.
 
 ## Resumed browser contract
 
