@@ -1,5 +1,37 @@
 # Verification status — 2026-10-31
 
+## Private subtitle controls draft — issue #22
+
+**Implemented / automated-tested / device-unverified; unaccepted draft:** opt-in
+source-pinned preparation UI and first-party transient resolver bridge for official
+HTML5X, avoiding an upstream-token-bearing vendor URL query. Normal default stays
+Off. [Actual partial Chrome observations](private-subtitle-results.md) record normal
+pairing/private details, callback playback, Off/DE7/EN12/alternateDE18, private VTT
+200/text-vtt, umlauts/two-line text and paused switch/seek samples. Actual placement
+failed: German bottom-flush, English top-edge at13. Full #22 remains OPEN.
+
+The replacement instruction requires IAB for further testing. The master reported
+the next worker's fresh documented IAB launch unavailable; no further Chrome
+verification/fallback or repeated unavailable launch. Generated safe percentage
+layout/completion settings remain candidates, not browser passes. Missing/malformed
+original recovery and remaining runtime-error/expiry/Stop criteria stay unchecked.
+Chrome cleanup disconnected the own session, closed two tabs; supervisor exit0,
+nine exact owned PIDs/listener/control absent. No operator/Ultra/TV/security change.
+
+Windows/Python3.12.14: initial full `uv run pytest -W error` **417 passed / 1 skip**;
+after #7 rebase/output-bound fix full **420 passed / 1 POSIX skip**, no warnings.
+Ruff check/format **94 files**, nine Node browser/bridge guards, whitespace and
+offline wheel/exact22-member allowlist passed. Preliminary independent review
+ran118 then79 affected tests/Node4; candidate review ran120 focused subtitle,
+navigation and supervisor tests/Ruff/format. It inspected three captures and
+confirmed placement failure, corrected generated-output size expansion and approved
+only IAB testing, not merge/full acceptance. First rebase regression failed on an
+obsolete exact fixture route alias; reusing #7's fixed item allowlist restored120
+passes, including healthy fallback Range206 and outside-item404. One earlier
+focused invocation named a nonexistent test file and ran no tests; corrected
+commands supplied these results. Required current-head CI/final review remain
+draft gates. Completion-property changes after this full run get affected checks.
+
 ## Authenticated hosted series navigation — issue #7
 
 **Implemented / automated-tested / browser-tested / device-unverified:** the

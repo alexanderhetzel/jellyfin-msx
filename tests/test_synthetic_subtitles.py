@@ -42,5 +42,7 @@ def test_subtitle_scenario_normal_private_routes_and_recovery():
             assert resolved["response"]["status"] == 200
             media = client.get(resolved["response"]["data"]["url"], headers={"Range": "bytes=0-31"})
             assert media.status_code == 206 and len(media.content) == 32
+            outside = resolved["response"]["data"]["url"].replace(item, "f" * 32)
+            assert client.get(outside).status_code == 404
         client.get(private + "/logout.json")
         assert client.get(resource).status_code == 401

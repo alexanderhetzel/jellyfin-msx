@@ -30,7 +30,8 @@ from tools.lab import ROOT, TrafficRecorder, attach_observations
 from tools.navigation_fixture import EPISODES, NavigationJellyfin
 from tools.synthetic_failures import FailureJellyfin
 from tools.synthetic_lab import SyntheticJellyfin, attach_fixture_media
-from tools.synthetic_subtitles import SubtitleJellyfin, attach_subtitle_media
+from tools.synthetic_subtitles import ITEMS as SUBTITLE_ITEMS
+from tools.synthetic_subtitles import SubtitleJellyfin
 from tools.windows_job import enter_kill_on_close_job
 
 VERSION = "2026.10.7"
@@ -83,10 +84,10 @@ def build_public_synthetic_lab(origin, *, allow_public_synthetic=False, scenario
     app, launch = attach_observations(app, settings, recorder)
     if scenario == "navigation":
         attach_fixture_media(app, fixture, raw, None, item_ids=EPISODES)
+    elif scenario == "subtitles":
+        attach_fixture_media(app, fixture, raw, None, item_ids=SUBTITLE_ITEMS)
     else:
         attach_fixture_media(app, fixture, raw, None)
-    if scenario == "subtitles":
-        attach_subtitle_media(app)
     app.add_middleware(
         TrustedHostMiddleware, allowed_hosts=[urlsplit(origin).hostname, "127.0.0.1"]
     )
@@ -435,7 +436,9 @@ def main():
     parser.add_argument("--cloudflared", type=Path, default=BINARY)
     parser.add_argument("--seconds", type=int, default=MAX_SECONDS)
     parser.add_argument(
-        "--scenario", choices=["baseline", "failures", "navigation", "subtitles"], default="baseline"
+        "--scenario",
+        choices=["baseline", "failures", "navigation", "subtitles"],
+        default="baseline",
     )
     parser.add_argument("--directory", type=Path, help=argparse.SUPPRESS)
     args = parser.parse_args()

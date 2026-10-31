@@ -13,8 +13,13 @@ The play item uses official vendor-hosted unmodified HTML5X, Off initially,
 credential-free CORS and its native subtitle panel. Distinct keys such as
 `deu-x-7`/`deu-x-18` preserve duplicate-language absolute indices and explicit
 track labels. Switching uses the official panel rather than starting a new video.
-Actual callback ABI, timing/position/Stop, placement and delayed resource failures
-are browser gates; existing public research does not certify this private path.
+The [partial private Chrome run and remaining IAB gates](private-subtitle-results.md)
+establish initial callback/menu/resource operation, not a full software pass.
+Placement remains unaccepted. Generated-output layout/completion candidates and
+delayed failures need integrated-browser checks.
+The post-run candidate stops completion rather than advancing to the separate
+original-playback row, and disables next/previous mode changes. These published
+extended properties also remain unverified in the integrated browser.
 
 An independently authored transient interaction bridge uses only the published
 [interaction interface](https://msx.benzac.de/wiki/index.php?title=Interaction_Plugin)
@@ -107,7 +112,9 @@ non-VTT responses fail closed. Strict UTF-8 plain WebVTT subset: exact header,
 10000 cues, four text lines/cue, 1024 characters/line, 4096 characters/original
 cue block, ordered non-overlapping positive intervals within 24 hours. Cue IDs
 are removed. Markup, cue settings, STYLE/REGION/NOTE, timestamp maps and control
-characters are rejected. Times remain unchanged. This is not a player placement
+characters from upstream are rejected. The current candidate adds only generated
+fixed cue settings after validation; both input/output stay within one MiB. Times
+remain unchanged. This is not a player placement
 or synchronization pass. Invalid subsets never trigger extraction/conversion.
 
 Capability/generation/expiry is checked after awaits before releasing buffered

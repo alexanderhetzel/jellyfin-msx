@@ -54,6 +54,9 @@ def subtitle_playback(available, resource, original):
         "button:content:action": "panel:request:player:subtitle",
         "html5x:cors": "true",
         "html5x:subtitle": "default",
+        "trigger:complete": "player:stop",
+        "button:next:enable": "false",
+        "button:prev:enable": "false",
     }
     for track in available:
         index, language = track["index"], track["language"]
@@ -68,7 +71,15 @@ def subtitle_playback(available, resource, original):
                 playerLabel="Subtitles: use the subtitle button to choose a track or Off",
                 properties=properties,
             ),
-            button("Play without subtitles", original),
+            button(
+                "Play without subtitles",
+                original,
+                properties={
+                    "trigger:complete": "player:stop",
+                    "button:next:enable": "false",
+                    "button:prev:enable": "false",
+                },
+            ),
             button(
                 "Subtitle help",
                 "info:Use the subtitle button during playback for language or Off. "

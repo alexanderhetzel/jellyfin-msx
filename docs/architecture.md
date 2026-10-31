@@ -118,8 +118,11 @@ a visible MSX response error. Player controls are MSX's standard controls.
 official HTML5X as a constrained browser-tested candidate for #22. Raw SRT/ASS
 and tested embedded MP4 text did not render; paused-switch/seek placement and
 missing-track notices have limitations. Production subtitles remain Off. The
-opt-in backend [resource contract](subtitle-resources.md) authenticates and bounds
-plain external WebVTT; actual private hosted selection/placement remains #22.
+opt-in [resource/bridge candidate](subtitle-resources.md) authenticates and bounds
+plain external WebVTT and offers source-pinned HTML5X controls. Partial Chrome
+private delivery/selection was observed; the generated layout and remaining
+integrated-browser/failure criteria are unaccepted in #22. See
+[actual evidence and platform limitation](private-subtitle-results.md).
 
 M1 records playback *decisions*, not proof that video started. Automatic fallback,
 watch progress, resume, stop reporting and active transcode cleanup are M3 work.

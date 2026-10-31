@@ -11,7 +11,7 @@ from fastapi.testclient import TestClient
 
 from jellyfin_msx.app import create_app
 from jellyfin_msx.errors import PortalError
-from jellyfin_msx.subtitles import MAX_BYTES, plain_vtt
+from jellyfin_msx.subtitles import CUE_LAYOUT, MAX_BYTES, plain_vtt
 
 VTT = "WEBVTT\n\n00:00:01.000 --> 00:00:04.000\nGrüße, ÄÖÜ äöü ß\nSecond line\n".encode()
 
@@ -79,7 +79,7 @@ def test_catalogue_absolute_indices_duplicate_language_and_delivery(subtitle_por
     response = p.subtitle_client.get(
         p.subtitle_path + "/7.vtt", headers={"Origin": "https://msx.benzac.de"}
     )
-    assert response.status_code == 200 and response.content == VTT
+    assert response.status_code == 200 and response.content == plain_vtt(VTT, position=True)
     assert response.headers["content-type"] == "text/vtt; charset=utf-8"
     assert response.headers["access-control-allow-origin"] == "https://msx.benzac.de"
     assert response.headers["referrer-policy"] == "no-referrer"
@@ -245,6 +245,12 @@ def test_plain_subset_rejects_unsupported_layout_encoding_and_timing(raw):
 def test_plain_subset_preserves_cue_times_and_unicode():
     assert plain_vtt(b"\xef\xbb\xbf" + VTT.replace(b"\n", b"\r\n")) == VTT
     assert plain_vtt(VTT.replace(b"\n\n", b"\n\nidentifier\n")) == VTT
+    positioned = plain_vtt(VTT, position=True)
+    assert positioned == VTT.replace(
+        b"00:00:04.000\n", b"00:00:04.000 " + CUE_LAYOUT.encode() + b"\n"
+    )
+    with pytest.raises(PortalError):
+        plain_vtt(positioned, position=True)  # Upstream settings remain outside admission.
 
 
 def test_rate_budget_and_unknown_capability_do_not_fetch(subtitle_portal):
@@ -296,6 +302,18 @@ def test_parser_cue_count_and_size_bounds():
         plain_vtt(b"x" * (MAX_BYTES + 1))
     with pytest.raises(PortalError, match="cue count"):
         plain_vtt(b"WEBVTT\n\n" + b"x\n\n" * 10001)
+
+    def timestamp(seconds):
+        return f"{seconds // 3600:02}:{seconds // 60 % 60:02}:{seconds % 60:02}.000"
+
+    raw = (
+        "WEBVTT\n\n"
+        + "\n\n".join(f"{timestamp(i)} --> {timestamp(i + 1)}\n" + "x" * 50 for i in range(9000))
+        + "\n"
+    ).encode()
+    assert len(raw) < MAX_BYTES and len(plain_vtt(raw)) <= MAX_BYTES
+    with pytest.raises(PortalError, match="size limit"):
+        plain_vtt(raw, position=True)
 
 
 @pytest.mark.parametrize(
@@ -390,6 +408,8 @@ def test_subtitle_menu_uses_private_source_pinned_bridge_and_unique_labels(subti
     assert TOKEN not in json.dumps(page) and "ApiKey" not in json.dumps(page)
     props = playback["properties"]
     assert props["html5x:subtitle"] == "default" and props["html5x:cors"] == "true"
+    assert props["trigger:complete"] == "player:stop"
+    assert props["button:next:enable"] == props["button:prev:enable"] == "false"
     assert (
         props["html5x:subtitle:deu-x-7:Deutsch (track 7)"]
         == "https://portal.test" + p.subtitle_path + "/7.vtt"

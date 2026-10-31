@@ -5,6 +5,7 @@ import httpx
 from tools.synthetic_lab import LIBRARY, MOVIE, SOURCE, USER, SyntheticJellyfin, source
 
 MISSING, MALFORMED = "8" * 32, "9" * 32
+ITEMS = (MOVIE, MISSING, MALFORMED)
 
 
 def subtitle_source():
@@ -90,12 +91,3 @@ class SubtitleJellyfin(SyntheticJellyfin):
                         headers={"Content-Type": "text/vtt"},
                     )
         return response
-
-
-def attach_subtitle_media(app):
-    """The negative subtitle cases retain the same synthetic original video."""
-    route = next(r for r in app.routes if r.path == f"/jellyfin/Videos/{MOVIE}/stream.mp4")
-    for item in (MISSING, MALFORMED):
-        app.add_api_route(
-            f"/jellyfin/Videos/{item}/stream.mp4", route.endpoint, methods=["GET", "HEAD"]
-        )

@@ -13,6 +13,8 @@ from .playback import compatible
 MAX_BYTES = 1024 * 1024
 DEADLINE = 8
 MAX_ACTIVE = 4
+# Generated settings only: never accept arbitrary upstream layout or STYLE blocks.
+CUE_LAYOUT = "line:70%,end position:50%,center size:90% align:center"
 OFFICIAL_ORIGINS = {"https://msx.benzac.de", "https://www.msx.benzac.de"}
 UNSUPPORTED = (
     "Only local external plain WebVTT subtitles are supported by this resource. "
@@ -33,7 +35,7 @@ def milliseconds(value):
     return ((hours * 60 + minutes) * 60 + seconds) * 1000 + millis
 
 
-def plain_vtt(raw):
+def plain_vtt(raw, *, position=False):
     """Admit a small, explicit subset, without changing the media timebase."""
     if len(raw) > MAX_BYTES:
         raise PortalError(502, "Subtitle exceeds the size limit. Select Off.")
@@ -70,8 +72,13 @@ def plain_vtt(raw):
         if start < previous or end <= start or end > 86400000:
             raise PortalError(502, "Invalid WebVTT timing. Select Off.")
         previous = end  # Overlapping cues are outside the initial plain-text subset.
+        if position:
+            lines[0] += " " + CUE_LAYOUT
         output.append("\n".join(lines))
-    return ("\n\n".join(output) + "\n").encode("utf-8")
+    result = ("\n\n".join(output) + "\n").encode("utf-8")
+    if len(result) > MAX_BYTES:
+        raise PortalError(502, "Subtitle exceeds the size limit. Select Off.")
+    return result
 
 
 def eligible_track(stream):
@@ -197,7 +204,7 @@ class SubtitleResources:
                 self.state.get(secret)
                 if device.token.encode() in raw:
                     raise PortalError(502, "Invalid subtitle content. Select Off.")
-                return plain_vtt(bytes(raw))
+                return plain_vtt(bytes(raw), position=True)
         except (httpx.RequestError, TimeoutError):
             raise PortalError(504, "Subtitle request timed out. Retry or select Off.") from None
         finally:
