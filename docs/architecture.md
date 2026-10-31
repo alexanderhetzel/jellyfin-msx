@@ -134,8 +134,9 @@ establish Start. Stop confirmation or a 45-second last-safe lease ends reporting
 The legacy Try original and HTML5X subtitle entries remain unreported.
 [Saved progress](saved-progress.md) adds source-pinned Resume/Start over using
 fresh authorized Jellyfin progress, bounded by selected duration, PlaybackInfo
-StartTimeTicks and native resume:position. Actual runtime resume acceptance is
-pending; automatic fallback remains separate work. Source-pinned official-runtime Chrome
+StartTimeTicks and native resume:position. Actual official-runtime Chrome
+observations verify the scoped synthetic flow; automatic fallback remains
+separate work. Source-pinned official-runtime Chrome
 observations now verify the supported original flow; physical device behavior
 and genuine suspension remain unverified.
 

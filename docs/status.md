@@ -1,24 +1,38 @@
 # Verification status — 2026-10-31
 
-## Saved progress source milestone — issue #19
+## Saved progress — issue #19
 
-**Implemented / automated-tested / device-unverified; browser acceptance pending.**
+**Implemented / automated-tested / browser-tested / device-unverified.**
 Movie/episode details now offer meaningful saved-progress Resume/Start over.
 Fresh authorized metadata and the selected source bound PlaybackInfo StartTimeTicks
 and native resume:position; invalid/watched/near-end progress starts at zero.
 Saved resume never enables conversion, including on an opted-in host. #18's
 observed-only progress/Stop and generation fencing remain unchanged. No audio/
 version selector or subtitle/legacy reporting support is claimed.
-[Contract, scope and pending runtime gate](saved-progress.md).
+[Contract, scope and actual runtime observations](saved-progress.md).
 
 Windows/Python3.12.14 locked dev/build sync passed. Full `uv run --no-sync pytest
 -W error`: **518 passed / 1 POSIX skip**, no warnings. Node **45** (28 lifecycle,
 12 subtitle, 5 browser guards), Ruff check/format **105 files**, diff check and
 locked offline wheel/exact **25-member** source/license/template allowlist passed.
-No browser/relay activation, operator/Ultra access, deployment or TV/audio pass
-occurred at this checkpoint. Independent source/security review found no blockers
-after the optional-host HLS timeline edge was removed; committed-head/docs review
-accepted the source milestone. Exact-head CI remains required before runtime readiness.
+Independent source/security review found no blockers after the optional-host HLS
+timeline edge was removed; committed-head/docs review accepted the source milestone.
+Source bad458c then completed one granted private Chrome/MSX synthetic run:
+normal pairing, movie/episode Resume, actual decoded1280x720/time, paused seek18
+then13, Stop retaining13 and refreshedResume13; Start over decoded4.689315s at
+5159ms after click, paused5.012135, Stop/report5 and refreshedResume5. Episode
+resume11.855827s at4436ms independently corroborates saved8; requested offsets are
+not treated as media observations. Near-end/watched settled beginning-only.
+Separate redacted three PlaybackInfo200 requests kept conversion/DirectStream/
+subtitles off. Six clean PNGs/fixed-counter JSON support independent acceptance.
+The short movie ended before Pause and Stop reportedFailedtrue; no new successful
+end semantic claim. Corrected case/CSS/autohide selector deadlines are tool limits.
+
+Normal confirmed Disconnect produced paired_sessions0/logout204. At14:27:18UTC,
+supervisor exit0/stopped; all9 owned PIDs/listener18092/control absent; both own
+tabs closed. No CDP/Network/viewport override, new budget, operator/Ultra access,
+deployment, real Jellyfin release or TV/audio pass. Final evidence/head acceptance
+and CI are recorded in PR68 before merge.
 
 ## Original playback lifecycle reporting — issue #18
 

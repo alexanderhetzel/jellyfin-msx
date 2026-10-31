@@ -1,8 +1,8 @@
 # Saved progress — issue #19
 
-**Implemented / automated-tested / device-unverified.** Actual official MSX
-Resume/Start over verification is pending; this source milestone is not browser
-acceptance. Physical Philips/audio/remote behavior remains in #4.
+**Implemented / automated-tested / browser-tested / device-unverified.** Actual
+official MSX Resume/Start over observations below verify the scoped synthetic
+software flow. Physical Philips/audio/remote behavior remains in #4.
 
 ## User behavior and limits
 
@@ -68,10 +68,55 @@ items (movie, episode, near-end and watched), the same reviewed original clip,
 per-login RAM progress, and fixed numeric reporting/negotiation summaries. It
 uses strict MockTransport and the existing supervised relay. Existing baseline,
 failure, navigation, subtitle and lifecycle scenarios are unchanged. This is a
-synthetic contract model, not a real Jellyfin release test. No relay has been
-activated for this source checkpoint.
+synthetic contract model, not a real Jellyfin release test.
 
-Pending actual acceptance: normal private pairing and details, both native choices,
-decoded picture/advancing time versus saved position, pause/seek/Stop and refreshed
-progress, and watched/near-end detail handling. Retain UI/media observations and
-sanitized requests separately. Automated test counts do not satisfy this gate.
+## Actual official-runtime observations — 2026-10-31
+
+Source `bad458c48a4abbfa1ea6051bd7981fa31a7461a5`, official hosted MSX in the
+connected Chrome extension, Windows/profile Mein Chrome, unmodified viewport.
+The runtime/browser version was not independently queried in this run; #18's
+earlier version record is not a new measurement. One master-granted supervised
+HTTPS run used the existing reviewed binary/clip and its original 900-second
+total budget (180-second startup bound included). Normal companion code/credential
+stages and actual Continue reached private libraries; no public substitutions or
+authentication bypass were used. Codes, QR and capability/media URLs were not
+emitted or retained. Only native UI controls changed playback.
+
+| Actual UI/media observation | Separate redacted request/report observation |
+| --- | --- |
+| Movie details showed Resume from 00:00:08 and Start over. Resume decoded 1280x720, readyState4/error null, retained time14.400717. | Negotiation1 requested start8; authenticated Start1, progress and Stop1. |
+| The short movie naturally finished before the attempted Pause. Reopened details offered only beginning playback. | Last position30, inactive, Failed=true. No successful-ended report is claimed; near-end/Stop reconciliation is not a new #18 completion pass. |
+| Episode details showed the same saved8 choice. After native Resume click, a loading sample was0 at304ms; decoded time11.855827 at4436ms, then paused12.688884 at5318ms. A later sample held12.688884. Real test-pattern frame was inspected. | Negotiation2 requested8; Start2. Paused report position13 (public API uses coarse seconds). Requested8 and measured native time are separate evidence. |
+| Native forward while paused landed18; native rewind landed13, readyState4/no error. | Authenticated progress separately moved to18, then13 with paused=true. |
+| Native Stop cleared media (paused, time0/readyState0). Back to details showed Resume from 00:00:13. | Stop2 retained13, inactive/Failed=true, rather than the player's reset0. |
+| Start over → Play from beginning decoded at4.689315 at5159ms after click, then paused5.012135 at5533ms. Real frame near5 was inspected. | Negotiation3 requested0; Start3, paused report5. |
+| Stop and Back refreshed the episode choice to Resume from 00:00:05. | Stop3 retained5, inactive/Failed=true. |
+| Near-end and watched catalogue items settled on beginning-only details, no Resume choice. | No extra negotiation; total stayed3. One immediate transitional near-end read was empty; settled visible content is the evidence. |
+| Normal Disconnect TV → Confirm disconnect completed; own tabs closed. | paired_sessions0, logout HTTP204; three PlaybackInfo HTTP200, each DirectPlay=true, DirectStream=false, Transcoding=false, subtitle index-1. |
+
+Six secret-free PNGs and numeric/fixed-counter `observations.json` are retained in
+the ignored local `.lab/issue19-evidence/` for independent inspection. Images show
+initial choices, resumed paused frame, refreshed13 choice, beginning paused frame,
+and settled near-end/watched details. Request summaries are separate from pixels
+and media DOM measurements; no missing Network events are used as evidence.
+The near-end/watched screenshots look identical because those fixtures share a
+display title; their distinct cases rely on the recorded catalogue actions and
+settled states, not distinguishable pixels. Independent evidence review inspected
+all six images/JSON and accepted the four scoped software criteria without
+repeating browser actions. Source pinning/clamping and unsupported track/version
+limits rely on the reviewed mocked tests/source, not a new runtime selector pass.
+
+Initial exact-text attempts used AX-uppercased labels/CSS glyphs that were not DOM
+text. Player Pause also auto-hid while the short movie advanced; fresh visible
+DOM/classes corrected those tool selector deadlines. These are not application
+failure, decoder failure or physical remote evidence. No restart, manual warmup,
+source variant, extra run budget, CDP, Network observation or viewport override
+was used. No Data Load Error appeared in the observed flow; this does not resolve
+the separately documented intermittent startup issue.
+
+Explicit supervisor stop at **14:27:18 UTC** returned exit0/stopped. All nine
+recorded owned PIDs, listener18092 and control directory were absent; both owned
+tabs closed and no browser override needed restoration. The master received the
+slot release before further work. No operator/Ultra, real Jellyfin release,
+audible audio, hardware, genuine suspension or optional HLS/subtitle/track-switch
+acceptance follows from these observations.
