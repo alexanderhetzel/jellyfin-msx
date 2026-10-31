@@ -41,11 +41,32 @@ code, renewal/cache, security or deployment changes.
 **Focused diagnostic preparation:** a fixed RAM-only numeric bitmask on the own
 plugin document now records parsed/script/SDK/handler/boot/content-call boundaries
 without values, logging, telemetry, storage, timers or scheduling/auth changes.
-The automatic-iframe observation is still pending. A new delayed-SDK guard failed
+The focused automatic-iframe read did not yield a value (details below). A new delayed-SDK guard failed
 before implementation and now passes with all **13 Node client guards**;
 `uv run --no-sync pytest tests/test_remembered_client.py -q` passed **3 tests**,
 Ruff check/format **94 files** and diff check passed. Earlier full-suite results
 below are reused, not recounted as a new integration pass.
+
+**Focused Chrome observation, source `fecdc4e`:** normal automatic startup again
+displayed the original two-control Opening Jellyfin fallback. DOM inspection
+confirmed one iframe whose public source matched our remember HTML. The
+documented own-frame/test-ID attribute query failed with Playwright selector
+deadline exceeded; no numeric lifecycle value was obtained. A DOM-only check
+reported that the frame's `contentDocument` was unavailable across origins.
+These facts cannot distinguish missing document/script execution from inaccessible
+inspection or content delivery. **The result is unknown, not stage zero.** No
+request/response categories for remember HTML/JS or vendor SDK were captured;
+the existing server counter allowlist does not cover those files. No Network
+observation, console changes, credentials, Retry, restart or full matrix ran.
+
+The first local preparation failed because the default vendor-binary path was
+absent. The known external binary passed the pinned hash check and exclusive-bind
+preflight; one retry used 830 seconds, retaining the original total deadline.
+Verified HTTPS readiness occurred within the original 180-second startup window.
+At 11:57 Vienna time the relay explicitly stopped, session exit zero/stopped;
+all nine recorded PIDs, listener/control and own helpers were absent. The one
+owned Chrome tab closed. The public fallback capture was inspected. No source
+fix follows from this unsuccessful observation; startup cause remains unresolved.
 
 **Current Chrome follow-up:** the maintainer now requires connected Chrome for
 all browser tests. The first bounded synthetic HTTPS run displayed normal startup's
