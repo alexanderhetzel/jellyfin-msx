@@ -575,12 +575,11 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
         if settings.allow_transcoding and selected:
             entries.append(play_button("Force HLS transcode", force=True))
         if settings.enable_subtitle_resources and selected:
-            # Distinct document URL; the marker grants no access and auth stays in the fragment.
             entries.append(
                 button(
                     "Subtitle playback (WebVTT)",
                     "content:request:interaction:init@"
-                    + url("/subtitle-bridge.html", document=secrets.token_hex(8))
+                    + url("/subtitle-bridge.html")
                     + f"#{secret}/{item_id}/{identifier(selected.get('Id'))}",
                 )
             )

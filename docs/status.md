@@ -2,128 +2,37 @@
 
 ## Private subtitle controls draft — issue #22
 
-**Current blocker: reliable reopening.** Exact `0dc1688` actual Chrome passed
-the declared W32/Han16two-line boundary, distinct track/paused switch/seek/Off,
-both rejected-layout explanations→decoded originals, and a correlated later
-unused native subtitle GET401 after natural expiry. The native track showed
-no immediate error notice; manual Off/Stop and expired-replay recovery worked.
-Healthy reopening after other source contexts still produced Data Load Error;
-normal Back/disconnect/public-start/fresh pairing recovered. No full acceptance.
-At10:43:13UTC supervisor exit0/stopped, all9PIDs/listener/control absent, both
-tabs closed; CDP reset unavailable, no reset pass claimed.
+**Implemented / automated-tested / partial browser-tested / device-unverified;
+OPEN / draft / unaccepted.** Repeated subtitle preparation after changing source
+contexts still ends in Data Load Error. A focused `6fad503` comparison added a
+public document marker, but healthy → layout rejection → healthy failed again
+without warming/reset/re-pair. The marker was present; it did not fix the defect.
+The ineffective source/test change is removed, restoring those files exactly to
+`0dc1688`. The failed-frame script/init/XHR/callback boundary was not captured;
+do not infer a platform limitation or a specific root cause.
 
-Minimal correction adds one public non-auth document marker per detail action,
-keeping all private context in the fragment. The regression failed old source
-and passes the correction. Fresh full pytest429passed/1POSIXskip, Node17,
-Ruff95files/diff/offlinewheel/exact22memberallowlist pass. Actual repeated
-healthy/rejected/healthy reopening remains the focused outstanding check;
-prior valid unchanged caption/layout/expiry observations need no repetition.
+Valid actual `0dc1688` evidence remains: admitted W32/Han16 two-line text fully
+visible; distinct duplicate-language selection; paused switch and seek timing;
+Off/Stop; retained four-line and W33 rejection explanations → decoded originals.
+An unused native subtitle GET after natural expiry was correlated with HTTP401;
+track state0→3, no captions, no specific error notice. Manual Off/Stop and
+expired-video replay recovery worked. Loaded cue bytes remain delivered data;
+the later native GET must always authenticate. No four-line/wrapping, universal
+font/language, physical Philips/audio/remote or live-Jellyfin pass.
 
-**Latest partial Chrome result, exact `3cee411`:** HTTPS callback delivery works;
-DE7 umlauts/two-line text, DE→EN unchanged paused position, EN timing after seeks10
-and20, distinct DE18 choice, Off at5 and Stop/replay were observed. Expired replay
-retained the native recovery page. **Long/four-line cue layout failed:** no wrap,
-right clipping and bottom clipping. Issue remains open/PR draft; no full software
-or device pass. Late native subtitle GET racing expiry was not exercised. Exact
-cleanup10:24:17UTC: supervisor exit0/stopped, all9PIDs/listener/control absent,
-viewport reset succeeded, both tabs closed. The session had naturally expired.
-The [source-pinned evidence](private-subtitle-results.md) separates these results
-from earlier failures and retains their limits. No guessed font/decoder limits
-or silent text truncation are used to declare this accepted.
+Full Windows verification at the simple-cue source: `uv run pytest -W error`
+428passed/1POSIXskip; Node17; Ruff check/format95files; whitespace and locked
+offline wheel/exact22-member allowlist passed. The marker candidate separately
+passed429/1skip and independent88affected checks before failing actual reopening;
+test counts are not an integration pass. Required current-head CI/final review
+must remain separate from software acceptance.
 
-The following simple-cue candidate was defined in issue22 before behavior:
-whole-track maximum2explicitlines/32display-budgetunits per line (East Asian W/F
-counts2); combining/Unicode C/line-separator forms unsupported. Fixed layout
-explanation/original recovery replaces clipping; no text/time rewriting.
-Failed four-line text remains a separate synthetic negative, with W33long-line
-negative and healthy W32/Han16boundary. Actual boundary/negative/late-fetch checks
-remain pending. Fresh full Windows `uv run pytest -W error`:428passed/1POSIXskip;
-Node17, Ruff95files, diff and offlinewheel/exact22memberallowlist pass. Independent
-review ran128focusedPython/Node17 and approved affected Chrome tests only.
-
-**Implemented / automated-tested / device-unverified; unaccepted draft:** opt-in
-source-pinned preparation UI and first-party transient resolver bridge for official
-HTML5X, avoiding an upstream-token-bearing vendor URL query. Normal default stays
-Off. [Actual partial Chrome observations](private-subtitle-results.md) record normal
-pairing/private details, callback playback, Off/DE7/EN12/alternateDE18, private VTT
-200/text-vtt, umlauts/two-line text and paused switch/seek samples. Actual placement
-failed: German bottom-flush, English top-edge at13. Full #22 remains OPEN.
-
-The later explicit maintainer instruction resumes connected Chrome for all tests.
-A bounded run at exact `2f4189f` decoded 1280x720 video with Off default and natural
-completion returning to submenu 1/4. No subtitle was selected: data-URL delivery,
-new placement and wrapped/four-line captions remain unverified. Bridge startup
-stalled; public-shell loading only correlated with eventual preparation, with no
-proven fix. After natural synthetic expiry, replay showed the generic native
-`Video URL is missing` warning, so expiry recovery failed. A small source-only
-native recovery candidate has 17 passing Node guards; its actual ordering still
-needs Chrome verification. Missing/malformed original recovery and remaining
-runtime-error/timing/Stop criteria stay unchecked. The original 900-second run
-exited0/stopped; nine owned PIDs/listener/control were absent, both tabs closed,
-and shared slot released. No operator/Ultra/TV/security change.
-
-Later actual Chrome at exact `2473dbb` **failed caption delivery**: initial Track
-URL is missing or invalid; DE7 and EN12 selected the expected track, but native
-track readyState3 and opaque-ID src remained, with no caption rendering. The
-limited top-tab network sample does not establish subtitle callback dispatch.
-Off preserved paused12.924185 and disabled all tracks; Stop returned to menu.
-Missing and malformed preparation each recovered to actual decoded original
-video. A healthy reopen produced Data Load Error; normal Back after expiry showed
-strict401, then public start/new pairing recovered. At second-session age246s,
-replay showed persistent Playback unavailable/Pair again/Back; Pair again opened
-public pairing. That video-expiry recovery path passes, subtitle late-fetch
-recovery and caption/layout criteria remain open. Explicit stop at10:07UTC:
-supervisor exit0/stopped, all9ownedPIDs/listener/control absent, both tabs closed.
-CDP reset was unavailable; closed tabs remove scoped state, no reset pass claimed.
-
-Diagnostic-only follow-up preserves the failed candidate's data-URL behavior
-while adding bounded frame-local numeric request/XHR/callback counters, with no
-secret or payload values. Independent review approves next Chrome testing only.
-Fresh `uv run pytest -W error`:420passed/1POSIXskip; Ruff check/format95files;
-Node18/18; diffcheck; locked offline wheel/exact22-member allowlist passed.
-Dispatch/actual VTT-request evidence is required before a URI comparison.
-
-Actual diagnostic Chrome at exact `1497273`: beforeplay init1/allothers0;
-afterstartup video1/subtitle3/unknown0/fetch3/HTTP2003/dataCallback3/null0;
-aftersecondstart+DE7/EN12+Stop video2/subtitle6/fetch6/ok6/data6/unknown0/null0.
-This proves known dispatch/HTTP200/attempted callback, not render acceptance.
-Both selected native tracks failed with opaque-ID src at paused4.346121.
-Active-player counter reads timed out; final after-Stop totals worked, so no
-per-selection delta claimed. Normal disconnect/reset/tabs cleanup and explicit
-supervisor stop10:15:36UTC succeeded; all9PIDs/listener/control absent,600s bound
-preserved. Next comparison returns fixed own-origin authenticated HTTPS URL
-through the same callback after preflight; strict later-native-GET denial and
-already-delivered-byte limits remain. No URI-type cause or caption pass inferred.
-The HTTPS comparison passed78affected Python checks, Node17/17, Ruff95files,
-diffcheck and locked offline wheel/exact22-member allowlist. Independent source
-review approves one Chrome comparison only; full acceptance/merge remain open.
-
-The recovery candidate passed a fresh Windows `uv run pytest -W error`:
-**420 passed / 1 POSIX skip**; `uv run ruff check .` and
-`uv run ruff format --check .` passed (95 files), as did the 17 Node guards and
-whitespace check. The locked offline wheel build and exact 22-member package
-allowlist also passed. Independent source review caught and confirmed the fix for a
-stale-request recovery race; regressions cover XHR/reader failure after context
-change and callback-triggered context change. Approved for next Chrome testing
-only, with no merge/full acceptance approval.
-
-Windows/Python3.12.14: initial full `uv run pytest -W error` **417 passed / 1 skip**;
-after #7 rebase/output-bound fix full **420 passed / 1 POSIX skip**, no warnings.
-Ruff check/format **94 files**, nine Node browser/bridge guards, whitespace and
-offline wheel/exact22-member allowlist passed. Preliminary independent review
-ran118 then79 affected tests/Node4; candidate review ran120 focused subtitle,
-navigation and supervisor tests/Ruff/format. It inspected three captures and
-confirmed placement failure, corrected generated-output size expansion and approved
-only IAB testing, not merge/full acceptance. First rebase regression failed on an
-obsolete exact fixture route alias; reusing #7's fixed item allowlist restored120
-passes, including healthy fallback Range206 and outside-item404. One earlier
-focused invocation named a nonexistent test file and ran no tests; corrected
-commands supplied these results. Required current-head CI/final review remain
-draft gates. Completion-property changes after this full run get affected checks.
-Required CI initially rejected the filtered Docker context because the new bridge
-JS was missing. An exact filename allowlist entry now includes only that reviewed
-asset; container/context/image validation must rerun on the updated head. This
-does not relax the test/media/private-state exclusion policy.
+Latest exact cleanup at10:52:30UTC: normal Disconnected observed, explicit
+supervisor exit0/stopped, all9ownedPIDs/listener18092/control absent, both tabs
+closed; viewport reset unavailable, no success claim. Original900-second bound
+preserved. No vendor code, operator/Ultra account, renewal/cache or security
+change. [Source-pinned actions and limitations](private-subtitle-results.md)
+retain the valid observations and failed comparisons.
 
 ## Authenticated hosted series navigation — issue #7
 

@@ -1,5 +1,34 @@
 # Private subtitle UI: simple cues pass; reopening pending — issue #22
 
+## Focused marker comparison failed at `6fad503` — 2026-10-31
+
+Exact `6fad503b2bc74046d445414b645c9984092364ab`, one normal pairing in official
+Chrome/MSX, no public-shell warming, reset or re-pair. Initial healthy preparation
+succeeded, then the retained layout-rejected context succeeded. Returning to
+healthy preparation again ended in Data Load Error. Read-only DOM confirmed
+the bridge iframe had the new document marker. The later long-context and
+same-cached-context stages were not reached. **The marker did not fix reopening**;
+the hypothesis is not an established cause, and the ineffective change/regression
+is removed from the candidate, restoring those files to exact `0dc1688` source.
+
+The safe retained stage evidence establishes the visible failure after the
+context switch, not whether the new bridge script, SDK init request, preparation
+XHR/response or content callback ran. No counter snapshot from that failed frame
+was retained. Earlier limited network samples do not fill this gap. The actual
+failure boundary remains unisolated; this is not evidence of a platform-wide
+unsupported operation or a successful fix. Existing first-party counters could
+answer script/request dispatch if captured at the failed frame; no new diagnostic
+infrastructure or further lifecycle variant is introduced.
+
+At10:52:30UTC normal Back/home/Confirm disconnect showed Disconnected. Explicit
+stop returned supervisor exit0/stopped, all nine recorded owned PIDs, listener
+18092 and control directory were absent, and both owned tabs closed. The original
+900-second total/180-second startup bound was preserved. Viewport reset was
+unavailable while the document response was paused; closed tabs remove scoped
+state, no reset-success claim. Ignored captures: `issue22-marker-reopen-failure.png`
+and fixed-stage-only `issue22-marker-reopen-evidence.json`. Issue22 stays open,
+PR65 draft/unaccepted; no additional public run or source variant is authorized.
+
 ## Simple-cue evidence at `0dc1688` — 2026-10-31
 
 Exact `0dc1688b73abe4d30ad56d3787265fda2b2df2a1`, official hosted MSX/connected
@@ -52,32 +81,31 @@ change. Captures: `issue22-fourline-rejected.png`, `issue22-fourline-original.pn
 `issue22-simple-expired-recovery.png`; fixed numeric/sanitized categories only
 in `issue22-simple-counters.json` and `issue22-simple-network.json` (ignored).
 
-## Reopening correction candidate — not yet browser-tested
+## Historical marker proposal — tested, failed and removed
 
 The source generated identical bridge document URLs, varying only private
 fragments. The [HTML navigation standard](https://html.spec.whatwg.org/multipage/browsing-the-web.html#navigate)
 uses same-document navigation when URLs match except their fragment; the bridge
 registers its SDK handler during initial script readiness. This supports a fresh
-document discriminator, but does not establish the vendor's internal failure
+document discriminator as a comparison, but did not establish the vendor's internal failure
 cause. Browser Use paused-response tooling remains a separate observation.
 
-Issue22 defines the correction before behavior: each generated detail action
-gets a fresh public non-auth query marker; all capability/item/source context
-stays in the fragment. No nonce state, auth role, timer, renewal or vendor change.
-The regression failed old source and now checks distinct same/different-source
-document URLs, unchanged private fragments and no access from the marker.
-Focused actual healthy→rejected→healthy repeats, without shell warmup/reset/new
-pairing, remain required before accepting reopening.
+Issue22 defined the proposal before behavior: each generated detail action
+received a public non-auth marker, with private context in the fragment.
+The regression failed old source and checked distinct document URLs, unchanged
+private fragments and no private access from the marker. The focused actual
+comparison failed as recorded above; the ineffective source/test change was
+removed. It is not a pending fix or an established cause.
 
-The subsequent simple-cue admission candidate is defined in owning issue #22
+The simple-cue admission policy was defined in owning issue #22
 and [the resource contract](subtitle-resources.md): two short lines with a
 conservative display-unit budget; reject whole unsupported tracks rather than
 discarding or rewriting text/times. It preserves the failed fixture as an
-explicit negative. Actual boundary/wide-glyph rendering, rejection/original
-recovery and late unused native-fetch expiry remain pending; no acceptance is
-inferred from the narrower parser or short-cue images below.
+explicit negative. Its actual boundary/wide-glyph, rejection/original recovery
+and later unused native-fetch denial evidence is recorded at `0dc1688` above.
+The broader feature remains unaccepted because reopening fails.
 
-## Latest actual result at `3cee411` — 2026-10-31
+## Earlier HTTPS comparison at `3cee411` — 2026-10-31
 
 **Implemented / automated-tested / partial browser-tested / device-unverified;
 issue open, PR draft.** The single reviewed HTTPS comparison used exact
@@ -122,13 +150,13 @@ explain rejection and recover to Off/original, be documented as a client policy
 rather than a decoder limit, and receive independent review plus an affected
 actual Chrome check. No guessed numeric font/layout limit is accepted here.
 
-## Resumed browser contract
+## Historical resumed browser contract
 
 The later explicit maintainer instruction is now connected Chrome for **all**
 browser verification and media inspection. It supersedes the temporary IAB-only
 pause recorded below. No IAB retry/fallback is needed. The original partial Chrome
-evidence stays valid within its limits. Final connected-Chrome placement, natural
-expiry, failure recovery and Stop/completion acceptance is still pending.
+evidence stays valid within its limits. Later source-pinned sections above
+supersede the pending checks recorded during this historical preparation stage.
 
 ## Callback-dispatch evidence at `1497273` — 2026-10-31
 

@@ -2,66 +2,42 @@
 
 ## Private subtitle menu implementation — 2026-10-31
 
-### Simple-cue admission candidate — awaiting affected Chrome check
+**Implemented / automated-tested / partial browser-tested / device-unverified;
+issue22 open, PR65 draft.** With the existing opt-in enabled, source-pinned
+preparation validates up to eight tracks within twelve seconds. Default remains
+Off. Rejected tracks explain their unsupported format/layout and retain original
+playback/Back; no conversion, burn-in, silent truncation or timing change.
 
-Issue #22 defines the narrowed candidate before implementation: at most two
-explicit text lines per cue, each at most 32 display-budget units. Unicode East
-Asian W/F characters count two units, others one. Combining marks, Unicode C
-categories and line/paragraph separators are outside this initial simple-text
-subset. These are conservative client admission rules, not certified glyph
-metrics, language coverage or hardware decoder limits. A successful boundary
-check cannot promise every font/platform fits.
+The declared simple-cue subset allows at most two explicit lines, each at most
+32 display-budget units (Unicode East Asian W/F counts two, others one).
+Combining marks, Unicode C categories and line/paragraph separators are excluded.
+These are conservative client admission rules, not certified glyph metrics,
+language coverage or hardware limits. Whole-track rejection preserves all
+accepted text/times; any unsupported cue rejects the whole track.
 
-The whole track fails closed when any cue exceeds this subset; no truncation,
-reflow, dropped cue or timing change. Preparation explains unsupported layout
-and retains Play without subtitles/Back. Admitted text/timestamps are unchanged.
-The actual failing long/four-line fixture is retained as a distinct negative;
-another negative is a 33-W single line. Healthy duplicate-DE18 uses two boundary
-lines: 32 W characters and 16 wide Han characters. Those exact boundaries and
-negative-original recovery require actual official Chrome observation before
-acceptance. Late unused native subtitle GET after expiry remains a separate gate.
+Actual `0dc1688` Chrome evidence showed the exact W32/Han16 boundary fully
+visible, distinct DE18/EN12 selection at unchanged paused time, seek timing and
+Off/Stop. The preserved failed four-line text and separate W33 negative each
+explained rejection and recovered to decoded original video. HTTPS callback
+delivery rendered DE7 umlauts/two-line text in `3cee411`. These observations
+support the tested subset, not four-line wrapping or universal platform support.
 
-**Implemented / automated-tested / device-unverified; connected-Chrome acceptance pending.**
-With the existing opt-in enabled, eligible details offer Subtitle playback
-(WebVTT). A source-pinned preparation page validates up to eight admitted tracks
-within twelve seconds. Missing/malformed/unsupported tracks produce a clear
-Subtitles unavailable page, a fixed explanation and Play without subtitles/Back
-recovery. No conversion is requested. The normal default deployment is unchanged.
+Official vendor-hosted HTML5X uses credential-free CORS and its native panel.
+Distinct language keys retain absolute indices, including duplicate languages.
+The bridge validates each fixed resource and returns its own-origin HTTPS URL
+through the published callback. The later native GET authenticates again.
+Actual unused-track selection after expiry produced a correlated GET401 and
+native track error; there was no specific per-track notice. Manual Off/Stop and
+expired-video replay recovery worked. No renewal/cache; delivered cues cannot
+be recalled. Fixed numeric frame-local counters record attempted handoff only,
+never identifiers, URLs, payloads or errors.
 
-The play item uses official vendor-hosted unmodified HTML5X, Off initially,
-credential-free CORS and its native subtitle panel. Distinct keys such as
-`deu-x-7`/`deu-x-18` preserve duplicate-language absolute indices and explicit
-track labels. Switching uses the official panel rather than starting a new video.
-The [partial private Chrome run and remaining browser gates](private-subtitle-results.md)
-establish initial callback/menu/resource operation, not a full software pass.
-The `3cee411` HTTPS comparison rendered DE7 umlauts/two-line text and correctly
-timed EN cues after seek; Off/Stop/replay and video-expiry recovery were observed.
-Placement remains unaccepted for admitted long/four-line cues: the alternate
-fixture clipped at the right and bottom without wrapping. A stricter supported
-subset cannot be claimed without review and an affected actual check.
-The post-run candidate stops completion rather than advancing to the separate
-original-playback row, and disables next/previous mode changes. These published
-extended properties also remain browser-unverified.
-Track properties now carry only bounded opaque IDs. The transient bridge checks
-the authenticated subtitle resource when HTML5X requests its URL, with a fixed
-recovery notice for fresh denial/failure. The current comparison candidate returns
-the fixed absolute own-origin HTTPS resource URL after that preflight, through
-the unchanged callback object. The native player authenticates its later GET
-again; expiry/revocation between requests can still deny that fetch. No hidden
-renewal/cache is added; already delivered cue bytes cannot be recalled.
-Actual `2473dbb` Chrome playback rejected track loading; DE/EN selected native
-tracks failed with opaque-ID src unchanged. Whether dispatch, response shape or
-data-URL acceptance caused this is not established. The next candidate preserves
-that behavior and exposed only fixed, bounded frame-local numeric counters in a
-hidden output: request categories, subtitle XHR entry/status category and callback
-attempts. A data-callback count precedes the callback and proves attempted
-handoff only; HTTP200 does not prove MIME acceptance or rendering. No identifiers,
-URLs, payloads or errors enter counters; no persistence or telemetry is added.
-Actual `1497273` counters established three known subtitle requests, HTTP200
-responses and attempted data-URL callbacks per playback start, while native
-tracks still failed. That evidence supports the single HTTPS comparison, not
-an inferred success. The current successful-URL counter is named
-`subtitleUrlCallback`; it still means attempted handoff, not native acceptance.
+**Remaining integration blocker:** repeated healthy preparation after other
+source contexts produces Data Load Error. A public-document-marker comparison
+at `6fad503` did not fix it and was removed. Failed-frame SDK/init/XHR/callback
+stages were not captured; no root cause or platform-wide limitation is proven.
+See [source-pinned actual actions and limits](private-subtitle-results.md).
+The full software feature remains unaccepted.
 
 An independently authored transient interaction bridge uses only the published
 [interaction interface](https://msx.benzac.de/wiki/index.php?title=Interaction_Plugin)
