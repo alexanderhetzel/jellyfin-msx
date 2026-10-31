@@ -4,7 +4,9 @@
 synthetic-only interaction probe and the observations below. **Deferred:** a
 production telemetry collector and Jellyfin reporting (#18), genuine application
 suspension/resume, abrupt-exit delivery guarantees and physical Philips comparison
-(#4). This is a research contract, not a watch-history implementation.
+(#4). The original research criteria are satisfied by the observed contract,
+recorded unavailable cases and conservative fallback (acceptance audit below).
+This is not a watch-history implementation or a successful suspension test.
 
 ## Public API basis
 
@@ -117,11 +119,30 @@ No visibility setter, synthetic event dispatch or fabricated app callback was us
 Temporary tabs were closed. This is not a Philips standby result or evidence that
 MSX cannot suspend.
 
+The bounded follow-up on 2026-10-30 confirmed that the owned MSX and comparison
+tabs were in the same normal window. The connected management tool rejected
+`tabs.update` with `active` as unsupported; no equivalent workaround was used.
+The documented window-create operation then isolated only the owned MSX tab in a
+new normal window. Ordinary minimization succeeded and a separate metadata read
+confirmed `minimized`. Nevertheless, document reads still returned
+`hidden=false` / `visible`, samples advanced and naturally reloaded the clip, and
+no collected suspend/resume callback appeared. Restoring the window to `normal`
+gave the same visibility result. The restored screenshot shows an actual frame,
+not a hidden document. Playback was stopped; both owned tabs and the isolated
+window were closed, leaving the pre-existing user tab/window intact. No runtime
+events, visibility values or player state were injected. Sanitized evidence is
+retained in ignored `issue17-suspend-followup-{minimized,restored}.json` and
+`issue17-suspend-followup-restored.jpg`; an independent reviewer inspected them.
+The [terminal technical report](https://github.com/alexanderhetzel/jellyfin-msx/issues/17#issuecomment-6534404792)
+remains accurate: genuine suspension is technically unverified.
+
 Closing a probe tab destroys its collector. No acknowledged final delivery after
 destruction can be inferred from the last saved console row. Process kill, OS
 sleep/wake and crash were not exercised. Do not rely on unload or an app callback
-to send a final stop. Genuine browser suspension is still a remaining #17
-verification item; physical ordering/suspension comparison remains #4.
+to send a final stop. Genuine browser suspension remains unverified; physical
+ordering/suspension comparison remains #4. Recording this unavailable precondition
+and defining the fallback satisfies the original research criterion; successful
+suspension emission was not an additional research acceptance requirement.
 
 ## Candidate authenticated telemetry contract for #18
 
@@ -178,6 +199,11 @@ the plugin's real HTTPS POST/header/CORS path on an operator-controlled origin.
    completion. Suspension/network errors may delay timers; resumption requires
    authorization and a fresh sample before reporting active playback. Backend
    restart/session expiry fails closed; never infer a stop delivery guarantee.
+   Unknown visibility does not itself fabricate a pause or advance position. If
+   fresh valid samples keep arriving, report only their observed state/position;
+   if they cease, expire the lease without extrapolating progress. Delayed timers
+   or absent suspend callbacks therefore cannot keep an abandoned session alive
+   indefinitely. #18 must test this policy and choose final timing constants.
 7. Retain only bounded operational state and aggregate error counters. Disable
    request URI/body/header logging; exceptions must use fixed codes. Do not write
    operator titles/IDs, grants, media URLs or arbitrary upstream errors to logs.
@@ -238,12 +264,34 @@ represented as a visible application error notice. Tool clicks on already-hidden
 icons timed out; no state change or playback failure is inferred from those tool
 errors. No raw private traffic or operator identifiers are retained.
 
-Software callback research and the candidate bounded telemetry/reconciliation
-design are reviewable. #17 remains open for genuine browser suspension/resume;
-this limitation requires no TV or credentials and does not create a human-input
-gate. Physical/device evidence remains deferred to #4. Neither 206 existing
-Python tests nor this public probe establishes authenticated production transport,
-private source delivery, audible audio or an all-client integration pass.
+## Research acceptance audit — 2026-10-31
+
+The owning issue asks to **record** lifecycle behavior and define a safe contract
+before Jellyfin reporting. Its observable milestone explicitly permits unavailable
+cases with conservative fallback rather than injected events. The earlier decision
+to keep research open until genuine suspension passed added a success gate beyond
+that wording. This audit changes that interpretation, not the original criteria
+or the retained technical observations. Independent review mapped all four:
+
+| Original research criterion | Retained evidence and boundary | Result |
+| --- | --- | --- |
+| Inspect public API, test actual Chrome emission, define candidate TV contract | Public API/declarations; actual Load/Pause/Play/Seek/Stop callbacks, separately labelled requested progress and visible screenshots. No Philips emission inferred. | Met. |
+| Record duplicates, missing events, order, suspension and network behavior | Ordered records show missing initial Play, stale state, repeated snapshots/loads, Back without Stop, cached offline playback and failed fresh Media fetch. Same-window/minimized-window attempts record unavailable visibility precondition and absent collected app callbacks. | Met as research with recorded limits; successful suspension remains unverified. |
+| Define bounded authenticated sanitized backend telemetry | Session/source/generation-bound grant, body/queue/retry/rate bounds, allowlist and bounded replay-digest window. | Met as design; no production collector/transport pass. |
+| Record fallback/reconciliation before reporting | Requested versus observed state, no fabricated progress, stale-event/end-generation reconciliation, last safe position, candidate 45-second lease and authorization/fresh sample on return. | Met as design; #18 owns implementation and verification. |
+
+No missing suspension fact blocks safe #18 implementation under that conservative
+contract: it must work when callbacks are absent and timers are delayed. #18
+still owns authenticated transport, source/generation correlation, Jellyfin
+start/progress/stop reporting, bounded retries and disappearance recovery, with
+mocked regressions and actual official-runtime verification. The 45-second lease
+and other policy constants are design choices, not measured MSX guarantees.
+Genuine suspension, OS sleep/crash, final-delivery guarantees, audible audio and
+physical Philips behavior remain unverified. Neither the historical 206 Python
+tests nor this public probe establishes authenticated production transport,
+private source delivery or an all-client integration pass. Research closure must
+not be represented as any of those passes. No browser or relay was launched for
+this acceptance audit.
 
 Independent review inspected the final source/public API contract, both ordered
 record sets and six saved UI images. It identified the high-water-only replay
