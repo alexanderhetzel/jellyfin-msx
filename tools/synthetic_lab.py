@@ -161,10 +161,16 @@ def build_synthetic_lab(settings, *, media=MEDIA, fault=None):
     return app, launch, fixture
 
 
-def attach_fixture_media(app, fixture, media, fault, *, item_ids=(MOVIE,)):
+def attach_fixture_media(
+    app, fixture, media, fault, *, item_ids=(MOVIE,), source_ids=(SOURCE,), unplayable_sources=()
+):
     """Attach only the fixture's explicitly supplied media, never a directory mount."""
 
     allowed_items = frozenset(item_ids)
+    allowed_sources = frozenset(source_ids)
+    unplayable = frozenset(unplayable_sources)
+    if not unplayable <= allowed_sources:
+        raise ValueError("Unplayable sources must be explicitly allowed synthetic sources")
 
     @app.api_route("/jellyfin/Videos/{item_id}/stream.mp4", methods=["GET", "HEAD"])
     async def stream(request: Request, item_id: str):
@@ -173,11 +179,14 @@ def attach_fixture_media(app, fixture, media, fault, *, item_ids=(MOVIE,)):
             return Response(status_code=404)
         if (
             request.query_params.get("ApiKey") not in fixture.tokens
-            or request.query_params.get("MediaSourceId") != SOURCE
+            or request.query_params.get("MediaSourceId") not in allowed_sources
             or request.query_params.get("Static") != "true"
         ):
             fixture.media_requests["denied"] += 1
             return Response(status_code=401)
+        if request.query_params.get("MediaSourceId") in unplayable:
+            fixture.media_requests["unplayable"] += 1
+            return Response(content=b"synthetic non-media fixture", media_type="video/mp4")
         if isinstance(media, bytes):
             # Public synthetic delivery snapshots the reviewed clip in RAM so a
             # later local path/symlink change cannot expose a different file.

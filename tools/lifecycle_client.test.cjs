@@ -4,9 +4,117 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const code = readFileSync(require("node:path").join(__dirname, "../src/jellyfin_msx/templates/lifecycle.js"), "utf8");
 const hash = "#" + "s".repeat(43) + "/" + "2".repeat(32) + "/" + "3".repeat(32);
+
+test("explicit playback attempts stop at three without an automatic retry loop", () => {
+    const f = fixture();
+    for (let i = 0; i < 3; i++) {
+        f.handler.handleRequest("portal-video", null, value => assert.equal(value, null));
+        f.requests.at(-1).respond(409, { category: "negotiation_denied", error: "private upstream URL" });
+    }
+    const count = f.requests.length;
+    f.handler.handleRequest("portal-video", null, value => assert.equal(value, null));
+    f.tick(60000);
+    assert.equal(f.requests.length, count);
+    assert.match(f.contents.at(-1).items[0].action, /Three play attempts/);
+    assert.equal(JSON.stringify(f.contents).includes("private upstream URL"), false);
+    assert.deepEqual(f.actions, []);
+});
+
+test("recovery offers only fresh returned alternatives and pins the explicit choice", () => {
+    const f = fixture(); let page;
+    f.handler.handleRequest("recovery", null, value => { page = value; });
+    const catalog = f.requests.at(-1);
+    assert.equal(catalog.url, "/api/playback/options");
+    assert.equal(catalog.headers.Authorization, "Bearer " + "s".repeat(43));
+    catalog.respond(200, { alternatives: ["a".repeat(32)] });
+    assert.ok(page.items.some(row => row.action === "[quiet|video:resolve:request:interaction:alternative-0]"));
+    assert.equal(page.items[0].title, "Playback: native unknown");
+    f.handler.handleRequest("video:alternative-0", null, () => {});
+    assert.equal(f.requests.at(-1).body.media_source_id, "a".repeat(32));
+    assert.deepEqual(f.actions, []);
+    assert.equal(f.requests.at(-1).body.force, false);
+    const count = f.requests.length;
+    f.handler.handleRequest("alternative-7", null, value => assert.equal(value, null));
+    assert.equal(f.requests.length, count);
+});
+
+test("recovery never interprets failed catalog or untyped errors as decode failures", () => {
+    const f = fixture(); let page;
+    f.handler.handleRequest("recovery", null, value => { page = value; });
+    f.requests.at(-1).respond(200, { alternatives: ["https://foreign.invalid/private"] });
+    assert.ok(page.items.some(row => row.title === "Stored alternatives could not be checked"));
+    f.handler.handleRequest("portal-video", null, value => assert.equal(value, null));
+    f.requests.at(-1).respond(409, { category: "native_decode", error: "private" });
+    assert.equal(f.contents.at(-1).items[0].title, "Playback: request failed");
+    assert.equal(JSON.stringify(f.contents).includes("native decode"), false);
+});
+
+test("XHR timeout and connection error name only the portal request boundary", () => {
+    for (const [event, expected] of [["ontimeout", "portal timeout"], ["onerror", "portal connectivity"]]) {
+        const f = fixture();
+        f.handler.handleRequest("portal-video", null, () => {});
+        f.requests.at(-1)[event]();
+        assert.equal(f.contents.at(-1).items[0].title, "Playback: " + expected);
+        assert.equal(f.requests.length, 1);
+    }
+});
+
+test("late failed start and catalog cannot navigate or choose in a changed context", () => {
+    const f = fixture(); let page;
+    f.handler.handleRequest("recovery", null, value => { page = value; });
+    const catalog = f.requests.at(-1);
+    f.handler.handleRequest("portal-video", null, () => {});
+    const play = f.requests.at(-1);
+    f.window.location.hash = hash.replace("2", "4");
+    catalog.respond(200, { alternatives: ["a".repeat(32)] });
+    play.respond(409, { category: "negotiation_denied" });
+    assert.equal(page, null);
+    assert.equal(f.contents.length, 0);
+});
+
+test("Back to details stops the native player through published actions", () => {
+    const f = fixture(); let result;
+    f.window.location.origin = "https://portal.test";
+    f.handler.handleRequest("details", null, value => { result = value; });
+    assert.equal(f.actions.at(-1), "quiet");
+    assert.equal(result.action, "content:https://portal.test/msx/device/" + "s".repeat(43) + "/detail.json?item_id=" + "2".repeat(32));
+});
+
+test("Back invalidates pending start and catalogue even when the fragment is unchanged", () => {
+    const f = fixture(); let video, recovery;
+    f.handler.handleRequest("portal-video", null, value => { video = value; });
+    const start = f.requests.at(-1);
+    f.handler.handleRequest("recovery", null, value => { recovery = value; });
+    const catalog = f.requests.at(-1);
+    f.handler.handleRequest("details", null, () => {});
+    assert.equal(video, null); assert.equal(recovery, null);
+    start.respond(200, { grant: "g".repeat(43), playback_id: "p".repeat(32), url: "https://media.test/original", expires_in: 28800 });
+    catalog.respond(200, { alternatives: ["a".repeat(32)] });
+    assert.equal(video, null); assert.equal(recovery, null);
+    assert.equal(start.aborted, true); assert.equal(catalog.aborted, true);
+    f.tick(60000); assert.equal(f.samples.length, 0); assert.equal(f.contents.length, 0);
+});
+
+test("explicit same-context init resets exhausted attempt budget and stale choices", () => {
+    const f = fixture();
+    for (let i = 0; i < 3; i++) {
+        f.handler.handleRequest("portal-video", null, () => {});
+        f.requests.at(-1).respond(409, { category: "negotiation_denied" });
+    }
+    let page;
+    f.handler.handleRequest("details", null, () => {});
+    f.handler.handleRequest("init", null, value => { page = value; });
+    assert.equal(page.items[0].title, "Play from beginning");
+    const before = f.requests.length;
+    f.handler.handleRequest("portal-video", null, () => {});
+    assert.equal(f.requests.length, before + 1);
+    f.requests.at(-1).respond(200, { url: "https://media.test/rejected-response-marker" });
+    assert.equal(f.contents.at(-1).items[0].title, "Playback: request failed");
+    assert.equal(JSON.stringify(f.contents).includes("rejected-response-marker"), false);
+});
 function fixture(initial = hash) {
     let now = 100000, next = 0, handler;
-    const timers = new Map(), requests = [], samples = [], notices = [];
+    const timers = new Map(), requests = [], samples = [], notices = [], contents = [], actions = [];
     const window = { location: { hash: initial } };
     function later(fn, delay) { const id = ++next; timers.set(id, { fn, time: now + delay }); return id; }
     function tick(ms) {
@@ -23,17 +131,50 @@ function fixture(initial = hash) {
         this.open = (method, url) => { this.method = method; this.url = url; };
         this.setRequestHeader = (key, value) => { this.headers[key] = value; };
         this.send = body => { this.body = JSON.parse(body); };
-        this.abort = () => { this.aborted = true; };
+        this.abort = () => { this.aborted = true; if (this.onabort) this.onabort(); };
         this.respond = (status, data) => { this.status = status; this.responseText = JSON.stringify(data); this.onload(); };
     }
     runInNewContext(code, { window, document: { getElementById: () => ({}) }, Date: { now: () => now },
         setTimeout: later, clearTimeout: id => timers.delete(id), XMLHttpRequest: XHR,
         TVXPluginTools: { onReady: fn => fn() }, TVXInteractionPlugin: {
             setupHandler: value => { handler = value; }, init() {}, info: value => notices.push(value),
+            showContent: value => contents.push(value), executeAction: value => actions.push(value),
             requestData: (id, fn) => { assert.equal(id, "video"); samples.push(fn); }
         } });
-    return { window, requests, samples, timers, tick, jump: ms => { now += ms; }, handler, notices, telemetry: window.PortalLifecycle.create() };
+    return { window, requests, samples, timers, tick, jump: ms => { now += ms; }, handler, notices, contents, actions, telemetry: window.PortalLifecycle.create() };
 }
+
+test("replacement resolver never ejects native media while its response is pending", () => {
+    const f = fixture(); let page, resolved;
+    f.handler.handleRequest("init", null, value => { page = value; });
+    const sequence = page.items[0].action;
+    assert.equal(sequence, "[quiet|video:resolve:request:interaction:portal-video]");
+    assert.equal(page.items[0].properties, undefined);
+    assert.equal(page.items[0].data.properties["trigger:complete"], "player:stop");
+    assert.equal(page.items[0].data.properties["button:next:enable"], "false");
+    assert.equal(page.items[0].data.properties["button:prev:enable"], "false");
+    assert.equal(page.items[0].data.properties["button:content:action"], "content:request:interaction:recovery");
+    // The public action sequence stops old media before native resolution begins.
+    // Once the request is in progress, the handler must only resolve its URL.
+    f.handler.handleRequest("video:portal-video", null, value => { resolved = value; });
+    assert.deepEqual(f.actions, []);
+    f.requests.at(-1).respond(200, { grant: "g".repeat(43), playback_id: "p".repeat(32), url: "https://media.test/original", expires_in: 900, duration: 30, start_position: 0 });
+    assert.equal(resolved.properties["resume:position"], "0");
+    assert.deepEqual(f.actions, []);
+});
+
+test("alternative from a saved-resume context explicitly starts the new stored source at zero", () => {
+    for (const startPosition of [0, 8]) {
+        const f = fixture(hash + "/0/-1/resume"); let resolved;
+        f.handler.handleRequest("recovery", null, () => {});
+        f.requests.at(-1).respond(200, { alternatives: ["a".repeat(32)] });
+        f.handler.handleRequest("video:alternative-0", null, value => { resolved = value; });
+        assert.deepEqual(f.requests.at(-1).body, { item_id:"2".repeat(32), media_source_id:"a".repeat(32), force:false, subtitle:-1, resume:false });
+        f.requests.at(-1).respond(200, { grant: "g".repeat(43), playback_id:"p".repeat(32), url:"https://media.test/original", expires_in:900, duration:30, start_position:startPosition });
+        if (startPosition === 0) assert.equal(resolved.properties["resume:position"], "0");
+        else assert.equal(resolved, null);
+    }
+});
 function start(f, correlate = true, id = "p".repeat(32)) {
     let result;
     f.telemetry.start(value => { result = value; });
@@ -209,7 +350,7 @@ test("expiry bounds the client even when delayed timers have not executed", () =
 test("native resolver returns a generation property and uses documented interaction action", () => {
     const f = fixture(); let page;
     f.handler.handleRequest("init", null, value => { page = value; });
-    assert.equal(page.items[0].action, "video:resolve:request:interaction:portal-video");
+    assert.equal(page.items[0].action, "[quiet|video:resolve:request:interaction:portal-video]");
     start(f, false);
     for (const name of ["video:pause", "video:seek", "video:stop", "app:suspend"]) {
         f.telemetry.handleEvent({ event: name, position: 10, data: { state: 2, duration: 30, position: 7 } });

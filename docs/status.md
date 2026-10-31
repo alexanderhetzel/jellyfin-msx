@@ -34,6 +34,71 @@ tabs closed. No CDP/Network/viewport override, new budget, operator/Ultra access
 deployment, real Jellyfin release or TV/audio pass. Final evidence/head acceptance
 and CI are recorded in PR68 before merge.
 
+## Playback recovery source milestone — issue #23
+
+**Implemented / automated-tested / partially browser-tested / device-unverified.**
+The preferred original-with-progress flow now provides fixed failure categories,
+three bounded explicit playback attempts, native recovery/Stop/Back controls and
+fresh authenticated policy-eligible stored alternatives. Back cancels pending
+responses; cached explicit reentry resets the budget. #18 generation binding,
+old-Stop acknowledgement and last-safe lease remain unchanged. Legacy/subtitle
+flows retain their existing recovery scope.
+
+`uv run pytest -q`: **491 passed / one POSIX skip**; Ruff check and format
+passed (**102 files** on final documentation recheck); three Node suites **50 passed**;
+diff check passed.
+Offline wheel build/exact manifest (**25 entries**) and synthetic HTTP smoke passed.
+The prepared synthetic recovery scenario is strict MockTransport with fixed
+faults, normal pairing and pinned RAM media.
+Independent review found and prompted fixes for stale Back callbacks, cached
+attempt reset, malformed-success recovery and protocol-error classification.
+Final independent source/security review found no remaining blocking findings;
+full runtime acceptance remains pending. The reviewer independently reran the
+full **491 passed / one skip**, then the latest **72 affected Python / 50 Node**
+checks after cancellation fixes. Review did not operate a browser or relay.
+
+One granted Chrome/MSX0.1.167 run on fixed `b650974` observed normal pairing,
+fixed negotiation denial, three-attempt cap, Back/details reentry and native
+non-media rejection. Manual recovery offered an actual stored alternative, but
+selecting it negotiated without any original-media GET/decoded frame: separate
+reads stayed time0/readyState0/dimensions0. Five total PlaybackInfo200, one
+unplayable GET, zero lifecycle reports; no alternate playback pass. Three safe
+JPEGs/sanitized numeric/action/request JSON support independent evidence review.
+Stopped at that blocker: two owned tabs closed, supervisor exit0, all9PIDs/
+listener18092/control absent at14:33:01UTC. No CDP/override/newbudget or real data.
+
+After cleanup the candidate was rebased onto merged #19 (`e21d103`), preserving
+Resume/Start over, source/start properties and both fixture scenarios. An explicit
+alternative starts at zero. Published ordered actions now stop old media with
+`quiet` before resolution, replacing an in-resolver stop hazard; this is a
+candidate correction rather than an established root-cause explanation. Full
+pytest **528 passed / one skip**, Node **55 passed**, Ruff/format **106 files**
+and offline wheel/exact **25-member** manifest passed. Independent exact-head
+source/security/union review accepted the candidate with no blockers.
+
+A separately granted focused run on unchanged `06a297e` then observed bad-native
+rejection→manualnative_unknown→explicitstoredalternative→actual1280x720 pattern,
+time0/readyState1→2.669199/readyState4. Pause held24.1604 across separate reads.
+NativeStop returned0/readyState0 and usable recovery; Back returned details.
+Before replay: Start1/Progress7/Stop1,lastsafe24,Failedtrue,inactive. Freshcontext
+same-alternative replay advanced0.017982→2.987993/readyState4; nativeStop reset0.
+Final3PlaybackInfo200/1nonmediaGET/2originalGET;Start2/Progress9/Stop2,lastsafe19,
+Failedtrue/inactive, conversion/DirectStream/subtitlesOff. Four clean JPEGs plus
+safe numeric/action/request JSON support independent acceptance of this declared
+recovery/control/cleanup/policy subset. No exact causal fix or universal recovery
+is inferred. Paused screenshot and numeric samples are separate observations.
+
+At14:43:57UTC explicit supervisorstop exit0, all9recordedPIDs/listener/control
+absent, both owned tabs closed. Companion DOM read timeout and autohidden Pause
+selector were tool limitations, not native error causes. No raw errorURL image,
+CDP/override, sourcevariant, realserver/TV/audio or further run occurred.
+
+The published interaction API does not expose a typed native media-error cause.
+Native failure remains explicitly unknown; no pause, missing sample or tool
+timeout diagnoses decoding/connectivity. Therefore the original decode-specific
+criterion remains unmet and #23 stays open as a partial draft milestone. See
+[the recovery contract, evidence boundaries and remaining criterion](playback-recovery.md).
+
 ## Original playback lifecycle reporting — issue #18
 
 **Implemented / automated-tested / browser-tested / device-unverified.**

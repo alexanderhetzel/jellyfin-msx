@@ -30,7 +30,7 @@ from tools.lab import ROOT, TrafficRecorder, attach_observations
 from tools.navigation_fixture import EPISODES, NavigationJellyfin
 from tools.synthetic_failures import FailureJellyfin
 from tools.synthetic_lab import SyntheticJellyfin, attach_fixture_media
-from tools.synthetic_lifecycle import LifecycleJellyfin
+from tools.synthetic_lifecycle import RECOVERY_BAD_SOURCE, LifecycleJellyfin, RecoveryJellyfin
 from tools.synthetic_resume import ITEMS as RESUME_ITEMS
 from tools.synthetic_resume import ResumeJellyfin
 from tools.synthetic_subtitles import ITEMS as SUBTITLE_ITEMS
@@ -63,7 +63,15 @@ def build_public_synthetic_lab(origin, *, allow_public_synthetic=False, scenario
     if allow_public_synthetic is not True:
         raise PreparationError("public-synthetic-opt-in-required")
     origin = validate_origin(origin)
-    if scenario not in {"baseline", "failures", "navigation", "subtitles", "lifecycle", "resume"}:
+    if scenario not in {
+        "baseline",
+        "failures",
+        "navigation",
+        "subtitles",
+        "lifecycle",
+        "resume",
+        "recovery",
+    }:
         raise PreparationError("invalid-synthetic-scenario")
     raw = CLIP.read_bytes()
     if hashlib.sha256(raw).hexdigest() != MEDIA_SHA256:
@@ -82,6 +90,7 @@ def build_public_synthetic_lab(origin, *, allow_public_synthetic=False, scenario
         "subtitles": SubtitleJellyfin,
         "lifecycle": LifecycleJellyfin,
         "resume": ResumeJellyfin,
+        "recovery": RecoveryJellyfin,
     }[scenario]
     fixture = fixture_type(origin)
     recorder = TrafficRecorder(httpx.MockTransport(fixture.handle))
@@ -93,6 +102,16 @@ def build_public_synthetic_lab(origin, *, allow_public_synthetic=False, scenario
         attach_fixture_media(app, fixture, raw, None, item_ids=SUBTITLE_ITEMS)
     elif scenario == "resume":
         attach_fixture_media(app, fixture, raw, None, item_ids=RESUME_ITEMS)
+    elif scenario == "recovery":
+        attach_fixture_media(
+            app,
+            fixture,
+            raw,
+            None,
+            item_ids=fixture.item_ids,
+            source_ids=fixture.source_ids,
+            unplayable_sources=(RECOVERY_BAD_SOURCE,),
+        )
     else:
         attach_fixture_media(app, fixture, raw, None)
     app.add_middleware(
@@ -103,7 +122,7 @@ def build_public_synthetic_lab(origin, *, allow_public_synthetic=False, scenario
     def ready():
         return {"mode": "public-synthetic", "configured": True}
 
-    if scenario in {"lifecycle", "resume"}:
+    if scenario in {"lifecycle", "resume", "recovery"}:
 
         @app.get("/__synthetic/lifecycle")
         def lifecycle_summary():
@@ -333,7 +352,15 @@ def ready_public(origin):
 def activate(binary, seconds=MAX_SECONDS, scenario="baseline"):
     if not 1 <= seconds <= MAX_SECONDS:
         raise PreparationError("invalid-lifetime")
-    if scenario not in {"baseline", "failures", "navigation", "subtitles", "lifecycle", "resume"}:
+    if scenario not in {
+        "baseline",
+        "failures",
+        "navigation",
+        "subtitles",
+        "lifecycle",
+        "resume",
+        "recovery",
+    }:
         raise PreparationError("invalid-synthetic-scenario")
     verify_binary(binary)
     CONTROL.parent.mkdir(parents=True, exist_ok=True)
@@ -451,7 +478,15 @@ def main():
     parser.add_argument("--seconds", type=int, default=MAX_SECONDS)
     parser.add_argument(
         "--scenario",
-        choices=["baseline", "failures", "navigation", "subtitles", "lifecycle", "resume"],
+        choices=[
+            "baseline",
+            "failures",
+            "navigation",
+            "subtitles",
+            "lifecycle",
+            "resume",
+            "recovery",
+        ],
         default="baseline",
     )
     parser.add_argument("--directory", type=Path, help=argparse.SUPPRESS)
