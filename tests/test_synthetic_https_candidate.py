@@ -224,6 +224,9 @@ def test_fake_supervisor_propagates_backend_only_and_lost_flag_cannot_publish_re
     monkeypatch, tmp_path, capsys, propagated
 ):
     assert https.MAX_SECONDS == 900 and https.STARTUP_SECONDS == 180
+    monkeypatch.setattr(
+        https.threading, "Thread", lambda **kwargs: SimpleNamespace(start=lambda: None)
+    )
     clock = [0]
     monkeypatch.setattr(
         https,
