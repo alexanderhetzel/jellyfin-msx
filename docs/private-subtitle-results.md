@@ -1,4 +1,73 @@
-# Private subtitle UI: HTTPS delivery passes; cue layout incomplete — issue #22
+# Private subtitle UI: simple cues pass; reopening pending — issue #22
+
+## Simple-cue evidence at `0dc1688` — 2026-10-31
+
+Exact `0dc1688b73abe4d30ad56d3787265fda2b2df2a1`, official hosted MSX/connected
+Chrome at 1920x1080, strict fixed synthetic subtitles scenario and original
+900-second total/180-second startup bounds. No source changed during this run.
+
+Both the verbatim retained four-line/long-line fixture and the separate 33-W
+single line showed Subtitles unavailable, with the fixed explanation of two
+short plain-text lines and unsupported long/complex layouts. Play without
+subtitles decoded1280x720 original video, readyState4/no media error, at8.062778
+and4.684656 respectively. The explanation overlay consumed the first click;
+the next normal activation started playback. No rejected text was truncated or
+claimed to have rendered.
+
+After those contexts, reopening healthy preparation produced Data Load Error.
+Normal Back returned to details; normal Disconnect/Confirm showed Disconnected.
+Public-start recovery and a fresh normal pairing, within the same relay budget,
+allowed healthy preparation. **Reliable reopening remains unaccepted.**
+
+Fresh-player DE18 loaded at paused5.93667. Its exact32-W first line and16-Han
+second line were fully visible with left/right/bottom margins. EN12 selection
+retained paused5.93667; native seek11 displayed EN B within8–16, lower-centred
+with margin. Off retained paused11 and disabled all three tracks. These support
+the tested simple-cue policy, not universal font/language/platform limits.
+
+DE7 had never been selected in that player and remained native readyState0,
+while EN12/DE18 were2. At natural session age248s, ordinary DE7 selection changed
+it to3/error, still paused11 with no captions. Sanitized Network events included
+a subtitle response401/application-json and a matching GET request, correlated
+by the transient request ID in RAM only. The request buffer was truncated, but
+the matching GET event was retained. No private URL/ID/header was saved. Bridge
+totals after Stop remained init1/video1/subtitle3/fetch3/HTTP2003/URLcallback3/
+denied0/null0: the denial was the **later native GET**, not a fresh bridge call.
+
+No immediate per-track failure notice appeared; the normal player guidance to
+choose a language or Off remained. This UX limitation is separate from the
+observed authentication denial. Native Off disabled every track at the same11;
+Stop returned to the menu, and expired video replay showed the persistent fixed
+recovery page. Already loaded cue data is still not revocable.
+
+At10:43:13UTC explicit stop returned supervisor exit0/stopped, all nine recorded
+owned PIDs/listener18092/control were absent, and both owned tabs closed. CDP
+disable/reset was unavailable while the document response was paused; closed
+tabs remove scoped state, no reset pass claimed. First session was normally
+disconnected; second naturally expired. No relay/budget extension or security
+change. Captures: `issue22-fourline-rejected.png`, `issue22-fourline-original.png`,
+`issue22-longline-rejected.png`, `issue22-longline-original.png`,
+`issue22-simple-boundary-wide.png`, `issue22-simple-en-b.png`,
+`issue22-simple-off-11.png`, `issue22-unused-expired-track.png`,
+`issue22-simple-expired-recovery.png`; fixed numeric/sanitized categories only
+in `issue22-simple-counters.json` and `issue22-simple-network.json` (ignored).
+
+## Reopening correction candidate — not yet browser-tested
+
+The source generated identical bridge document URLs, varying only private
+fragments. The [HTML navigation standard](https://html.spec.whatwg.org/multipage/browsing-the-web.html#navigate)
+uses same-document navigation when URLs match except their fragment; the bridge
+registers its SDK handler during initial script readiness. This supports a fresh
+document discriminator, but does not establish the vendor's internal failure
+cause. Browser Use paused-response tooling remains a separate observation.
+
+Issue22 defines the correction before behavior: each generated detail action
+gets a fresh public non-auth query marker; all capability/item/source context
+stays in the fragment. No nonce state, auth role, timer, renewal or vendor change.
+The regression failed old source and now checks distinct same/different-source
+document URLs, unchanged private fragments and no access from the marker.
+Focused actual healthy→rejected→healthy repeats, without shell warmup/reset/new
+pairing, remain required before accepting reopening.
 
 The subsequent simple-cue admission candidate is defined in owning issue #22
 and [the resource contract](subtitle-resources.md): two short lines with a

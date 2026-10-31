@@ -2,6 +2,23 @@
 
 ## Private subtitle controls draft — issue #22
 
+**Current blocker: reliable reopening.** Exact `0dc1688` actual Chrome passed
+the declared W32/Han16two-line boundary, distinct track/paused switch/seek/Off,
+both rejected-layout explanations→decoded originals, and a correlated later
+unused native subtitle GET401 after natural expiry. The native track showed
+no immediate error notice; manual Off/Stop and expired-replay recovery worked.
+Healthy reopening after other source contexts still produced Data Load Error;
+normal Back/disconnect/public-start/fresh pairing recovered. No full acceptance.
+At10:43:13UTC supervisor exit0/stopped, all9PIDs/listener/control absent, both
+tabs closed; CDP reset unavailable, no reset pass claimed.
+
+Minimal correction adds one public non-auth document marker per detail action,
+keeping all private context in the fragment. The regression failed old source
+and passes the correction. Fresh full pytest429passed/1POSIXskip, Node17,
+Ruff95files/diff/offlinewheel/exact22memberallowlist pass. Actual repeated
+healthy/rejected/healthy reopening remains the focused outstanding check;
+prior valid unchanged caption/layout/expiry observations need no repetition.
+
 **Latest partial Chrome result, exact `3cee411`:** HTTPS callback delivery works;
 DE7 umlauts/two-line text, DE→EN unchanged paused position, EN timing after seeks10
 and20, distinct DE18 choice, Off at5 and Stop/replay were observed. Expired replay

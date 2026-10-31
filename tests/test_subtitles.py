@@ -3,6 +3,7 @@
 import asyncio
 import json
 from dataclasses import replace
+from urllib.parse import parse_qs, urlsplit
 
 import httpx
 import pytest
@@ -428,7 +429,7 @@ def test_subtitle_menu_uses_private_source_pinned_bridge_and_unique_labels(subti
         i["action"] for i in detail["items"] if i["title"].startswith("Subtitle playback")
     )
     assert target.startswith(
-        "content:request:interaction:init@https://portal.test/subtitle-bridge.html#"
+        "content:request:interaction:init@https://portal.test/subtitle-bridge.html?document="
     )
     assert target.endswith(f"/{MOVIE}/{SOURCE}") and TOKEN not in target
     page = p.subtitle_client.get(
@@ -449,6 +450,30 @@ def test_subtitle_menu_uses_private_source_pinned_bridge_and_unique_labels(subti
     assert "/api/device/" not in json.dumps(page)
     assert len(p.subtitle_requests) == 2
     assert not any(r.url.path.endswith("PlaybackInfo") for r in p.fake.requests)
+
+
+def test_subtitle_reopening_gets_a_new_document_without_exposing_private_context(subtitle_portal):
+    p = subtitle_portal
+    bridges = []
+    for source_id in (SOURCE, SOURCE, "4" * 32):
+        p.fake.source["Id"] = source_id
+        detail = p.subtitle_client.get(p.path + "/detail.json", params={"item_id": MOVIE}).json()
+        action = next(
+            i["action"] for i in detail["items"] if i["title"].startswith("Subtitle playback")
+        )
+        bridge = urlsplit(action.split("@", 1)[1])
+        assert bridge.fragment == f"{p.secret}/{MOVIE}/{source_id}"
+        assert bridge.scheme == "https" and bridge.netloc == "portal.test"
+        assert bridge.path == "/subtitle-bridge.html"
+        query = parse_qs(bridge.query)
+        assert set(query) == {"document"}
+        marker = query["document"][0]
+        assert len(marker) == 16 and all(c in "0123456789abcdef" for c in marker)
+        assert all(value not in bridge.query for value in (p.secret, MOVIE, source_id, TOKEN))
+        assert p.subtitle_client.get(bridge._replace(fragment="").geturl()).status_code == 200
+        assert p.subtitle_client.get(p.subtitle_path.replace(p.secret, marker)).status_code == 401
+        bridges.append(bridge._replace(fragment="").geturl())
+    assert len(set(bridges)) == 3
 
 
 @pytest.mark.parametrize("status,content", [(404, VTT), (200, b"bad VTT")])
