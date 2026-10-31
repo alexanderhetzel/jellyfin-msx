@@ -77,12 +77,24 @@ exited zero/stopped; all nine recorded PIDs, listener/control/own helpers were
 absent. The readable 1920x1080 public error capture was inspected. No Retry,
 login, restart, source variant or remaining acceptance matrix was attempted.
 
-**Observation normalization pending runtime check:** the plugin now has an
+**Observation normalization — actual entry still fails:** the plugin now has an
 ordinary empty body, matching the published plugin template and subtitle bridge.
 The prior hidden body was a concrete markup difference, not a proven cause of
 the timeout or selector failure. Scripts, fixed marker, CSP, authentication and
 scheduling are unchanged; guards protect the empty body and exact script policy.
-No successful startup is claimed from this markup change.
+No successful startup is claimed from this markup change. At exact `cde5574`,
+one normal automatic comparison again reached Data Load Error / Request timed
+out before pairing. Generic body reads still timed out; lifecycle remained
+unknown. Main category capture was untruncated: HTML requested once with no
+responseReceived/completion/failure, no observed own-JS/SDK. Matching ExtraInfo
+showed HTTP 200 in a historical buffer marked truncated; child event coverage
+remained unknown. Network.disable/viewport reset explicitly reported paused
+document response, then the one owned tab closed. At 12:35 Vienna time explicit
+stop exited zero/stopped; all nine recorded PIDs/listener/control/helpers were
+absent. Settled DOM/runtime errors and safe categories are the evidence; the
+blank/outgoing screenshot is excluded. No credentials, Retry, restart or full
+matrix ran. This ends the body comparison without another markup/script/CSP
+variant; it does not identify a product cause or establish an external cause.
 
 **Focused diagnostic preparation:** a fixed RAM-only numeric bitmask on the own
 plugin document now records parsed/script/SDK/handler/boot/content-call boundaries

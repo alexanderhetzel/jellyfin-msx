@@ -53,6 +53,15 @@ markup, matching the published plugin example and subtitle bridge. Hidden-body
 causation is unproven; this changes no script, CSP, authentication or scheduling.
 The body stays empty and the fixed lifecycle marker stays on the root. Actual
 startup and observation outcomes must be attributed to the tested variant.
+At exact `cde5574`, ordinary automatic startup again failed with Data Load Error /
+Request timed out before pairing. The body-marker read stayed unknown. One HTML
+request and ExtraInfo HTTP 200 were observed, without established document
+completion/child coverage; no own-JS/SDK events appeared. Cleanup commands reported
+a paused document response, then the owned tab closed. Explicit stop at 12:35
+Vienna time left all nine PIDs/listener/control/helpers absent. The blank capture
+is excluded; settled DOM/runtime-error/category evidence is retained. No Retry,
+credentials, restart or matrix ran. This comparison ends without another source
+variant, a successful startup claim or a proven external/product root cause.
 
 Normal current companion QR/manual two-stage CSRF pairing is unchanged. The
 plugin uses same-origin body-only pair/status endpoints and keeps the pending
