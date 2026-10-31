@@ -117,6 +117,44 @@ production packaging checks remain required; no local Docker pass is claimed.
 
 ## Update review procedure
 
+### Pillow development dependency — issue #80 / PR #78, 2026-10-31
+
+**Implemented / automated-tested locally:** Pillow 13.0.0 replaces 12.3.0 only
+in the development extra. The reviewed constraint is `>=13,<14`, excluding the
+old major after reviewing its advisories. Segno still generates production PNGs
+without Pillow. All unrelated locked package records are unchanged; hashed
+production dependency exports before/after are byte-identical.
+
+The [official release notes](https://pillow.readthedocs.io/en/stable/releasenotes/13.0.0.html)
+drop Python 3.10, I-mode PNG saving, dtype-changing `fromarray(mode=...)`,
+`Image._show`, ImageCms product attributes and the misspelled Exif Makernote
+alias; child-image access moves to ImageFile. The tagged changelog also removes
+the private GIF Netpbm saver. None is used here: the only checked-in Pillow calls
+are `Image.open(BytesIO(...))` in `tests/test_pairing_qr.py`, followed by zxing-cpp
+decoding. Existing tests decode actual endpoint PNGs, verify pending-only
+authority/staged pairing and denial paths, and decode a long-origin QR.
+
+[Official PyPI metadata](https://pypi.org/pypi/pillow/13.0.0/json) declares Python
+>=3.11 and MIT-CMU. All **69** new locked artifacts (68 wheels and one sdist)
+match its URLs, SHA256 values and sizes, with no yanked entries. Downloaded
+Windows CPython 3.12 amd64 and Linux CPython 3.12/3.13 amd64 wheels additionally
+passed byte SHA256 and embedded metadata/license inspection. Available wheels
+support the existing CI matrix; other lock platforms are not execution passes.
+
+The upstream [multi-frame storage advisory](https://github.com/python-pillow/Pillow/security/advisories/GHSA-v9pv-5gc8-w2m6)
+and [bundled OpenJPEG advisory](https://github.com/python-pillow/Pillow/security/advisories/GHSA-78g4-xqwv-q3g8)
+explicitly include 12.3.0 and identify 13.0.0 as patched. The release lists further
+security fixes. Current project inputs are generated single-frame PNGs, not those
+multi-frame/JPEG2000 paths; this is scope assessment, not a claim of general image
+safety. The empty current-version PyPI vulnerability list is not proof of absence.
+
+The original bot head's CodeQL result was **neutral**, reporting three missing
+default-setup configurations, not a successful analysis. Required protection
+contexts remain `test (3.12)`, `test (3.13)`, `docker` and `secret-scan`; neither
+workflow permissions nor protection/security configuration is changed. Exact-head
+independent review and current CI remain merge gates, recorded in PR #78.
+See [executed checks and limits](status.md#pillow-13-development-dependency-review--80).
+
 ### uv bootstrap update — PR #47, 2026-10-31
 
 **Implemented / automated-tested locally:** uv 0.13.4 replaces 0.9.8 only in

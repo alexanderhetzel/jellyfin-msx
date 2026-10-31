@@ -1,5 +1,56 @@
 # Verification status — 2026-10-31
 
+## Pillow 13 development dependency review — #80
+
+**Implemented / automated-tested locally / device-unverified:** existing PR #78
+retains its Pillow 13.0.0 proposal and is refreshed onto main `38fa6dd`, preserving
+the existing source and documentation union. Its development constraint now starts
+at 13 after reviewing advisories affecting 12.3.0. Production application source,
+runtime dependencies and every unrelated locked package are unchanged.
+[Compatibility, provenance and security evidence](build-supply-chain.md#pillow-development-dependency--issue-80--pr-78-2026-10-31).
+
+Executed on Windows amd64 / Python **3.12.14**, using a task-private hash-required
+uv **0.13.4** bootstrap:
+
+```text
+uv lock --check --python .venv/Scripts/python.exe             passed
+uv sync --frozen --only-group build                          passed
+uv sync --frozen --extra dev --group build --no-build-isolation passed
+uv run --no-sync pytest -q -W error                          690 passed / 1 skip
+uv run --no-sync pytest -q -W error tests/test_pairing_qr.py  10 passed
+uv run --no-sync ruff check .                                passed
+uv run --no-sync ruff format --check .                       121 files formatted
+uv run --no-sync python -m tools.synthetic_check             passed
+uv run --no-sync python -m tools.session_check               passed
+uv build --python .venv/Scripts/python.exe --wheel --no-build-isolation --offline passed
+python -m tools.package_check wheel dist/jellyfin_msx-0.1.0-py3-none-any.whl passed
+git diff --check                                            passed
+```
+
+The full suite used the same locked Pillow 13 wheel as the final frozen sync.
+An independent reviewer separately reproduced the ten existing QR regressions,
+all 69 artifact metadata comparisons and three downloaded-wheel hash/license
+checks. Production exports with hashes are byte-identical to main. A fresh
+runtime-only environment outside the source package installed hash-required
+binary dependencies and the built wheel offline/no-deps; the installed template,
+app, Fernet and SQLite restart/rotation/replay smoke passed. Pillow and zxing-cpp
+are absent from that environment.
+
+An initial offline lock refresh failed closed because cached registry metadata
+was incomplete; an ordinary verified registry refresh succeeded without changing
+unrelated packages or hashes. Initial unqualified lock checking selected/downloaded
+Python 3.15 into uv's cache; subsequent lock/build operations explicitly selected
+3.12.14. No Python 3.15 execution pass is claimed. Global tool installations and
+OS trust configuration were not changed.
+
+No local Docker, Linux 3.12/3.13, browser, MSX or physical-TV pass is inferred.
+Current exact-head CI must supply the Linux matrix, Docker/context/image/proxy
+and full-history secret-scan results. The original bot head's CodeQL was neutral
+with missing configurations, not green. Exact-head independent review, current
+CI and the master's exclusive squash slot remain required before merge; their
+final outcomes are recorded in the issue/PR. No server, relay, operator settings,
+credentials or production deployment were used.
+
 ## Corrected native procedure: pairing observation incomplete — #32
 
 **Actual browser subset / device-unverified / native acceptance deferred:** a

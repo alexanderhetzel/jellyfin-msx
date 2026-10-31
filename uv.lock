@@ -368,7 +368,7 @@ requires-dist = [
     { name = "fastapi", specifier = ">=0.115,<1" },
     { name = "httpx", specifier = ">=0.28,<0.29" },
     { name = "httpx2", marker = "extra == 'dev'", specifier = ">=2.16,<3" },
-    { name = "pillow", marker = "extra == 'dev'", specifier = ">=12,<14" },
+    { name = "pillow", marker = "extra == 'dev'", specifier = ">=13,<14" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8,<10" },
     { name = "python-multipart", specifier = ">=0.0.20,<1" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.11,<1" },
