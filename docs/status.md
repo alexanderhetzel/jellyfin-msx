@@ -71,15 +71,33 @@ After cleanup the candidate was rebased onto merged #19 (`e21d103`), preserving
 Resume/Start over, source/start properties and both fixture scenarios. An explicit
 alternative starts at zero. Published ordered actions now stop old media with
 `quiet` before resolution, replacing an in-resolver stop hazard; this is a
-candidate correction, not a proven runtime fix. Full pytest **528 passed / one
-skip**, Node **55 passed**. Source/union review and focused actual verification
-remain required; no further browser grant is implied.
+candidate correction rather than an established root-cause explanation. Full
+pytest **528 passed / one skip**, Node **55 passed**, Ruff/format **106 files**
+and offline wheel/exact **25-member** manifest passed. Independent exact-head
+source/security/union review accepted the candidate with no blockers.
+
+A separately granted focused run on unchanged `06a297e` then observed bad-native
+rejection→manualnative_unknown→explicitstoredalternative→actual1280x720 pattern,
+time0/readyState1→2.669199/readyState4. Pause held24.1604 across separate reads.
+NativeStop returned0/readyState0 and usable recovery; Back returned details.
+Before replay: Start1/Progress7/Stop1,lastsafe24,Failedtrue,inactive. Freshcontext
+same-alternative replay advanced0.017982→2.987993/readyState4; nativeStop reset0.
+Final3PlaybackInfo200/1nonmediaGET/2originalGET;Start2/Progress9/Stop2,lastsafe19,
+Failedtrue/inactive, conversion/DirectStream/subtitlesOff. Four clean JPEGs plus
+safe numeric/action/request JSON support independent acceptance of this declared
+recovery/control/cleanup/policy subset. No exact causal fix or universal recovery
+is inferred. Paused screenshot and numeric samples are separate observations.
+
+At14:43:57UTC explicit supervisorstop exit0, all9recordedPIDs/listener/control
+absent, both owned tabs closed. Companion DOM read timeout and autohidden Pause
+selector were tool limitations, not native error causes. No raw errorURL image,
+CDP/override, sourcevariant, realserver/TV/audio or further run occurred.
 
 The published interaction API does not expose a typed native media-error cause.
 Native failure remains explicitly unknown; no pause, missing sample or tool
 timeout diagnoses decoding/connectivity. Therefore the original decode-specific
 criterion remains unmet and #23 stays open as a partial draft milestone. See
-[the recovery contract, evidence boundaries and pending verification](playback-recovery.md).
+[the recovery contract, evidence boundaries and remaining criterion](playback-recovery.md).
 
 ## Original playback lifecycle reporting — issue #18
 

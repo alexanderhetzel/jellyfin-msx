@@ -58,8 +58,8 @@ plugin reentry. Existing finite observation-upload retries are separate.
 The rebased candidate orders public `quiet` before `video:resolve` for every play
 row, rather than stopping from inside an already pending resolver. Back also
 uses `quiet`, which avoids the documented no-media info notice. This sequencing
-change still needs an explicitly granted focused runtime check; no successful
-alternative playback is inferred from source or tests.
+change has the scoped successful focused runtime evidence below; the earlier
+failure and causal limitation remain separately recorded.
 Back invalidates pending start/catalogue responses so they cannot reopen playback
 or recovery. No reliable Stop callback is inferred: disposal can leave the server
 to close the generation at its last safe position under the existing 45-second
@@ -148,10 +148,42 @@ requires a new master grant and exact reviewed head. It must verify explicit
 alternative selection actually reaches original-media GET, decoded advancing
 frames and safe Stop/Back/replay; it must not manufacture native cause signals.
 
+## Focused candidate run — 2026-10-31
+
+A separate explicit master grant authorized one run of unchanged
+`06a297ebf8df330001f18a3c1a9a3b6bcf54fd9d`, after the prior run's verified cleanup.
+Normal pairing and authenticated library/details entry succeeded. The source was
+not modified during the run. Official MSX remained 0.1.167 web in connected
+Chrome; no raw CDP, network/viewport override, media state setter, native callback
+injection, real server or operator data was used.
+
+| Actual UI/media observation | Separate sanitized request/report evidence | Result |
+| --- | --- | --- |
+| Native non-media source displayed unsupported-source notice; two native Back actions returned usable content. Manual recovery showed `native unknown` and an eligible stored alternative. | One non-media native GET. | Expected rejection and explicit recovery choices observed. URL was removed before text output; no error-notice screenshot. No native cause code inferred. |
+| Selecting the alternative displayed the generated test pattern. Native read moved from time0/readyState1 to2.669199/readyState4,1280x720,duration30,playing/no error. | First original-media GET; authenticated Start and advancing progress followed. | Actual stored-alternative video playback observed. No audible-audio/TV claim. |
+| Real Pause held time24.1604 across separate reads, readyState4. Native eject returned recovery content and video time0/readyState0/dimensions0. Back to details was usable. | Before replay: Start1,Progress7,Stop1,last safe24 seconds,paused=true,Failed=true,active=false. | Pause/explicit Stop/Back observed. The reset native zero was not reported as lost progress or successful completion. |
+| Fresh preferred context offered the same alternative; explicit selection replayed from0.017982 to2.987993,readyState4,1280x720. Native eject again returned video time0/readyState0. | Final: three PlaybackInfo200,one non-media GET,two original GET; Start2,Progress9,Stop2,last safe19 seconds,Failed=true,active=false. All negotiation flags retained original/DirectStreamOff/conversionOff/subtitlesOff. | Fresh-generation replay and bounded prior-session cleanup observed. No repeated bad-source attempt, profile expansion or automatic fallback. |
+
+Four secret-free JPEGs show decoded playback, held pause, usable details and
+replay. Fixed aggregate JSON and safe numeric/action observations are retained
+under ignored `.lab/reports/issue23-run2*`. The first companion DOM read timed out;
+the already successful paired session was corroborated by the backend and actual
+libraries. A Pause selector initially missed autohidden controls; a real video
+click revealed them, then the native Pause was used. These are tool/control
+visibility limitations, not media/network diagnoses. The native player overlay
+uses the generic resolver request label; no title/label polish is claimed.
+
+Both owned tabs were closed; explicit supervisor stop returned exit0. At
+14:43:57UTC all nine recorded PIDs, listener18092 and control directory were absent.
+No further run or budget was started. This run supports the declared recovery
+subset but does not prove the exact causal explanation of run1 or universal
+recovery. Native decode/timeout/connectivity distinction still lacks a supported
+API signal and remains unmet in the original issue.
+
 Original four-criterion mapping: diagnostic distinction **partial** (native cause
-unavailable); remote recovery/alternatives **partly observed, alternative playback
-blocked**; finite retries/cleanup **automated-tested, attempt cap observed but
-active-playback cleanup not reached**;
+unavailable); remote recovery/alternatives **observed for the declared synthetic
+subset on the focused candidate**; finite retries/cleanup **automated-tested,
+attempt cap observed in run1 and active Stop/replay observed in run2**;
 no Ultra conversion/alternate-origin credentials **preserved and automated-tested**.
 Physical Philips, audio, hardware remote and OS connectivity remain deferred to
 #4 and related device issues. No full #23 acceptance or merge readiness is claimed.
@@ -161,4 +193,11 @@ It independently ran the full 491-pass/one-skip suite and latest 72 affected
 Python/50 Node checks, plus Ruff/format/diff. Review found and verified corrections
 for stale Back callbacks, same-context attempt reset, malformed-success recovery,
 protocol-error classification and immediate aborted-catalogue callback settlement.
-No reviewer browser or relay operation occurred. PR69 remains a partial draft.
+After rebase the independent reviewer reran exact candidate528-pass/one-skip,
+55 Node, Ruff/format106/diff checks and verified the #19 source/resume/fixture
+union and ordered-action data placement. It inspected all four focused-run
+images and numeric/action/request/before-replay/cleanup JSON and accepted the
+declared manual-recovery/control/cleanup/policy subset. The native cause
+distinction remains unmet; network loss/native timeout/TV/audio/hardware remote
+were not tested. No reviewer browser or relay operation occurred. PR69 remains
+a partial draft; no full acceptance or merge readiness is claimed.
