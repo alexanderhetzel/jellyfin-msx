@@ -24,6 +24,46 @@ the app never silently retargets an old form to another device. A lost/cancelled
 credential request consumes its grant; retry starts with the current TV code.
 No sliding pending expiry or password persistence is introduced.
 
+## Software acceptance evidence — 2026-10-31
+
+**Implemented / automated-tested / device-unverified:** the remaining #13 normal
+hosted-MS​​X pairing-to-authenticated-libraries criterion is now supported by the
+reviewed synthetic HTTPS observations below. The earlier loopback Data Load Error
+is historical; it does not describe the later authorized HTTPS runs. This
+acceptance reconciliation changes documentation only and starts no new relay.
+
+| Criterion | Evidence and boundary |
+| --- | --- |
+| Code before credentials, invalid-code recovery | PR #45 implemented the protocol; the actual #9 connector run in [PR #58](https://github.com/alexanderhetzel/jellyfin-msx/pull/58) passed wrong-code denial, valid-code recovery and clean Step 2 using normal visible forms. |
+| Activation link skips manual entry | The independently reviewed #13 receiving route and its native Chrome activation/recovery checks below satisfy this route contract. QR rendering and exposing the link in MSX remain #14. |
+| Device/cookie-bound stages, expiry and single-use | Current `tests/test_pairing_stages.py` and normal pairing regressions retain expiry-before/after-authentication, replay, tampering and concurrency coverage. Expiry is automated evidence, not a new browser expiry pass. |
+| CSRF/origins, bounded attempts, redaction and password non-persistence | Existing source/regressions and #13 security review; PR #58's actual stale-CSRF and wrong-credential recovery checks, plus deliberately broken final CSRF/login paths with fresh matching denials. |
+| Normal official runtime pairing → private libraries | [Manual HTTPS observations](msx-synthetic-https-results.md) record the actual displayed MSX code, normal two-stage sign-in, TV paired, Continue and Synthetic movies/libraries. The corrected [connector execution](browser-pairing-check.md#actual-connector-execution--2026-10-31) independently repeats that path through `official-msx-continue` and own-session disconnect. |
+
+Evidence provenance: the manual record merged as PR #57 / `c22a3a9`; the corrected
+ten-stage connector record merged as PR #58 / `6d08521`, from reviewed head
+`5e4b29c7ab66a1799a290a596c36d4a26a49e9e2`. PR #59 / `31aeeb4` extends that same
+normal pairing path into authenticated failure/recovery; it changes only lab/
+driver/tests/docs. This reconciliation uses baseline
+`31aeeb4c0cf300daa2172cd7b6be81692dba7902`. Pairing state/security logic has not
+changed since PR #45; the later PR #51 presentation changes were already present
+in these hosted runs. The fixed-field local positive report contains all ten
+stages, and the negative reports stop at normal-pairing with `csrf` or
+`credentials` denial. The settled Disconnected / Pair again screenshot was
+inspected again for this audit; it supports that final screen, not every earlier
+step. Actual earlier actions are attributed to the #9 worker, not replayed by
+this documentation audit. No new browser action, screenshot or media pass is
+claimed here.
+
+This closes #13's software acceptance gap, not the complete #9 browser matrix.
+The dedicated factory used strict mocked Jellyfin, normal CSRF and random RAM
+capabilities, without operator data, real Jellyfin or an authentication bypass.
+The source-code/HTTP-only limitation from the initial run is therefore resolved
+by actual hosted UI evidence, not by equating an HTTP test with MSX integration.
+Mobile layout remains unverified; QR/UI follow-ups remain #14/#16, real-server
+compatibility remains separate, and physical Philips acceptance is deferred to
+#4. No new device, audible-audio, retention or deployment claim follows.
+
 ## Activation link contract and privacy
 
 `/pair?activation=…` accepts the device's independent random pending-only secret,
@@ -67,7 +107,10 @@ still explicitly signs in to pair the identified TV. QR rollout must tell users
 to initiate pairing from their own TV; no link-level proof of physical ownership
 is claimed by this receiving-route milestone.
 
-## Evidence and remaining acceptance
+## Initial implementation evidence — 2026-10-30
+
+This section preserves the original implementation checks and delivery failure.
+The later software acceptance evidence above supersedes its hosted-flow blocker.
 
 `tests/test_pairing_stages.py` and updated normal pairing/durable/synthetic
 regressions cover code-only/legacy posts, invalid/expired/used/claimed devices,
@@ -114,6 +157,8 @@ report observed no `/msx/pair.json` request, one synthetic authentication return
 200, and one paired session from the separate activation-form check. No runtime
 pairing code or private library rendered, so the failure is delivery evidence
 only; no exact TLS/network cause is inferred here. All owned tabs/listener were
-closed and the viewport reset. Full normal private hosted-MS​​X delivery and physical TV
-acceptance remain unverified; HTTP tests/fixture routes do not replace them.
+closed and the viewport reset. At that checkpoint, full normal private hosted-MS​​X
+delivery and physical TV acceptance remained unverified; HTTP tests/fixture routes
+did not replace them. The later HTTPS evidence above resolves only the software
+pairing flow, with physical TV still unverified.
 No real Jellyfin/account, production host, TLS trust change or TV action occurred.
