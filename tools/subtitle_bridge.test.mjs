@@ -5,15 +5,15 @@ import assert from "node:assert/strict";
 const code = readFileSync(new URL("../src/jellyfin_msx/templates/subtitle-bridge.js", import.meta.url), "utf8");
 function fixture(hash, options = {}) {
     let handler;
-    const requests = [], notices = [], readers = [];
+    const requests = [], notices = [], readers = [], panels = [], contents = [], actions = [];
     const window = { location: { hash, origin: "https://portal.test" } };
     function XHR() { requests.push(this); this.open = (method, url) => { this.method = method; this.url = url; }; this.send = () => {}; this.headers = {}; this.getResponseHeader = name => this.headers[name] || null; }
     function FixtureBlob(parts, options) { this.text = parts.join(""); this.type = options.type; }
     function Reader() { readers.push(this); this.readAsDataURL = blob => { this.result = "data:" + blob.type + ";base64," + Buffer.from(blob.text).toString("base64"); if (!options.deferRead) this.onload(); }; }
     runInNewContext(code, { window, XMLHttpRequest: XHR, Blob: FixtureBlob, FileReader: options.noReader ? undefined : Reader,
         TVXPluginTools: { onReady: fn => fn() },
-        TVXInteractionPlugin: { setupHandler: h => { handler = h; }, init() {}, info: (...args) => notices.push(args) } });
-    return { handler, requests, notices, window, readers };
+        TVXInteractionPlugin: { setupHandler: h => { handler = h; }, init() {}, info: (...args) => notices.push(args), showPanel: value => panels.push(value), showContent: value => contents.push(value), executeAction: value => actions.push(value) } });
+    return { handler, requests, notices, window, readers, panels, contents, actions };
 }
 const hash = "#" + "s".repeat(43) + "/" + "2".repeat(32) + "/" + "3".repeat(32);
 test("invalid context cannot fetch; unknown request cannot fetch", () => {
@@ -43,6 +43,9 @@ test("expired, missing and invalid subtitle responses give one fixed notice", ()
         xhr.headers["Content-Type"] = "text/html"; xhr.onload(); xhr.onerror();
         assert.equal(calls, 1); assert.equal(f.notices.length, 1);
         assert.ok(f.notices[0][0].includes("Select Off or Stop"));
+        assert.equal(f.panels.length, 1);
+        assert.equal(f.panels[0].items[1].action, "panel:request:player:subtitle");
+        assert.equal(f.panels[0].items[2].action, "player:stop");
     }
 });
 test("invalid subtitle IDs never construct a request", () => {
@@ -114,5 +117,32 @@ test("HTTP and wrapped authorization failures show fixed recovery notice", () =>
         xhr.responseText = JSON.stringify({ response: { status: 401, message: "private upstream text" } }); xhr.onload();
         assert.equal(value, null); assert.equal(f.notices.length, 1);
         assert.ok(!f.notices[0][0].includes("private upstream"));
+        assert.deepEqual(f.actions, ["player:stop"]);
+        assert.equal(f.contents[0].headline, "Playback unavailable");
+        assert.equal(f.contents[0].items[1].action, "content:https://portal.test/msx/pair.json");
+    }
+});
+test("stale XHR and reader failures cannot interrupt a newer context", () => {
+    for (const event of ["onerror", "ontimeout", "reader-error", "reader-abort"]) {
+        const f = fixture(hash, { deferRead: true }); let calls = 0;
+        f.handler.handleRequest("portal-subtitle-7", null, value => { assert.equal(value, null); calls++; });
+        const xhr = f.requests[0];
+        if (event.startsWith("reader-")) {
+            xhr.status = 200; xhr.responseText = "WEBVTT\n"; xhr.headers["Content-Type"] = "text/vtt"; xhr.onload();
+        }
+        f.window.location.hash = hash.replace("2", "4");
+        if (event.startsWith("reader-")) f.readers[0][event === "reader-error" ? "onerror" : "onabort"]();
+        else xhr[event]();
+        assert.equal(calls, 1);
+        assert.equal(f.notices.length + f.panels.length + f.contents.length + f.actions.length, 0);
+    }
+});
+test("failure callback changing context suppresses every recovery side effect", () => {
+    for (const id of ["portal-video", "portal-subtitle-7", "init"]) {
+        const f = fixture(hash); let calls = 0;
+        f.handler.handleRequest(id, null, value => { assert.equal(value, null); calls++; f.window.location.hash = "#invalid"; });
+        f.requests[0].onerror(); f.requests[0].ontimeout();
+        assert.equal(calls, 1);
+        assert.equal(f.notices.length + f.panels.length + f.contents.length + f.actions.length, 0);
     }
 });

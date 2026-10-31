@@ -8,6 +8,43 @@ pause recorded below. No IAB retry/fallback is needed. The original partial Chro
 evidence stays valid within its limits. Final connected-Chrome placement, natural
 expiry, failure recovery and Stop/completion acceptance is still pending.
 
+## Resumed Chrome run — 2026-10-31
+
+**Partial browser evidence only; issue open / PR draft.** The bounded run used
+exact committed head `2f4189fad53e68460a60c636543abb2fa03b5eb5`, strict synthetic
+subtitles transport and the original 900-second supervisor bound. Connected
+Chrome used the official hosted MSX runtime and a 1920x1080 viewport. Two normal
+synthetic pairing flows reached private libraries, movies and source-pinned
+details. The first session was normally disconnected before the second pairing.
+
+The interaction frame initially stalled after its HTML response, without an
+observed script/preparation request. A fresh owned MSX tab had the same symptom.
+Opening the public bridge shell without a capability fragment in the companion
+tab preceded the pending preparation appearing about 187 seconds after pairing.
+This is a correlation, not an established startup fix. Raw CDP reported a paused
+document response; no Fetch, debugger, security or vendor-runtime override was used.
+
+Actual playback decoded 1280x720 video (`readyState=4`, no media error) at
+27.966928 seconds. All three subtitle tracks were disabled, confirming default
+Off. Natural completion returned to the subtitle menu at item 1/4, rather than
+advancing to the original-playback item. **No subtitle was selected in this run**;
+the data-URL handoff, new cue placement and wrapped/four-line rendering remain
+unverified. Historical caption observations below used the earlier URL handoff.
+
+After the synthetic session's natural 240-second lifetime, replay displayed
+`Video URL is missing`, overwriting the bridge's fixed information notice.
+This is a failed expiry-recovery criterion. A subsequent source-only recovery
+candidate uses published native content/panel actions; it was not loaded or
+tested during this run. Node guards do not establish its actual ordering against
+the native error message. The ignored capture
+`issue22-natural-expiry-replay.png` records this synthetic warning only.
+
+At 09:41 UTC the supervisor exited 0 with `stopped`; a stop request found no owned
+run. All nine recorded owned PIDs, the port 18092 listener and control directory
+were absent. Both owned tabs were closed and the shared slot released. The second
+session had naturally expired; no second-session logout is claimed. No lifetime
+extension, detached helper, new relay, real server or operator credentials.
+
 The resumed candidate uses HTML5X's documented non-HTTP subtitle IDs. On a subtitle
 resolver request, the first-party bridge validates the existing authenticated
 resource through same-origin XHR, then supplies its already-authorized bytes as an
@@ -95,7 +132,7 @@ their named partial state. `issue22-private-network.json` retains category/statu
 MIME only. No retained pairing codes, private fragment/resource/media URLs or
 raw QR pixels. All screenshots contain only synthetic media/menu labels.
 
-## Generated layout candidate — pending IAB
+## Generated layout candidate — pending connected Chrome
 
 Upstream cue settings/markup/STYLE/REGION remain rejected. After validation, only
 the fixed `line:70%,end position:50%,center size:90% align:center` is added. The

@@ -10,13 +10,27 @@ pairing/private details, callback playback, Off/DE7/EN12/alternateDE18, private 
 200/text-vtt, umlauts/two-line text and paused switch/seek samples. Actual placement
 failed: German bottom-flush, English top-edge at13. Full #22 remains OPEN.
 
-The replacement instruction requires IAB for further testing. The master reported
-the next worker's fresh documented IAB launch unavailable; no further Chrome
-verification/fallback or repeated unavailable launch. Generated safe percentage
-layout/completion settings remain candidates, not browser passes. Missing/malformed
-original recovery and remaining runtime-error/expiry/Stop criteria stay unchecked.
-Chrome cleanup disconnected the own session, closed two tabs; supervisor exit0,
-nine exact owned PIDs/listener/control absent. No operator/Ultra/TV/security change.
+The later explicit maintainer instruction resumes connected Chrome for all tests.
+A bounded run at exact `2f4189f` decoded 1280x720 video with Off default and natural
+completion returning to submenu 1/4. No subtitle was selected: data-URL delivery,
+new placement and wrapped/four-line captions remain unverified. Bridge startup
+stalled; public-shell loading only correlated with eventual preparation, with no
+proven fix. After natural synthetic expiry, replay showed the generic native
+`Video URL is missing` warning, so expiry recovery failed. A small source-only
+native recovery candidate has 17 passing Node guards; its actual ordering still
+needs Chrome verification. Missing/malformed original recovery and remaining
+runtime-error/timing/Stop criteria stay unchecked. The original 900-second run
+exited0/stopped; nine owned PIDs/listener/control were absent, both tabs closed,
+and shared slot released. No operator/Ultra/TV/security change.
+
+The recovery candidate passed a fresh Windows `uv run pytest -W error`:
+**420 passed / 1 POSIX skip**; `uv run ruff check .` and
+`uv run ruff format --check .` passed (95 files), as did the 17 Node guards and
+whitespace check. The locked offline wheel build and exact 22-member package
+allowlist also passed. Independent source review caught and confirmed the fix for a
+stale-request recovery race; regressions cover XHR/reader failure after context
+change and callback-triggered context change. Approved for next Chrome testing
+only, with no merge/full acceptance approval.
 
 Windows/Python3.12.14: initial full `uv run pytest -W error` **417 passed / 1 skip**;
 after #7 rebase/output-bound fix full **420 passed / 1 POSIX skip**, no warnings.
