@@ -69,10 +69,43 @@ is needed to extract a code.
 
 The [pairing browser command](browser-pairing-check.md) otherwise retains normal
 forms, fixed error reports and owned-tab cleanup. Its repaired current-layout
-entry point still requires a separately granted, focused official MSX Chrome
-check on the reviewed head. No browser, relay or merge resource was used for
-the local implementation checkpoint. Do not mark hosted resource/session privacy
-or native failure classification passed from these local assertions.
+entry point completed the separately granted focused official MSX Chrome check
+below. No browser, relay or merge resource was used for the earlier local
+implementation checkpoint. Do not mark hosted resource/session privacy or native
+failure classification passed from these assertions.
+
+## Focused current-layout browser checkpoint — 2026-10-31
+
+Unchanged reviewed source `83df3d70f5f9ccf1a84d693fd9302ac62c1704a9` completed
+one granted baseline `checkPairing` invocation with `fault: none`. The current
+standalone grouped code was read privately; normal form submission succeeded,
+Continue reached private Synthetic movies, and normal confirmed Disconnect
+reached the settled Disconnected / Pair again screen. All ten existing command
+stages passed, including its built-in stale-form, wrong-code and credential
+checks. No separate fault variant, media, alternative-start or product-matrix
+replay was run. Runtime/browser versions were not independently reread here.
+
+Fixed result evidence completed at 15:46:39 Vienna. Separate allowlisted server
+observations recorded paired_sessions=0, logout HTTP204 count=1 and PlaybackInfo
+request count=0. The final 2560x1249 capture was inspected and a local QR decoder
+reported no code present before display. No pairing code, QR pixels, private URL,
+token, raw AX/body or response trace was emitted. The four blank-initialized owned
+tabs closed through the unchanged command's cleanup; no user tabs were operated.
+
+The single supervisor started at 15:44:34 with its original 15:59:34 deadline;
+startup stayed inside that 900-second total. After the command it stopped with
+exit 0. At 15:47:09 all nine recorded exact helper/launcher/console/vendor PIDs,
+listener 18092 and control directory were absent. The shared slot was released
+immediately. No CDP, Network/viewport override, security change, new source variant,
+new budget, operator configuration or real-server access was used.
+
+Sanitized local evidence remains ignored under `.lab/reports/`:
+`issue9-pr70-entry-result.json`, `issue9-pr70-server.json`,
+`issue9-pr70-image-guard.json`, and `issue9-pr70-disconnected.png`.
+The image proves the final disconnected view, not intermediate QR readability or
+media playback. This focused pass establishes current-layout command entry,
+normal sign-in/Continue/disconnect; the two-session resource command above remains
+in-process HTTP evidence, not a new hosted resource-isolation pass.
 
 ## Reconciliation with accepted feature evidence
 

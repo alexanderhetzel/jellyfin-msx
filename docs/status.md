@@ -30,8 +30,11 @@ the retained failing real-server contract in draft PR #52.
 entry reads the accepted QR layout's standalone grouped code instead of the
 removed prose prefix, keeping it in its private closure and rejecting ambiguous
 text. No AX tree, QR image or private URL is emitted. The change is locally
-guard-tested; focused current-head Chrome execution is still **deferred** until
-a separate resource slot is granted.
+guard-tested; unchanged reviewed source `83df3d7` then completed one separately
+granted positive baseline command in connected Chrome. Normal sign-in/Continue
+reached private content and confirmed Disconnect passed; all ten existing command
+stages passed. The inspected final image is QR-free. Separate fixed server
+counters show paired_sessions=0, one logout204 and no PlaybackInfo request.
 
 The [two-session HTTP command and evidence audit](session-boundary-check.md)
 exercise normal production form authentication with strict mocked transport:
@@ -47,10 +50,17 @@ Windows/Python 3.12.14 locked offline dev/build sync passed. `uv run pytest -W
 error`: **522 passed / 1 POSIX skip**, no warnings; four focused session checks,
 seven Node browser guards, Ruff, format **108 files**, syntax/diff checks passed.
 The normal command passed with browser/device flags false; its negative CLI
-returned the fixed failed stage. No browser, relay, listener, secret store or
+returned the fixed failed stage. At that local checkpoint no browser, relay, listener, secret store or
 external transport was used. Current accepted #7/#16/#18/#19/#22 evidence is
 referenced rather than replayed; #8 real cases, #12 startup and #23 native
 classification remain open. Overall #9 acceptance is not claimed.
+
+The later focused browser checkpoint is separate from those local checks:
+four owned tabs closed, supervisor exit0/stopped, all nine exact owned PIDs,
+listener18092/control absent at 14:47:09UTC, within the original900-second total.
+The shared slot was released immediately. No media, alternative-start, source
+variant, new budget or CDP/Network/viewport override was used. Exact actions,
+private-evidence boundaries and limited scope are in the linked runbook.
 
 ## Saved progress — issue #19
 
