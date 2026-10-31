@@ -75,9 +75,9 @@ are never approval. A workflow-setup request does not start ticket implementatio
 - Keep dependencies minimal and locked. Use `apply_patch` for source/document edits.
 - Tests: `uv run pytest`; quality: `uv run ruff check .`, `uv run ruff format --check .`.
 - Verify browser forms with `browser-verify`; only the physical TV can validate MSX playback.
-- Use the official MSX runtime for application verification. The user now requires
-  one consistent test browser: use the integrated browser for all testing, including
-  Jellyfin media inspection. Do not switch back to native Arc automation.
+- Use the official MSX runtime for application verification. Use the connected
+  Chrome extension for all browser testing, including Jellyfin media inspection.
+  Do not use the integrated browser, native Chrome app automation or Arc.
   Do not copy, host or modify the proprietary MSX runtime code. Use its published API.
 - A successful test count is not an MSX integration pass. Record UI actions,
   actual media observations and sanitized request evidence separately.

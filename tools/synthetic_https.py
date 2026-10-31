@@ -5,6 +5,7 @@ separate human authorization; merely preparing this tool is not that approval.
 """
 
 import argparse
+import asyncio
 import base64
 import hashlib
 import json
@@ -380,6 +381,13 @@ def share_listener(backend, listener):
         backend.stdin.flush()
 
 
+def remember_loop_factory():
+    # Windows Proactor associates a shared socket with one process's IOCP. A fresh
+    # process cannot reuse that association. Selectors preserve the continuously
+    # owned listening endpoint without any close/rebind or security-policy change.
+    return asyncio.SelectorEventLoop()
+
+
 def backend_helper(seconds, scenario="baseline", *, authenticated_file_candidate=False):
     candidate_option(scenario, authenticated_file_candidate)
     # In restart tests the supervisor keeps exclusive ownership continuously, even
@@ -422,6 +430,9 @@ def backend_helper(seconds, scenario="baseline", *, authenticated_file_candidate
                 proxy_headers=False,
                 log_config=None,
                 timeout_graceful_shutdown=2,
+                loop="tools.synthetic_https:remember_loop_factory"
+                if scenario == "remember"
+                else "auto",
             )
         )
         stopped = threading.Event()

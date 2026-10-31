@@ -465,6 +465,27 @@ code, renewal/cache, security or deployment changes.
 
 ## Remembered-device client preparation — issue #12
 
+**Current Chrome follow-up:** the maintainer now requires connected Chrome for
+all browser tests. One bounded synthetic HTTPS run displayed normal startup's
+Opening Jellyfin fallback; ordinary Retry loaded pairing and Continue displayed
+Waiting. No credentials, enrollment or renewal were exercised, and automatic
+startup is not accepted. An initial synthetic-code screenshot mask miss was
+contained: the retained capture was overwritten with a whole private-panel mask,
+visually verified, and the approved restart request ultimately destroyed the
+pending server/key/temp state on fixed readiness timeout. Nine recorded owned
+PIDs, listener/control and own Python relay helpers were absent; both test tabs
+closed. No operator state, real Jellyfin or TV action occurred.
+
+A local-only ephemeral-port test reproduced Windows Proactor shared-socket
+restart failure. A remember-synthetic-only SelectorEventLoop factory fixes it:
+two actual Uvicorn processes now serve health, exit zero and preserve exclusive
+reservation across restart. Independent source/security review passed six
+targeted tests; guards and default/other-scenario loop selection remain unchanged.
+After this correction, full Windows `uv run --no-sync pytest -W error` passed
+**423 tests / 1 POSIX skip**, and Ruff/format passed **94 files**.
+This is a local server restart correction, not an MSX restoration pass. The actual
+browser matrix remains pending a new master-granted slot.
+
 **Implemented / automated-tested / device-unverified; runtime acceptance deferred:**
 the explicit `MSX_REMEMBER_DEVICES` option requires the existing external key and
 encrypted store. Its own-origin public-MS​​X client performs ordinary pending
@@ -501,12 +522,13 @@ skip, 12 Node guards and Ruff/format/diff checks, including actual Windows
 socket/process and EOF-ordering cases. It ran no relay/browser and established
 no application acceptance.
 
-**Deferred / issue remains open:** integrated-browser-only verification was
+**Earlier availability history / issue remains open:** integrated-browser-only verification was
 required by the maintainer. Inventory exposed only Chrome, and the documented
 IAB creation call returned Browser is not available: iab. No tab, supervisor,
 shared listener or control directory was created; the slot was released. No Chrome
-fallback, trust/security change, operator/Jellyfin access or TV action occurred.
-Keep the client PR a draft until actual automatic startup, exact-save/readback,
+fallback, trust/security change, operator/Jellyfin access or TV action occurred
+in that earlier attempt. The later Chrome-for-all instruction removes the IAB
+availability blocker. Keep the client PR a draft until actual automatic startup, exact-save/readback,
 normal reload/reopen, backend restart, second-device denial and visible
 disconnect/re-pair pass. Tests and older storage/QR evidence do not satisfy them.
 
