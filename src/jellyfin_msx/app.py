@@ -18,7 +18,7 @@ from .device_profile import MODEL, PROFILE_BASIS, evidence_warnings
 from .errors import PortalError
 from .jellyfin import Jellyfin, identifier
 from .middleware import PairBodyLimit
-from .msx import button, content, text, wrapped
+from .msx import button, content, pairing_page, text, wrapped
 from .pairing_qr import activation_png
 from .playback import PROFILE_NAME, choose_source, compatibility_reasons, resolve
 from .presentation import PAIR_CSS
@@ -369,44 +369,34 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
     async def pairing(request: Request):
         limit(request, "new_pair", 10)
         secret, device = state.pair()
-        page = content(
-            "Pair this TV",
-            [
-                button(
-                    f"On your phone/PC open {url('/pair')}", "info:Use your phone or PC to pair."
-                ),
-                button(
-                    f"TV code: {device.code[:4]} {device.code[4:]} "
-                    f"(valid {(settings.pairing_ttl + 59) // 60} minutes)",
-                    "info:Enter this code on the pairing page.",
-                ),
-                button("Continue after pairing", "content:" + device_url(secret, "home.json")),
-                button("Create new code", "content:" + url("/msx/pair.json")),
-            ],
+        return activation_page(secret, device)
+
+    def activation_page(secret, device, waiting=False):
+        return pairing_page(
+            "Waiting for pairing" if waiting else "Pair this TV",
+            url("/pair").split("://", 1)[1],
+            device.code,
+            url(f"/msx/pair/image/{device.activation}.png"),
+            "content:" + device_url(secret, "pairing.json"),
+            "content:" + url("/msx/pair.json"),
+            max(1, int(device.expires - state.clock() + 59) // 60),
         )
-        # Native MSX grid/image properties only. Keep manual entry available beside QR.
-        page["type"] = "pages"
-        del page["template"]
-        for item, row in zip(page["items"], (0, 1, 3, 4), strict=True):
-            item.update(layout=f"4,{row},8,1", color="#182632")
-        page["items"] += [
-            button(
-                "Scan only from your own TV. Sign in to link it.",
-                "info:Scanning identifies this TV. Sign in only if you started pairing here.",
-                layout="4,2,8,1",
-                color="#182632",
-            ),
-            {
-                "type": "space",
-                "layout": "0,0,4,4",
-                "image": url(f"/msx/pair/image/{device.activation}.png"),
-                "imageFiller": "fit",
-                "imageOverlay": 0,
-                "color": "white",
-            },
-        ]
-        page["pages"] = [{"items": page.pop("items")}]
-        return page
+
+    @app.get("/msx/device/{secret}/pairing.json")
+    async def pairing_status(secret: str):
+        # Expired/unknown grants may receive only public recovery, never a library or code.
+        try:
+            device = state.get(secret, authenticated=False)
+        except PortalError as error:
+            if error.status != 401:
+                raise
+            return content(
+                "Pairing or session expired",
+                [button("Create new code", "content:" + url("/msx/pair.json"))],
+            )
+        if not device.token:
+            return activation_page(secret, device, waiting=True)
+        return await home(secret)
 
     @app.get("/msx/pair/image/{activation}.png")
     async def pairing_image(request: Request, activation: str):

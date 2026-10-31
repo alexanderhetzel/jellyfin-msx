@@ -42,8 +42,12 @@ def export_pages(base):
     with TestClient(app, base_url=origin) as client:
         pairing = client.get("/msx/pair.json").json()
         waiting = client.get(
-            action(pairing, "Continue after pairing").removeprefix("content:")
+            action(pairing, "Continue after pairing")
+            .removeprefix("content:")
+            .replace("/pairing.json", "/home.json")
         ).json()
+        # Keep the historical code-free home preview. The new pairing-status
+        # screen includes private QR/code data and must never be exported.
         # Waiting UI comes from the real pending-session route. Never export the
         # pairing response, code, activation link or private reload/new-code URL.
         waiting["items"] = [

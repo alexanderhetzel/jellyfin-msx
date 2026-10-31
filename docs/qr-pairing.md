@@ -1,5 +1,92 @@
 # QR companion pairing — issue #14
 
+## QR-first activation layout — issue #16, 2026-10-31
+
+**Implemented / automated-tested / browser-tested / device-unverified.**
+The native 12x6 page gives the QR a four-by-four area, followed by an explicit
+"or" manual alternative: the configured companion hostname plus `/pair`, a
+grouped code, validity and a short code/sign-in instruction. The own-TV scan
+instruction stays beside the QR. Only Continue after pairing and Create new code
+take remote focus. Nonselectable native `space` items keep instructions and code
+bright without extra focus stops. No arbitrary HTML/CSS, external URL shortener,
+QR service, vendor artwork or runtime copy is used.
+
+Continue now uses the capability-bound `pairing.json` route. Pending sessions
+retain the same QR/code instructions under Waiting for pairing; paired sessions
+reach authenticated libraries. Missing/expired grants receive only a public
+Pairing or session expired screen with one Create new code control, never a code,
+QR or library. The existing private `home.json` still denies invalid grants with
+its 401 response envelope. State is refreshed on Continue; there is no automatic
+polling/countdown or implicit authorization from scanning. The companion's normal
+TV paired success message remains the instruction to Continue on the TV.
+
+The historical public waiting exporter deliberately uses the code-free pending
+`home.json` view. It does not export the new QR-bearing waiting page. Committed
+public fixtures remain byte-for-byte consistent and secret-free.
+
+Actual verification used connected Chrome on Windows and official unmodified
+MSX **0.1.167 web**, measured **1920x1080**, through the approved isolated synthetic
+HTTPS supervisor (each run at most 900 seconds including startup). No operator
+configuration, credentials, media or real Jellyfin/Ultra server was used.
+
+- A first native disabled teaser dimmed the code to 25% opacity. Actual rendering
+  exposed this problem; the final native space has full-opacity white code text.
+  Read-only DOM measurements found a 44px-high code line at this viewport.
+- The final rendered QR occupied 552x552 screenshot pixels and independently
+  decoded in RAM to the intended synthetic-origin pending activation URL. Opening
+  it reached clean `/pair`, blank credentials and no manual-code field.
+- Native Return on Continue before sign-in displayed Waiting for pairing with the
+  same usable QR/manual instructions. Normal synthetic credentials displayed TV
+  paired; native Continue reached Jellyfin libraries / Synthetic movies. Scanning
+  alone did not authorize libraries. Own-session Disconnect was confirmed normally.
+- Native Right selected Create new code with the visible white frame; Left
+  returned to Continue. Grouped manual code entry reached clean blank sign-in.
+- That device remained pending through its original five-minute lifetime. At
+  313 seconds, native Continue showed Pairing or session expired with only Create
+  new code. Reopening its decoded QR showed clean manual recovery without
+  credentials. Native Return on the retry control produced a different grouped
+  code; normal manual entry, credentials and Continue reached private libraries.
+  The settled final library screenshot was inspected and retained.
+
+QRs, codes and decoded activation links stayed in process memory. Only masked or
+secret-free screenshots were retained under ignored `.lab/reports/`. Browser
+snapshots were redacted before output. One initial pre-readiness load displayed
+Data Load Error; a normal reload after verified HTTPS readiness recovered. Early
+loading/outgoing screenshots were not accepted as settled evidence. A locator
+wait timed out despite its diagnostic reporting the visible success text; a
+fresh native state confirmed TV paired. The generic `browser-verify` command was
+unavailable; supported connected-Chrome actions and inspected screenshots supplied
+the form evidence. HTTP privacy/denial properties are separate mocked regressions.
+For natural-expiry Continue and manual-recovery Continue, browser Network response
+events were reduced in RAM to a fixed pairing-status route category (grant omitted),
+HTTP 200 and `application/json`. Those two sanitized observations are retained;
+no raw browser request trace or media/audio result is claimed.
+
+Settled ignored captures: `issue16-final-pairing-redacted.png`,
+`issue16-final-waiting-redacted.png`, `issue16-final-new-code-focus-redacted.png`,
+`issue16-manual-signin.png`, `issue16-companion-success.png`,
+`issue16-companion-expired.png`, `issue16-msx-expired.png` and
+`issue16-final-manual-libraries.png`. Fixed-field browser response evidence is
+`issue16-request-evidence.json`. The separate earlier `issue16-qr-libraries.png`
+is an outgoing/masked frame and is not retained-library proof. The initial
+pre-correction capture is historical only. QR/code pixels remain masked even in
+reviewed captures; decoding/full-opacity/grouped-value observations come from the
+implementation agent's in-memory screenshot/DOM inspection, not the masked image.
+
+Both own paired sessions were disconnected through normal confirmation. The two
+created tabs closed, Network observation stopped and the temporary MSX viewport
+override cleared (measured 2560x1249 again). The first owned relay stopped before
+the contrast correction restart; its three recorded parent/helper PIDs, listener
+and control directory were absent. The final supervisor exited 0/stopped within
+its original 900-second bound; all seven recorded owned Python/console PIDs,
+vendor tunnel process, listener 18092 and control directory were absent at
+08:30 UTC. No trust, DNS, production or security setting was changed.
+
+Physical Philips arrows/OK/Back, normal-distance readability, overscan and phone
+scan from the actual screen remain explicitly **unchecked in #4**.
+
+## Historical QR delivery milestone — issue #14
+
 **Implemented / automated-tested / device-unverified — 2026-10-31.**
 The native MSX pairing page includes a locally encoded PNG QR beside the readable
 companion address, grouped manual code, explicit own-TV instruction, Continue
@@ -8,7 +95,8 @@ native `space` image with aspect-preserving `fit`; no HTML/CSS injection or
 proprietary runtime copying. References:
 [root/template/page contract](https://msx.benzac.de/wiki/index.php?title=Content_Root_Object),
 [item/image/grid contract](https://msx.benzac.de/wiki/index.php?title=Content_Item_Object).
-Full waiting/success/retry layout redesign remains #16.
+At that checkpoint, the waiting/success/retry layout redesign remained #16;
+the later software milestone is recorded above.
 
 ## Authority and privacy
 
