@@ -1,5 +1,66 @@
 # Verification status — 2026-10-31
 
+## Pending-code expiry: partial browser evidence — issue #9
+
+**Implemented / automated-tested with mocks / actual browser subset /
+recovery deferred / device-unverified.** The
+[resumable expiry check](pairing-code-expiry-check.md) uses the existing normal
+300-second pending lifetime, clean companion forms and public recovery controls.
+It enforces the original supervisor deadline, post-read 485-second allowance,
+post-wait 180-second allowance and 60-second cleanup reserve. Bounded operations
+yield fixed progress; no live clock override, product/service change, private
+Network identity or raw code/credential/URL reporting is added.
+
+Seventeen offline expiry guards cover retained-valid and stale/CSRF evidence,
+dirty forms, clock/budget failures, recovery refusal, stalled operations, late
+tab creation, cancellation and cleanup uncertainty. These model tests do not
+establish hosted-runtime rendering or recovery.
+
+Fresh extraction validation on Windows / Python 3.12.14, frozen build/dev sync
+with Pillow 13.0.0:
+
+```text
+node --test tools/*.test.mjs                              36 passed (17 expiry)
+uv run --no-sync pytest -q -W error                        690 passed / 1 POSIX skip
+uv run --no-sync ruff check .                             passed
+uv run --no-sync ruff format --check .                    122 files formatted
+node --check tools/browser_pairing_expiry_check.mjs        passed
+node --check tools/browser_pairing_expiry_check.test.mjs   passed
+git diff --check                                         passed
+```
+
+Exact-head CI and independent review of the extracted milestone remain required;
+their results belong in the linked issue/PR. No new live run was performed.
+
+One granted baseline/candidate-off browser run at reviewed head `b43ad558`
+waited **307 monotonic seconds after privately reading the unused code**. A
+fresh companion form rejected its single old-code submission with the specific
+invalid/expired message, keeping credentials hidden. Normal TV Continue then
+executed, but the expected expiry notice was not confirmed. The driver stopped
+at `expired-tv-notice`; the cause is unknown. New-code recovery, sign-in,
+libraries and Disconnect were not attempted. No retry or clock override ran.
+
+Source audit confirmed Continue targets `pairing.json`, the expired/unknown
+branch returns the expected headline and public recovery action, and content
+disables cache/reuse/preload. Existing focused checks passed:
+`uv run --no-sync pytest -q tests/test_pairing_layout.py` (**3 passed**).
+This source evidence does not establish hosted headline visibility or failure cause.
+
+Sanitized server counters were pairing statuses `[400]`, authentication 0,
+PlaybackInfo 0, paired sessions 0 and logout 0. The supervisor started at
+18:28:56 UTC with its original 18:43:56 deadline and stopped/exit 0; cleanup was
+verified at **18:37:14 UTC**. All three owned tabs, nine captured owned PIDs,
+port 18092 listener and control directory were absent; pending creations 0.
+Independent evidence review accepted these bounded claims; supervisor timing
+and exit remain worker-reported. The master independently verified exact PIDs
+and listener absence. See the [actual expiry evidence](pairing-code-expiry-check.md#granted-browser-observation--2026-10-31).
+
+This narrowed milestone extracts only the expiry driver, tests and evidence from
+draft PR #73. Historical JSON/playback/CSRF/login observations remain historical.
+Preferred playback, authenticated-session/native-token expiry and A/B authority
+remain separate gaps; #9 stays open, PR #73 stays draft and no physical-TV pass
+or complete hosted integration pass is claimed.
+
 ## Pillow 13 development dependency review — #80
 
 **Implemented / automated-tested locally / device-unverified:** existing PR #78
