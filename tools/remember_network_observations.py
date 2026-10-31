@@ -130,7 +130,11 @@ class NetworkObservations:
                 return None
             return session
         target = source.get("targetId")
-        return next((key for key, value in self.sessions.items() if value == target), None)
+        matches = [key for key, value in self.sessions.items() if value == target]
+        if len(matches) > 1:
+            self.coverage["identity_conflict"] = True
+            return None
+        return matches[0] if matches else None
 
     def _clear(self, session, frame=None, keep_loader=None):
         for key, value in list(self.requests.items()):

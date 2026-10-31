@@ -29,6 +29,11 @@ from Network request, response and loading-finished/failed notifications.
 These are protocol contracts, not evidence of which targets the installed tool
 covered during any historical run. Its actual source/session/target convention
 must be preserved; do not rewrite mismatched metadata into accepted identities.
+All installed event-source identity fields are optional. Root identity therefore
+requires a supported `Target.getTargetInfo` result and matching event metadata;
+`Tab.id`, provider tab IDs and `source.tabId` are not target-ID substitutes.
+Missing identity withholds attribution. Target-only identity must resolve to
+exactly one observed session; multiple sessions sharing a target stay ambiguous.
 
 Do not override `Target.setAutoAttach`: enabling/disabling changes attachment
 routing and disabling detaches related targets. Do not pause targets, use Fetch
@@ -125,7 +130,7 @@ an SDK-stall, tool/platform-root-cause or physical-device claim.
 ## Local verification
 
 `uv run --no-sync pytest tests/test_remember_network_observations.py -q -W error`:
-**36 passed**. Regressions include cross-session IDs, redirects, changed/retired
+**37 passed**. Regressions include cross-session IDs, redirects, changed/retired
 loaders, wrong frames/queries/targets, detach/reattach ancestry and cycles,
 same-process frames, orphan/tree separation, late/blank child attachment,
 pagination/truncation, replay metadata, event ordering, budget limits, fixed error

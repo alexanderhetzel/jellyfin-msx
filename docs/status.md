@@ -478,8 +478,8 @@ single-run procedure. No new runtime attempt or grant has occurred.
 Rebased onto main `13ad0ba`, preserving default-off authenticated File candidate,
 fresh Full admission, profile/body/policy/fixture unions and remember deadlines.
 The remembered synthetic scenario does not enable that candidate. Full Windows
-`uv run --no-sync pytest -W error`: **702 passed / 1 POSIX skip**, including
-**36 new reducer tests**. Ruff check/format **125 files**, diff check, offline
+`uv run --no-sync pytest -W error`: **703 passed / 1 POSIX skip**, including
+**37 new reducer tests**. Ruff check/format **125 files**, diff check, offline
 wheel build and exact **28-member** package validation passed. Product/startup
 source, CSP/body/order/timing and locked dependencies remain unchanged by this
 diagnostic milestone. Independent review and current-head CI are recorded in PR64.

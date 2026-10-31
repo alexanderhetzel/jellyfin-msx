@@ -485,3 +485,24 @@ def test_only_literal_published_sdk_url_is_in_scope(suffix):
     assert report["resources"]["vendor_sdk"]["requests"] == 0
     assert report["resources"]["vendor_sdk"]["loading_finished"] == 0
     assert not x.snapshot()["resource_tree_seen"]["vendor_sdk"]
+
+
+def test_target_only_event_cannot_choose_between_multiple_attached_sessions():
+    x = observation()
+    start = request(3, session="alpha")
+    start["source"]["targetId"] = "shared-target"
+    terminal = finish(5, session="alpha")
+    terminal["source"]["targetId"] = "shared-target"
+    report = ingest(
+        x,
+        [
+            attach(1, session="alpha", target="shared-target"),
+            attach(2, session="beta", target="shared-target"),
+            start,
+            event(4, "Network.responseReceived", response(4)["params"], target="shared-target"),
+            terminal,
+        ],
+    )
+    assert report["coverage"]["identity_conflict"]
+    assert x.counts["plugin_html"]["response_200"] == 0
+    assert report["resources"]["plugin_html"]["loading_finished"] is None
