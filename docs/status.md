@@ -1,5 +1,35 @@
 # Verification status — 2026-10-31
 
+## Authenticated-file synthetic integration preparation — #32
+
+**Implemented / automated-tested in process / browser and device-unverified:**
+the existing isolated synthetic builder accepts explicit candidate Settings and
+bounded immutable bytes, with no path reads or new launcher/public scenario.
+Normal pairing, resume and lifecycle transport are reused. Fixed source/self
+metadata and File-shaped GET/HEAD serve a frozen selected-byte snapshot; the
+wrong-parent ASCII counter is not an eligible alternate or real cut. Public
+fixtures and the original MP4 sample are unchanged. Both real HTTP transports
+are forbidden in the new tests; no service, tunnel, browser, real Jellyfin or
+operator configuration was used. [Scope and model limits](synthetic-testing.md#authenticated-file-candidate-preparation--32).
+
+Windows/Python 3.12.14 `uv run --no-sync pytest -q -W error`: **657 passed /
+1 POSIX skip**, no warnings; **17 new tests** cover normal paired candidate byte
+identity, ranges/MIME/HEAD, invalid ranges/query tokens, modeled logout/second-login
+isolation, immutable mapping, fixed fixture version and Movie/Episode authored
+Start/pause/Stop/re-resume. A controlled actual-resolver mutation returning the
+parent File target made the selected-target test fail; restoring it passed all
+17 tests. No production diff remains. The earlier focused run passed **66 tests**
+before the final extra fixture-configuration case. Ruff check/format (**119 files**),
+diff check and existing synthetic HTTP/two-session commands passed. Independent
+source-plan review preceded implementation; final implementation review and CI
+are recorded in the linked issue/PR when complete.
+
+Synthetic token denial is authored behavior, not Jellyfin revocation evidence;
+submitted observations are not native player measurements. All real File,
+official-runtime and physical-device gates remain **deferred**, #32 stays open,
+and the old strict Videos failure is preserved. The preceding default-off
+software candidate merged in PR #75 as `13ad0ba1b3ecde54883e946b3748d2aab032aa87`.
+
 ## Default-off authenticated-file software candidate — #32
 
 **Implemented / automated-tested with mocked transport / device-unverified:**

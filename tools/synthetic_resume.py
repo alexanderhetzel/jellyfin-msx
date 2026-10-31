@@ -1,10 +1,11 @@
 """Isolated resume catalogue and per-login progress, never operator data."""
 
 import json
+from types import MappingProxyType
 
 import httpx
 
-from tools.synthetic_lab import LIBRARY, MOVIE, USER, source
+from tools.synthetic_lab import LIBRARY, MOVIE, SOURCE, USER, source
 from tools.synthetic_lifecycle import LifecycleJellyfin
 
 EPISODE, NEAR_END, WATCHED = (str(n) * 32 for n in (6, 7, 8))
@@ -113,3 +114,70 @@ class ResumeJellyfin(LifecycleJellyfin):
             "negotiations": self.negotiations,
             "requested_start_seconds": self.start_position,
         }
+
+
+class CandidateResumeJellyfin(ResumeJellyfin):
+    """Authored File model only: not a real Jellyfin release or revocation test."""
+
+    def __init__(self, origin, media):
+        if type(media) is not bytes or not 0 < len(media) <= 32 * 1024 * 1024:
+            raise ValueError("Candidate fixture requires explicit bounded immutable bytes")
+        super().__init__(origin)
+        self.files = MappingProxyType(
+            {SOURCE: media, MOVIE: b"synthetic wrong-parent byte counter; not a media cut"}
+        )
+
+    def file_source(self):
+        return {
+            **source(),
+            "Path": "/synthetic/selected.mp4",
+            "Size": len(self.files[SOURCE]),
+            "Protocol": "File",
+            "Type": "Default",
+            "VideoType": "VideoFile",
+            "IsRemote": False,
+            "RequiresOpening": False,
+        }
+
+    def handle(self, request):
+        # Reuse origin/login validation before adding any candidate metadata.
+        response = super().handle(request)
+        if response.status_code == 401:
+            return response
+        path = request.url.path.removeprefix("/jellyfin")
+        if request.method == "GET" and path == "/System/Info/Public":
+            return httpx.Response(200, json={"Version": "12.4.0"})
+        if request.method == "GET" and path == f"/Users/{USER}/Items/{SOURCE}":
+            own = self.file_source()
+            return httpx.Response(
+                200,
+                json={
+                    **own,
+                    "Type": "Movie",
+                    "PlayAccess": "Full",
+                    "LocationType": "FileSystem",
+                    "MediaSources": [own],
+                },
+            )
+        if response.status_code == 200:
+            if request.method == "GET" and any(
+                path == f"/Users/{USER}/Items/{item}" for item in ITEMS
+            ):
+                return httpx.Response(
+                    200,
+                    json={
+                        **response.json(),
+                        "LocationType": "FileSystem",
+                        "VideoType": "VideoFile",
+                        "Path": "/synthetic/parent-counter.mp4",
+                        "Container": "mp4",
+                        "Size": len(self.files[MOVIE]),
+                        "RunTimeTicks": 300_000_000,
+                        "MediaSources": [self.file_source()],
+                    },
+                )
+            if request.method == "POST" and path.endswith("/PlaybackInfo"):
+                return httpx.Response(
+                    200, json={**response.json(), "MediaSources": [self.file_source()]}
+                )
+        return response
