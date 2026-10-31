@@ -508,6 +508,16 @@ source change, new budget or operator state was used. The callback-order repair
 remains automated evidence; it is not a verified fix for automatic entry or the
 previous unknown document boundary. #12 remains open and the PR remains draft.
 
+Post-run rebase onto actual main `bc4599a` preserved #19/#23 source-selection
+and recovery code, request body limits (including playback options), lifecycle/
+resume/subtitle assets and the recovery/remember scenario union. No source was
+changed during the run. Final local `uv run --no-sync pytest -W error` passed
+**537 tests / 1 POSIX skip**; remembered/lifecycle/subtitle Node guards passed
+**72 tests**, Ruff check/format **108 files**, diff check and rebuilt offline
+wheel/exact **27-member** allowlist passed. Final affected source/evidence review
+and exact-head CI are recorded in PR64. These checks retain a reviewable draft;
+they do not supersede the failed actual automatic-entry observation.
+
 **Request/response startup correction — implemented / automated-tested /
 runtime acceptance pending:** rebased onto subtitle milestone `1594bf63`, keeping
 its bridge, policies, packaging and synthetic scenario. Startup now uses the
