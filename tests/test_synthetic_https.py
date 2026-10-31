@@ -368,7 +368,7 @@ def test_occupied_listener_aborts_before_any_tunnel_helper(monkeypatch, tmp_path
     assert not https.CONTROL.exists()
 
 
-@pytest.mark.parametrize("scenario", ["baseline", "failures"])
+@pytest.mark.parametrize("scenario", ["baseline", "failures", "navigation"])
 def test_actual_backend_reserves_local_only_and_exits_on_parent_eof(tmp_path, scenario):
     with socket.socket() as reservation:
         reservation.bind(("127.0.0.1", 0))

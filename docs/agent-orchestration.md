@@ -35,7 +35,8 @@ retrieve it without a cross-chat message.
    dispatch or recovery. Reuse the existing chat for an issue; never start duplicate
    workers or merge a PR merely because it exists.
 2. Select the highest-priority dependency-ready issue in the authorized scope.
-   Initially run one ticket chat at a time. Use the app's project and chat tools to
+   Run up to three independent ticket chats at a time. Respect native dependencies
+   and reuse idle issue chats in their existing worktrees. Use the app's project and chat tools to
    create a separate chat in a worktree. Resolve pending creation before using its
    final chat ID. Record the issue/chat mapping in the master's context; keep public
    issue updates free of local paths, credentials and private operational details.
@@ -43,7 +44,10 @@ retrieve it without a cross-chat message.
    relevant documentation, claims the issue, creates a branch, implements and
    verifies it, obtains independent review and resolves findings.
 4. The ticket chat opens a PR, attaches it to its Codex chat, handles required
-   checks and feedback, then squash merges without asking the maintainer. If the
+   checks and feedback, then reports `MERGE_READY` with the exact reviewed head,
+   acceptance and check results. The master serializes merge slots; after the
+   grant, squash merge without asking the maintainer. Refresh current main and
+   repeat affected validation/review after other merges before final readiness. If the
    head changes after review, assess the new diff and repeat affected validation
    and review before merging. Do not queue GitHub Auto-Merge during an orchestrated
    run: wait for checks, recheck the human-input gate and merge the reviewed head
@@ -54,7 +58,14 @@ retrieve it without a cross-chat message.
    an issue and mark Done only when its acceptance criteria are met. Hardware
    acceptance cannot be inferred from desktop tests. A merged partial change may
    leave an issue open if remaining acceptance is documented.
-6. Refresh `origin/main` and repeat. An externally blocked issue can be recorded
+6. The shared connected browser and synthetic HTTPS relay have one exclusive
+   master-controlled slot. Report `BROWSER_READY` with the bounded test scope;
+   use no other worker's tabs, listener, relay or controls. Only the slot owner
+   starts/stops its supervised relay and operates its own browser tabs. Release
+   the slot with exact helper/listener/control cleanup and browser restoration
+   evidence before the master grants it to another chat. Independent source work
+   and mocked tests may continue in the other worktrees.
+7. Refresh `origin/main` and repeat. An externally blocked issue can be recorded
    and skipped if no human input is needed; continue independent eligible work.
    Stop when the requested scope is complete or no eligible work remains. Do not
    invent work or spin on an empty queue.
@@ -73,8 +84,9 @@ Routine implementation choices and merging accepted changes are not input gates.
   master actively watches chat status; it must not rely only
   on a worker remembering to send a message.
 - The master dispatches no new work, asks the other active ticket chats to stop
-  safely and wait, and presents the outstanding request to the maintainer. With
-  sequential dispatch there should normally be only one active ticket chat.
+  safely and wait, and presents the outstanding request to the maintainer. This
+  stops all concurrently active ticket chats and revokes dispatch/browser/merge
+  slots until the maintainer's actual reply clears the gate.
 - Cancel any pre-existing queued auto-merge belonging to this run before waiting;
   do not create another queue entry. Freezing workers and cancelling queued merges
   are allowed containment actions while the gate is open. A merge already
@@ -113,13 +125,17 @@ Use this after the workflow changes are available on `main`:
 ```text
 Act as the master chat for alexanderhetzel/jellyfin-msx. Read AGENTS.md and
 docs/agent-orchestration.md. Create a Goal for this run. Start implementing the open issues in the GitHub
-Project in priority and dependency order, one ticket at a time.
+Project in priority and dependency order, up to three independent tickets at a time.
 
 Create a separate Codex chat with its own worktree for every ticket. You are
 authorized to create, inspect and message these chats and to send follow-up
 instructions. Pass this authorization to each ticket chat, including permission
 to communicate progress and input requests back to this master. Ticket chats may
 use subagents for implementation and independent review.
+
+Grant one exclusive shared browser/HTTPS-relay slot and serialize merge slots.
+Ticket chats report BROWSER_READY and MERGE_READY with their exact scope/head;
+they wait for your slot grant before touching a shared resource or merging.
 
 Complete each ticket through testing, independent review, required GitHub checks
 and squash merge, without asking me for merge approval. Preserve branch protection
