@@ -108,9 +108,9 @@ test("explicit same-context init resets exhausted attempt budget and stale choic
     const before = f.requests.length;
     f.handler.handleRequest("portal-video", null, () => {});
     assert.equal(f.requests.length, before + 1);
-    f.requests.at(-1).respond(200, { url: "https://media.test/private" });
+    f.requests.at(-1).respond(200, { url: "https://media.test/rejected-response-marker" });
     assert.equal(f.contents.at(-1).items[0].title, "Playback: request failed");
-    assert.equal(JSON.stringify(f.contents).includes("https://media.test/private"), false);
+    assert.equal(JSON.stringify(f.contents).includes("rejected-response-marker"), false);
 });
 function fixture(initial = hash) {
     let now = 100000, next = 0, handler;
