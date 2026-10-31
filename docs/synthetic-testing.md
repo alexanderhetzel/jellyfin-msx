@@ -83,6 +83,45 @@ operator secrets or account. All upstream REST uses `httpx.MockTransport`, with 
 network fallback; tests also guard against real HTTP transport calls. No new
 dependencies or lockfile changes are needed. Local ports are not used by this check.
 
+## Authenticated-file candidate preparation — #32
+
+**Implemented / in-process automated-tested / browser and device-unverified.**
+`build_synthetic_lab` can prepare the default-off production candidate when given
+explicit candidate `Settings` and nonempty immutable `bytes` (at most 32 MiB).
+Its default path argument is rejected in this mode; there is no implicit file
+read or directory mount. The existing command-line launcher and public HTTPS
+scenario allowlist remain unchanged. Preparing this app does not authorize a
+service, tunnel, browser run, real Jellyfin connection or operator enablement.
+
+The candidate reuses normal pairing and the existing resume/lifecycle model. It
+adds fixed authenticated metadata for parent membership, selected version/self
+identity and source-pinned PlaybackInfo. `12.4.0` is authored fixture data, not a
+config echo or a verified server release. A frozen snapshot serves the selected
+bytes at `/jellyfin/Items/{selectedVersionId}/File`; a fixed ASCII wrong-parent
+counter at the parent target detects URL substitution. That counter is neither
+an advertised alternate nor a real media cut. The checked-in synthetic MP4 sample
+is unchanged. Candidate fixture mode refuses the legacy Videos route.
+
+```sh
+uv run --no-sync pytest tests/test_synthetic_file.py -q -W error
+```
+
+These tests forbid both real HTTP transports and pair through the actual forms,
+then exercise the production start resolver, exact selected bytes, MP4 MIME,
+full/suffix/open-ended ranges, HEAD, invalid ranges and canonical ApiKey queries.
+Authored missing/invalid/repeated/legacy-token denials and per-login logout
+isolation test this **model**, not Jellyfin authentication or revocation. Movie
+and Episode cases preserve parent resume/report identity, submit authored
+Start/pause/Stop observations, and resume from the reported ten-second position.
+URL issuance/media GET alone must not create Start. These submitted snapshots are
+not native playback observations. A controlled parent-target mutation in the
+actual resolver made the selected-target test fail; restoration made it pass.
+
+Real `/File` bytes/ranges/MIME and missing/invalid/revoked-credential denial remain
+unverified. Official MSX decode/seek/resume/lifecycle correlation and physical TV
+evidence remain separate gates. #32 stays open; the strict old `/Videos` failure
+is unchanged. No production code or live configuration changes in this milestone.
+
 ## Launch the same fixture for official MSX
 
 Generate an original synthetic H.264/AAC MP4 locally with FFmpeg on PATH:

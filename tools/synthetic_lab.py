@@ -13,6 +13,7 @@ import struct
 import zlib
 from collections import Counter
 from pathlib import Path
+from types import MappingProxyType
 
 import httpx
 import uvicorn
@@ -20,6 +21,7 @@ from fastapi import Request
 from fastapi.responses import FileResponse, Response
 
 from jellyfin_msx.config import Settings
+from jellyfin_msx.original_file import enabled as file_candidate
 from tools.lab import ROOT, build_lab
 
 USER, LIBRARY, MOVIE, DENIED, SOURCE = (str(n) * 32 for n in range(1, 6))
@@ -156,14 +158,32 @@ def build_synthetic_lab(settings, *, media=MEDIA, fault=None):
         raise ValueError("Synthetic Jellyfin must use the lab origin and /jellyfin")
     if fault not in {None, "json", "playback", "csrf"}:
         raise ValueError("Unknown synthetic failure")
-    fixture = SyntheticJellyfin(settings.public_url, fault)
+    files = None
+    if file_candidate(settings):
+        if fault is not None:
+            raise ValueError("Candidate fixture does not combine legacy faults")
+        # Local import avoids the existing resume/lifecycle/base-fixture cycle.
+        from tools.synthetic_resume import CandidateResumeJellyfin
+
+        fixture = CandidateResumeJellyfin(settings.public_url, media)
+        files = fixture.files
+    else:
+        fixture = SyntheticJellyfin(settings.public_url, fault)
     app, launch = build_lab(settings, transport=httpx.MockTransport(fixture.handle))
-    attach_fixture_media(app, fixture, media, fault)
+    attach_fixture_media(app, fixture, media, fault, files=files)
     return app, launch, fixture
 
 
 def attach_fixture_media(
-    app, fixture, media, fault, *, item_ids=(MOVIE,), source_ids=(SOURCE,), unplayable_sources=()
+    app,
+    fixture,
+    media,
+    fault,
+    *,
+    item_ids=(MOVIE,),
+    source_ids=(SOURCE,),
+    unplayable_sources=(),
+    files=None,
 ):
     """Attach only the fixture's explicitly supplied media, never a directory mount."""
 
@@ -172,10 +192,30 @@ def attach_fixture_media(
     unplayable = frozenset(unplayable_sources)
     if not unplayable <= allowed_sources:
         raise ValueError("Unplayable sources must be explicitly allowed synthetic sources")
+    if files is not None:
+        snapshot = dict(files)
+        if set(snapshot) != {MOVIE, SOURCE} or any(
+            type(value) is not bytes or not 0 < len(value) <= 32 * 1024 * 1024
+            for value in snapshot.values()
+        ):
+            raise ValueError("Candidate media requires fixed bounded byte fixtures")
+        files = MappingProxyType(snapshot)
+
+        @app.api_route("/jellyfin/Items/{item_id}/File", methods=["GET", "HEAD"])
+        async def original_file(request: Request, item_id: str):
+            if item_id not in files:
+                return Response(status_code=404)
+            params = list(request.query_params.multi_items())
+            if len(params) != 1 or params[0][0] != "ApiKey" or params[0][1] not in fixture.tokens:
+                fixture.media_requests["denied"] += 1
+                return Response(status_code=401)
+            return byte_response(request, files[item_id], fixture)
 
     @app.api_route("/jellyfin/Videos/{item_id}/stream.mp4", methods=["GET", "HEAD"])
     async def stream(request: Request, item_id: str):
         # This is the fixture's original-file endpoint, not a production media proxy.
+        if files is not None:
+            return Response(status_code=404)
         if item_id not in allowed_items:
             return Response(status_code=404)
         if (
@@ -191,34 +231,7 @@ def attach_fixture_media(
         if isinstance(media, bytes):
             # Public synthetic delivery snapshots the reviewed clip in RAM so a
             # later local path/symlink change cannot expose a different file.
-            headers = {"Accept-Ranges": "bytes"}
-            selection = request.headers.get("range")
-            if selection:
-                match = re.fullmatch(r"bytes=(\d{0,12})-(\d{0,12})", selection)
-                if not match or not any(match.groups()):
-                    return Response(
-                        status_code=416, headers={"Content-Range": f"bytes */{len(media)}"}
-                    )
-                start = int(match[1]) if match[1] else max(0, len(media) - int(match[2]))
-                end = min(
-                    int(match[2]) if match[1] and match[2] else len(media) - 1, len(media) - 1
-                )
-                if start > end:
-                    return Response(
-                        status_code=416, headers={"Content-Range": f"bytes */{len(media)}"}
-                    )
-                headers["Content-Range"] = f"bytes {start}-{end}/{len(media)}"
-                payload, status = media[start : end + 1], 206
-            else:
-                payload, status = media, 200
-            headers["Content-Length"] = str(len(payload))
-            fixture.media_requests["original"] += 1
-            return Response(
-                b"" if request.method == "HEAD" else payload,
-                status_code=status,
-                media_type="video/mp4",
-                headers=headers,
-            )
+            return byte_response(request, media, fixture)
         if not media.is_file():
             fixture.media_requests["missing"] += 1
             return Response(status_code=503)
@@ -234,6 +247,32 @@ def attach_fixture_media(
             "browser_verified": False,
             "physical_device_verified": False,
         }
+
+
+def byte_response(request, media, fixture):
+    """Same authored byte/range model for fixed synthetic media routes only."""
+    headers = {"Accept-Ranges": "bytes"}
+    selection = request.headers.get("range")
+    if selection:
+        match = re.fullmatch(r"bytes=(\d{0,12})-(\d{0,12})", selection)
+        if not match or not any(match.groups()):
+            return Response(status_code=416, headers={"Content-Range": f"bytes */{len(media)}"})
+        start = int(match[1]) if match[1] else max(0, len(media) - int(match[2]))
+        end = min(int(match[2]) if match[1] and match[2] else len(media) - 1, len(media) - 1)
+        if start > end:
+            return Response(status_code=416, headers={"Content-Range": f"bytes */{len(media)}"})
+        headers["Content-Range"] = f"bytes {start}-{end}/{len(media)}"
+        payload, status = media[start : end + 1], 206
+    else:
+        payload, status = media, 200
+    headers["Content-Length"] = str(len(payload))
+    fixture.media_requests["original"] += 1
+    return Response(
+        b"" if request.method == "HEAD" else payload,
+        status_code=status,
+        media_type="video/mp4",
+        headers=headers,
+    )
 
 
 def main():
