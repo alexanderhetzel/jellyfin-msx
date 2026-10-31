@@ -1,3 +1,4 @@
+import base64
 import hashlib
 import io
 import json
@@ -6,6 +7,7 @@ import queue
 import socket
 import subprocess
 import sys
+import threading
 import time
 from types import SimpleNamespace
 
@@ -20,6 +22,138 @@ from tools.synthetic_check import action, pair
 from tools.synthetic_lab import MOVIE, build_synthetic_lab
 
 ORIGIN = "https://synthetic-test.trycloudflare.com"
+
+
+def test_remember_restart_keeps_ram_key_and_original_deadline(monkeypatch, tmp_path, capsys):
+    clock = [0.0]
+    control = tmp_path / "control"
+    monkeypatch.setattr(https, "CONTROL", control)
+    monkeypatch.setattr(https, "verify_binary", lambda _: None)
+    monkeypatch.setattr(https, "ready_local", lambda: True)
+    monkeypatch.setattr(https, "ready_public", lambda _: True)
+    calls, stopped, streams = [], [], []
+    shared = []
+    listener = SimpleNamespace(
+        share=lambda pid: shared.append(pid) or b"synthetic-socket-share",
+        close=lambda: shared.append("closed"),
+    )
+    monkeypatch.setattr(https, "reserve_listener", lambda: listener)
+
+    def advance(delay):
+        clock[0] += 10
+        if clock[0] == 10:
+            (control / "restart-backend").touch()
+        if clock[0] == 20:
+            (control / "stop").touch()
+
+    monkeypatch.setattr(https, "time", SimpleNamespace(monotonic=lambda: clock[0], sleep=advance))
+
+    def spawn(args, directory, **kwargs):
+        calls.append(args)
+        stream = io.BytesIO()
+        streams.append(stream)
+        return SimpleNamespace(
+            pid=len(calls), stdin=stream, stdout=io.BytesIO(b"RESERVED\n"), poll=lambda: None
+        )
+
+    monkeypatch.setattr(https, "spawn", spawn)
+    monkeypatch.setattr(https, "stop_process", lambda process: stopped.append(process.pid))
+    monkeypatch.setattr(https, "drain_origins", lambda *args: None)
+    deadlines = []
+
+    def allocated(process, values, deadline, stop_file):
+        deadlines.append(deadline)
+        return ORIGIN if process.pid == 2 else "RESERVED"
+
+    monkeypatch.setattr(https, "await_value", allocated)
+    https.activate(tmp_path / "synthetic-binary", seconds=900, scenario="remember")
+    assert len(calls) == 3 and calls[2][calls[2].index("--seconds") + 1] == "890"
+    first = streams[0].getvalue().splitlines()
+    restarted = streams[2].getvalue().splitlines()
+    assert first == restarted and json.loads(first[2]).keys() == {"key"}
+    assert deadlines == [180, 180, 40]
+    assert set(stopped) == {1, 2, 3} and stopped[0] == 1
+    assert not control.exists()
+    assert shared == [1, 2, 3, "closed"]
+    assert json.loads(first[2])["key"] not in capsys.readouterr().out
+
+
+def test_tunnel_eof_stops_vendor_before_releasing_shared_listener(monkeypatch, tmp_path):
+    events = []
+    monkeypatch.setattr(https, "verify_binary", lambda _: None)
+    monkeypatch.setattr(
+        https.sys,
+        "stdin",
+        SimpleNamespace(buffer=io.BytesIO(base64.b64encode(b"synthetic-descriptor") + b"\n")),
+    )
+    monkeypatch.setattr(
+        https.socket,
+        "fromshare",
+        lambda _: SimpleNamespace(close=lambda: events.append("reservation-closed")),
+        raising=False,
+    )
+    monkeypatch.setattr(https, "watch_parent", lambda stream, stopped: stopped.set())
+    monkeypatch.setattr(https.subprocess, "Popen", lambda *a, **k: SimpleNamespace(stdout=None))
+    monkeypatch.setattr(https, "drain_origins", lambda *args: None)
+    monkeypatch.setattr(https, "stop_process", lambda _: events.append("vendor-stopped"))
+    https.tunnel_helper(tmp_path / "synthetic-binary", tmp_path, 900, "remember")
+    assert events == ["vendor-stopped", "reservation-closed"]
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows socket.share/fromshare contract")
+def test_actual_windows_socket_reservation_survives_child_process_restart(monkeypatch, tmp_path):
+    # An ephemeral test-only reservation, never the shared relay port or a web service.
+    monkeypatch.setattr(https, "PORT", 0)
+    listener = https.reserve_listener()
+    port = listener.getsockname()[1]
+    script = (
+        "import base64,socket,sys; "
+        "descriptor=base64.b64decode(sys.stdin.buffer.readline().strip(),validate=True); "
+        "held=socket.fromshare(descriptor); "
+        "print('HELD',flush=True); sys.stdin.buffer.read(); held.close()"
+    )
+    processes = []
+
+    def assert_owned():
+        with socket.socket() as other:
+            with pytest.raises(OSError):
+                other.bind(("127.0.0.1", port))
+
+    try:
+        assert_owned()
+        for _ in range(2):
+            child = subprocess.Popen(
+                [sys.executable, "-c", script],
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.DEVNULL,
+                env=https.child_environment(tmp_path),
+                creationflags=subprocess.CREATE_NO_WINDOW,
+            )
+            processes.append(child)
+            https.share_listener(child, listener)
+            observed = queue.Queue()
+            threading.Thread(
+                target=lambda child=child, observed=observed: observed.put(
+                    child.stdout.readline(16)
+                ),
+                daemon=True,
+            ).start()
+            assert observed.get(timeout=5).strip() == b"HELD"
+            assert_owned()
+            child.stdin.close()
+            assert child.wait(timeout=5) == 0
+            assert_owned()  # Includes the interval before the next exact child is created.
+    finally:
+        for child in processes:
+            child.stdin.close()
+            if child.poll() is None:
+                child.kill()
+                child.wait(timeout=5)
+            child.stdout.close()
+        listener.close()
+    with socket.socket() as other:
+        other.bind(("127.0.0.1", port))
 
 
 @pytest.mark.parametrize(

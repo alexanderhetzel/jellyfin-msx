@@ -28,6 +28,8 @@ jobs:
       - run: uv run --no-sync ruff check .
       - run: uv run --no-sync ruff format --check .
       - run: uv run --no-sync pytest -W error
+      - name: Remembered-device client state guards (no external runtime)
+        run: node --test tools/remember_client.test.cjs
       - name: Synthetic HTTP contract smoke (no external runtime)
         run: uv run --no-sync python -m tools.synthetic_check
       - name: Verify wheel exclusion and reviewed manifest
