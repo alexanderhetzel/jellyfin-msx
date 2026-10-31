@@ -1,5 +1,48 @@
 # Verification status — 2026-10-31
 
+## Existing HTTPS resume harness: candidate option preparation — #32
+
+**Implemented / automated-tested with mocks / native and device-unverified:** one
+explicit default-false authenticated-file flag is restricted to the existing
+resume scenario. The trusted synthetic factory constructs fixed candidate
+Settings after its existing opt-in/origin/sample-hash guards; no operator config
+or new real transport is admitted. Backend-only argument propagation and a fixed
+marker in existing readiness prevent silent legacy substitution. That marker
+attests configuration only. Default payloads/scenarios, first `RESERVED` line,
+pinned binary, exclusive listener reservation, origin pipe, 900/180-second bounds,
+sanitized environment and owned cleanup remain in place. [Containment and future
+native gate](temporary-synthetic-https.md#default-off-authenticated-file-option-in-the-existing-resume-scenario--32).
+
+Windows/Python 3.12.14: **33 new tests passed** with warnings as errors; **51**
+passed including the prior File/resume fixture cases. New CLI/backend/supervisor
+tests fake all process/socket/server/thread/HTTP actions; both real HTTP transports
+and operator Settings readers are forbidden. They cover explicit flag propagation,
+default legacy, invalid modes/types before side effects, normal paired production
+candidate resolution, unchanged sample snapshot, strict local/public readiness
+mismatches and lost-flag timeout/cleanup. A controlled mutation that expected
+legacy public readiness during candidate mode made its mismatch test fail;
+restoring the marker check passed all 33 tests.
+
+Broad local command (deliberately excluding 11 existing legacy process/listener
+cases, not a full-suite claim):
+
+```sh
+uv run --no-sync pytest -q -W error -k 'not owned_helpers_cleanup_on_all_supervisor_exit_paths and not tunnel_wrapper_parent_eof_stops_owned_fake_tunnel and not occupied_listener_aborts_before_any_tunnel_helper and not actual_backend_reserves_local_only_and_exits_on_parent_eof and not abrupt_owned_wrapper_termination_kills_descendant'
+```
+
+Result: **679 passed / 1 POSIX skip / 11 deselected**, no warnings. Ruff check and
+format passed (**120 files**); diff check and existing synthetic HTTP/two-session
+commands passed. Required normal CI remains unchanged, including its baseline
+helper tests. Independent containment-plan review preceded edits; independent
+implementation review found no blockers and reran all **33 new tests** with
+warnings as errors. Exact-head review and CI are recorded in the issue/PR when complete.
+
+No candidate backend/helper/listener or relay was activated. No browser, real
+Jellyfin or operator settings were used. All actual File/native/device
+acceptance stays **deferred**, the candidate remains off by default, #32 remains
+open, PR #52 remains draft and its strict Videos failure is unchanged. Prior
+fixture PR #76 merged as `224adc280fdd48f847c832b47487d374dcaabed5`.
+
 ## Authenticated-file synthetic integration preparation — #32
 
 **Implemented / automated-tested in process / browser and device-unverified:**
