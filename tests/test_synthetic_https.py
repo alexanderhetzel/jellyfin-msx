@@ -1,3 +1,4 @@
+import asyncio
 import base64
 import hashlib
 import io
@@ -22,6 +23,83 @@ from tools.synthetic_check import action, pair
 from tools.synthetic_lab import MOVIE, build_synthetic_lab
 
 ORIGIN = "https://synthetic-test.trycloudflare.com"
+
+
+def test_remember_loop_factory_returns_owned_selector_loop():
+    loop = https.remember_loop_factory()
+    try:
+        assert isinstance(loop, asyncio.SelectorEventLoop)
+    finally:
+        loop.close()
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows shared-listener Uvicorn restart contract")
+def test_actual_windows_uvicorn_restarts_on_continuously_owned_socket(monkeypatch, tmp_path):
+    from cryptography.fernet import Fernet
+
+    monkeypatch.setattr(https, "PORT", 0)
+    listener = https.reserve_listener()
+    port = listener.getsockname()[1]
+    control = tmp_path / "control"
+    state = control / "sandbox-local"
+    state.mkdir(parents=True)
+    state.chmod(0o700)
+    key = Fernet.generate_key().decode()
+    code = (
+        "import sys; from pathlib import Path; from tools import synthetic_https as h; "
+        "h.CONTROL=Path(sys.argv[1]); owned=h.enter_kill_on_close_job(); "
+        "h.backend_helper(20,'remember')"
+    )
+    children = []
+    try:
+        for _ in range(2):
+            child = subprocess.Popen(
+                [sys.executable, "-c", code, str(control)],
+                cwd=https.ROOT,
+                env=https.child_environment(state),
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.DEVNULL,
+                creationflags=subprocess.CREATE_NO_WINDOW,
+            )
+            children.append(child)
+            try:
+                https.share_listener(child, listener)
+                observed = queue.Queue()
+
+                def reserved(child=child, observed=observed):
+                    observed.put(child.stdout.readline(32))
+
+                threading.Thread(target=reserved, daemon=True).start()
+                assert observed.get(timeout=5).strip() == b"RESERVED"
+                https.configure_backend(child, ORIGIN, key)
+                deadline = time.monotonic() + 6
+                ready = False
+                with httpx.Client(trust_env=False, follow_redirects=False, timeout=0.4) as client:
+                    while time.monotonic() < deadline and child.poll() is None:
+                        try:
+                            result = client.get(f"http://127.0.0.1:{port}/__synthetic/ready")
+                            ready = (
+                                result.status_code == 200
+                                and result.json().get("configured") is True
+                            )
+                        except (httpx.HTTPError, ValueError):
+                            pass
+                        if ready:
+                            break
+                        time.sleep(0.1)
+                assert ready
+            finally:
+                https.stop_process(child)
+            assert child.poll() == 0
+            with socket.socket() as competitor:
+                with pytest.raises(OSError):
+                    competitor.bind(("127.0.0.1", port))
+    finally:
+        for child in children:
+            if child.poll() is None:
+                https.stop_process(child)
+        listener.close()
 
 
 @pytest.mark.parametrize("restart_delay,success", [(0, True), (31, False)])

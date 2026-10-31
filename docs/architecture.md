@@ -72,7 +72,7 @@ and a candidate renewal contract for #12. The optional
 server records, single-use renewal and generation-bound RAM grants. The default
 MSX UI does not call those APIs. A separately opt-in controlled-origin MSX web
 client verifies exact new renewal value/generation readback; automatic startup
-and restoration remain unverified pending an available integrated browser.
+and restoration remain unverified pending actual connected-Chrome verification.
 SAPHI retention remains unverified. Real renewal secrets require a controlled plugin origin,
 never the shared source-preview origin used for synthetic research.
 

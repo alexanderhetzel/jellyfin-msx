@@ -88,9 +88,41 @@ through two child-process lifecycles and the interval between them; mock tests
 check vendor-stop-before-reservation-release and unchanged RAM key/deadline.
 These are containment/source tests, not actual hosted MSX restoration evidence.
 
-### Browser availability and acceptance — 2026-10-31
+### First actual Chrome run and local restart correction — 2026-10-31
 
-**Deferred:** the current maintainer instruction requires the integrated browser
+The later maintainer instruction explicitly selects connected Chrome for all
+browser tests. One approved 900-second synthetic run reached verified HTTPS
+readiness. Normal startup without `init=1` displayed the public Opening Jellyfin
+fallback; only the visible Retry control loaded normal pairing. Continue then
+displayed Waiting for pairing. This is **not** automatic-startup acceptance.
+No credentials were submitted and no enrollment/renewal occurred in that run.
+
+A screenshot mask initially missed the synthetic pending code's whitespace form.
+The saved capture was overwritten with a conservative whole-panel mask and visually
+verified; no QR/code value is retained in the report. An approved backend restart
+was immediately requested to invalidate the pending session, but hit its fixed
+restart-readiness timeout. The supervisor destroyed its backend, synthetic key and
+temporary state and exited; all nine recorded owned PIDs, listener and control
+directory were absent. Both owned tabs closed. Main-tab CDP cleanup was blocked
+by a Browser Use paused-document response; closing the owned tab cleared its
+tab-scoped observations/viewport. No real credentials/server or TV was involved.
+
+A bounded local-only ephemeral-port diagnosis reproduced first Uvicorn health
+success followed by restart health failure while exclusive reservation remained.
+Uvicorn's installed Windows default uses Proactor/IOCP. The
+[Windows IOCP contract](https://learn.microsoft.com/en-us/windows/win32/api/ioapiset/nf-ioapiset-createiocompletionport)
+ties completion-port association to a process and warns about sharing associated
+handles. The inference was checked by selecting the standard SelectorEventLoop
+through Uvicorn's custom loop factory **only in the synthetic remember backend**.
+Two actual fresh Uvicorn processes then both served health, exited zero and denied
+competitor binds throughout. No global event-loop/security policy or reservation,
+TLS, EOF, JobObject or original lifetime guard changed. Independent affected
+source review repeated six focused loop/socket/EOF/deadline tests successfully.
+Actual MSX restart/restoration still requires a new slotted browser run.
+
+### Earlier browser-availability limitation — 2026-10-31
+
+**Historical:** an earlier maintainer instruction required the integrated browser
 for application verification. Fresh inventory exposed only the Chrome extension.
 The documented `cua.createBrowserTab("iab", "about:blank")` call returned
 **Browser is not available: iab**. No tab or public relay was created. The browser
@@ -100,7 +132,9 @@ Automatic startup, actual exact-generation storage, normal reload/reopen, MSX
 restoration after backend-process restart, second pending-context denial and
 visible revoke/re-pair are therefore **not accepted** for this client. API restart/
 isolation and real ephemeral Windows socket/process tests are not MSX passes.
-Keep the client in a draft PR and #12 open until the required evidence exists.
+The later instruction requires connected Chrome for all browser verification;
+the unavailable IAB surface is no longer a blocker. Keep the client in a draft PR
+and #12 open until the required actual MSX evidence exists.
 Older marker retention/QR evidence remains attributed to its original revisions.
 
 ## Server authorization milestone — 2026-10-30 (historical)
