@@ -79,8 +79,10 @@ synthetic marker retention in the official Chrome runtime, startup limitations
 and a candidate renewal contract for #12. The optional
 [durable server authorization](durable-authorization.md) implements encrypted
 server records, single-use renewal and generation-bound RAM grants. The default
-MSX UI does not call those APIs; automatic browser restoration and SAPHI retention
-remain unverified. Real renewal secrets require an operator-controlled plugin origin,
+MSX UI does not call those APIs. A separately opt-in controlled-origin MSX web
+client verifies exact new renewal value/generation readback; automatic startup
+and restoration remain unverified pending an available integrated browser.
+SAPHI retention remains unverified. Real renewal secrets require a controlled plugin origin,
 never the shared source-preview origin used for synthetic research.
 
 Jellyfin API calls have a total deadline below MSX's documented 30-second timeout.
