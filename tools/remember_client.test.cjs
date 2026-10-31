@@ -140,6 +140,17 @@ test("init returns one terminal page only after renewal save and home, never pro
     last.onload(); assert.equal(x.replies.length,1); assert.equal(x.pages.length,0);
 });
 
+test("SDK-registered init is handled without a separate handler-ready notification",()=>{
+    for(const initial of [null,raw()]){
+        const x=browserLab(initial);x.sdk();x.init();
+        assert.equal(x.requests.length,1);
+        assert.equal(x.requests[0].path,initial===null?
+            "/api/device-authorization/pair":"/api/device-authorization/renew");
+        assert.equal(x.replies.length,0);assert.equal(x.pages.length,0);
+        x.ready();x.ready();assert.equal(x.requests.length,1);
+    }
+});
+
 test("delayed SDK readiness and concurrent init cannot dispatch duplicate renewal",()=>{
     const x=browserLab(); x.sdk(); x.init(); x.init();
     assert.equal(x.requests.length,0); assert.equal(x.replies.length,1);assert.equal(x.replies[0],null);
