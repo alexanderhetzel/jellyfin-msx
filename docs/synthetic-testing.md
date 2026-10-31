@@ -1,5 +1,10 @@
 # Synthetic integration lab
 
+For startup-selected authenticated JSON/playback/access/simulated-upstream faults,
+actual hosted MSX recovery assertions and positive-path failure sensitivity, see
+[the failure/recovery browser check](browser-failure-check.md). Its limited scope
+does not close the complete #9 matrix.
+
 For a reusable supported-API connected-Chrome command that asserts normal hosted
 pairing and deliberately broken CSRF/login paths, see
 [the pairing browser check](browser-pairing-check.md). Its actual limited browser

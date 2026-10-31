@@ -1,5 +1,11 @@
 # Temporary synthetic HTTPS preparation — issue #9
 
+The later [failure/recovery scenario](browser-failure-check.md) is selected only
+by trusted `--scenario failures` startup configuration. The default remains
+`baseline`; no public fault-control endpoint or request-selected mode is added.
+Both retain the same reviewed origin, normal authentication, immutable synthetic
+media, strict mock isolation, lifetime, TLS and owned cleanup boundaries.
+
 The preparation checkpoint below predates the later explicit human approval for
 temporary synthetic-only activation. That approved follow-up reached local and
 verified public HTTPS health readiness after a longer bounded startup wait; see

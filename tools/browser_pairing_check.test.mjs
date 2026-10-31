@@ -10,6 +10,9 @@ test("invalid destinations or fault choices cannot open any tab", async () => {
     assert.equal(result.stage, "invalid-synthetic-options");
   }
   assert.equal((await checkPairing({ origin, fault: "arbitrary", newTab: () => assert.fail("opened tab") })).status, "failed");
+  for (const [scenario, fault] of [["operator", "none"], ["pairing", "json"], ["failures", "csrf"]]) {
+    assert.equal((await checkPairing({ origin, scenario, fault, newTab: () => assert.fail("opened tab") })).stage, "invalid-synthetic-options");
+  }
 });
 
 test("missing connector fails without a substitute browser or network driver", async () => {
