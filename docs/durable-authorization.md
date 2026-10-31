@@ -4,6 +4,103 @@
 
 ### Foreground result and synthetic observation boundary — 2026-10-31
 
+**Diagnostic run 9 — actual entry failed / device-unverified.** At reviewed
+`25ff60f` on main `e46a4de`, the single granted normal automatic entry again
+settled on Load Error / Data Load Error and Request timed out. Initial local-only
+`remember_asgi` snapshot had zero received requests in every category. The final
+snapshot was retained **before** closing the tab or stopping the fixture:
+
+| Category | Received | Start send returned, HTTP200 | Final-body send returned |
+| --- | ---: | ---: | ---: |
+| `entry_content` | 1 | 1 | 1 |
+| `plugin_html` | 1 | 1 | 1 |
+| `start_config`, `plugin_script`, `authorization_pair`, `authorization_renew`, `private_home` | 0 each | 0 each | 0 each |
+
+Every aborted/incomplete counter was zero at that snapshot. Direct content entry
+does not require a start-configuration request. This establishes successful ASGI
+send returns for the remembered root and plugin HTML at this observer boundary;
+it does not establish Chrome delivery, document completion or parsing. No own-JS
+or subsequent authorization/home request was observed here. Cached execution,
+earlier middleware/transport rejection, blocked parsing or off-origin SDK loading
+are not distinguished by these aggregates; none is claimed as the cause.
+
+The sanitized existing runtime logs show root Data ready, startup action,
+interaction `init` request and plugin-load attempt to the correct own target.
+The own-frame marker read again reached a selector deadline, leaving lifecycle,
+handler, storage and callback stages unknown. No Network/CDP observation or
+browser HTTP status was collected. No Retry, ForceInit, warm-up, credentials,
+restart or restore matrix ran. Initial/final count-only JSON snapshots and the
+inspected 2560x1249 sanitized error image are retained under ignored `.lab/reports/`.
+Raw pixels remained RAM-only. The original 900-second total/180-second startup
+bound was retained, never restarted. Supervisor session93439 exited zero/stopped;
+cleanup at 15:57:22 UTC / 16:57:22 Vienna found all nine exact owned PIDs, listener
+18092, control and own helpers absent; the sole owned tab was closed. No active
+test resources remain. Startup is still unaccepted and its cause unresolved.
+
+#### Source audit after run 9
+
+Remember, lifecycle and subtitle shells all declare the same classic vendor SDK
+first, without async/defer, then their same-origin adapter with defer. The
+[published MSX example](https://msx.benzac.de/wiki/index.php?title=Interaction_Plugin)
+also loads the vendor SDK before registering the handler. The
+[HTML script rules](https://html.spec.whatwg.org/multipage/scripting.html#attr-script-defer)
+make the first script parser-blocking and defer adapter execution until parsing
+finishes. But [speculative parsing](https://html.spec.whatwg.org/multipage/parsing.html#speculative-html-parsing)
+can fetch later resources while a script blocks the main parser. Therefore zero
+observed own-script requests neither proves an SDK stall nor necessarily follows
+from one. Accepted playback/subtitle ordering does not validate remembered startup.
+
+The current shell's exact hosted SDK source is explicitly allowed by its CSP,
+and the own adapter is covered by self. The declared adapter has a JavaScript
+content type and no-store response, as mocked route tests verify. Other plugin
+shells allow the broader vendor origin; remembered startup retains its narrower
+exact path. This source comparison cannot establish the actual browser's response,
+redirect chain, effective policy, resource loading or SDK behavior. No CSP,
+script-order, body, nonce or timing change is justified by these counters.
+
+Execution-only VM counterexamples distinguish own-code stages: absent SDK global
+sets marker3 then raises ReferenceError; withheld SDK readiness leaves marker3
+without registration; delivered readiness with missing interaction interface sets
+marker7 then raises ReferenceError. None dispatches an authorization request. The
+two missing-interface witnesses and existing delayed-readiness guard pass within
+**24 Node tests**. They simulate no HTML parsing, fetch, cache, CSP or browser
+delivery. In particular, no authorization POST does not prove no handler ran.
+
+There is also an observation dependency: the runtime marker read located `body`
+before reading its document's root attribute. The root marker is declared before
+the blocking SDK; `body` appears after the scripts. A body-selector deadline can
+therefore leave the root unobserved even if a committed document is accessible.
+All prior marker values remain unknown. A future fixed-source observation should
+target `html` directly, then obtain categorical document readiness and script-element
+presence only if accessible. Distinguishing an SDK stall from document-delivery/
+parse failure additionally needs covered browser-side resource completion/error
+or CSP-violation evidence from the actual child document. Server counts and VM
+execution cannot supply that evidence; unavailable child inspection remains
+unknown. No new runtime grant or product variant follows from this audit.
+
+The observation-plan refinement has a local **constructed DOM** counterexample,
+using Python's standard-library DOM: an own marked `html` containing `head` and
+no `body` makes the old body-first lookup unavailable while direct root attribute
+access returns1. Count-only result is retained at ignored
+`.lab/reports/issue12-head-only-dom-witness.json`. This verifies the lookup
+prerequisite, not browser parsing, attachment, child-target accessibility or a
+live SDK stall. It does not turn any historical unknown marker into a value.
+
+A future connected-Chrome observation should use the exact observed own iframe
+and its marked `html[data-testid="jellyfin-msx-lifecycle"]`, then documented
+`getAttribute("data-jellyfin-msx-lifecycle")`. Require readable attachment, without
+a body, visibility or load-complete prerequisite. Keep the raw result in RAM;
+emit only a validated fixed marker bitmask (odd integer1..127), otherwise unknown.
+If ordinary root-scoped read-only DOM evaluation is accessible, additionally
+emit only readyState from loading/interactive/complete/unknown, body presence,
+and presence of the two exact declared script elements. Do not emit their URLs,
+arbitrary attributes, DOM text, runtime globals, storage, event history or errors.
+An unmatched/unreadable own root stays unknown; an initial about:blank root is
+not an own-document observation. Script-element presence does not imply fetching
+or execution; even readyState complete does not prove successful resource loads.
+The plan uses no vendor internals, CDP, injection, policy bypass or new endpoint.
+It still needs an exclusive runtime grant; no additional attempt has occurred.
+
 **Actual entry unaccepted / device-unverified.** The single normal-entry run at
 `e5e2153` parsed root data, executed its startup action, dispatched interaction
 `init` and logged a plugin-load attempt to the correct own HTTPS HTML target.

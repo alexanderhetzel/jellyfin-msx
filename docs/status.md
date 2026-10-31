@@ -465,6 +465,52 @@ code, renewal/cache, security or deployment changes.
 
 ## Remembered-device client preparation — issue #12
 
+**Fixed-source diagnostic run 9 — actual entry failed / device-unverified:**
+exact `25ff60f` (main `e46a4de`) had both independent exact-head reviews and all
+12 CI/CodeQL checks successful before the single granted normal entry. Startup
+source was unchanged. Initial local-only `remember_asgi` counts were all zero.
+The post-timeout snapshot, retained before stop, showed `entry_content` and
+`plugin_html` each received1 / response-start-send-returned200=1 /
+final-body-send-returned1. `start_config`, own `plugin_script`, authorization
+pair/renew and private home remained zero. All aborted/incomplete counters were
+zero at the snapshot. No browser delivery/execution or timeout cause follows.
+The direct content launch does not require start configuration. See the
+[per-category table and limits](durable-authorization.md#foreground-result-and-synthetic-observation-boundary--2026-10-31).
+
+Actual UI again settled on Load Error / Data Load Error; existing sanitized logs
+showed root Data ready, startup action, interaction init/plugin-load attempt to
+the correct target, then Request timed out. Own marker selector deadline leaves
+lifecycle/handler/storage/callback unknown. No Network/CDP, Retry, ForceInit,
+warm-up, credentials, restart or full matrix. Count-only snapshots were retained
+under ignored `.lab/reports/issue12-run9-{initial,final}-asgi.json`; the sanitized
+2560x1249 error capture was inspected at
+`.lab/reports/issue12-run9-asgi-start-data-load-error.png`, with raw pixels RAM-only.
+Original900-total/180-startup bound retained. Session93439 exited0/stopped after
+normal stop; cleanup at15:57:22 UTC /16:57:22 Vienna confirmed all nine exact owned
+PIDs, listener18092, control and own helpers absent, sole owned Chrome tab closed.
+No test resources remain; the observation gap is narrower but software acceptance
+and timeout cause remain unresolved. #12 OPEN / #64 DRAFT, no merge readiness.
+
+**Post-run9 source audit — automated-tested / device-unverified:** remembered,
+lifecycle and subtitle HTML share vendor-first blocking SDK / deferred own-adapter
+order, consistent with the published MSX example. Speculative fetching prevents
+deducing an SDK stall from zero own-script requests. Two added JavaScript-only
+missing-interface witnesses and the prior withheld-readiness guard distinguish
+markers3/7 and no API work; `node --test tools/remember_client.test.cjs` passed
+**24 tests**. This is no browser/parser/fetch model or product fix. The actual
+marker probe depended on finding `body`, which appears after the blocking SDK,
+before reading the earlier root attribute. A future read-only probe should target
+`html` directly; previous selector deadlines remain UNKNOWN. Full reasoning,
+primary references and distinguishing browser evidence are in the
+[source audit](durable-authorization.md#source-audit-after-run-9). No production
+source, CSP/body/order/timing/dependency variant or further runtime activation.
+The read-only observation plan now targets the own marked root without body,
+visibility or load-complete prerequisites. A local standard-library constructed
+head-only DOM counterexample returned old lookup unavailable / direct root1;
+this is no browser/parser/target-accessibility test. Future output is restricted
+to validated fixed marker bits, categorical readyState and two exact script-element
+presence flags, with unreadable/about:blank remaining unknown. No runtime grant.
+
 **Foreground run 8 — actual entry failed / device-unverified:** source `e5e2153`
 parsed root content and dispatched startup interaction `init` to the correct own
 HTTPS plugin target, then settled on Load Error / Data Load Error and Request

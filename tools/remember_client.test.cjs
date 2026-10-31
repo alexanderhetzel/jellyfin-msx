@@ -271,3 +271,33 @@ test("RAM-only lifecycle flags follow actual delayed adapter boundaries without 
     assert(!JSON.stringify(exposed).includes(old));
     handler.ready(); assert.equal(requests.length,1);
 });
+
+// Execution-only witnesses: these do not model HTML parsing or script fetching.
+for (const boundary of ["missing-sdk", "missing-interaction"]) {
+    test(`missing interface witness: ${boundary} leaves a distinct own-entry marker`,()=>{
+        const vm=require("node:vm"), fs=require("node:fs");
+        let marker="1", sdkReady, requests=0, timers=0;
+        const scope={window:{location:{origin:"https://portal.test"}},
+            document:{documentElement:{setAttribute:(name,value)=>{
+                assert.equal(name,"data-jellyfin-msx-lifecycle");marker=value;
+            }}},
+            XMLHttpRequest:class { constructor(){requests++;} },
+            setTimeout:()=>{timers++;return 1;},clearTimeout:()=>{}};
+        if (boundary === "missing-interaction") {
+            scope.TVXPluginTools={onReady:fn=>{sdkReady=fn;}};
+        }
+        const evaluate=()=>vm.runInNewContext(fs.readFileSync(
+            require.resolve("../src/jellyfin_msx/templates/remember.js"),"utf8"),scope);
+        if (boundary === "missing-sdk") {
+            assert.throws(evaluate,error=>error.name === "ReferenceError" &&
+                error.message.includes("TVXPluginTools"));
+            assert.equal(marker,"3");
+        } else {
+            evaluate();assert.equal(marker,"3");
+            assert.throws(()=>sdkReady(),error=>error.name === "ReferenceError" &&
+                error.message.includes("TVXInteractionPlugin"));
+            assert.equal(marker,"7");
+        }
+        assert.equal(requests,0);assert.equal(timers,0);
+    });
+}
