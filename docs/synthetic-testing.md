@@ -1,5 +1,11 @@
 # Synthetic integration lab
 
+The [positive own-request authority assessment](hosted-session-network-assessment.md)
+records the separate conditional main-frame metadata design after three stopped
+poster-capture attempts. It remains unimplemented: a separate generic preflight
+throw supplied no usable root identity, without establishing its cause or
+universal API unavailability. Existing offline checks do not fill that boundary.
+
 For source-prepared hosted A/B pairing, retained-resource denial, surviving B and
 A re-pairing, see [the hosted session check](hosted-session-check.md). Its mocked
 observer guards and authorized-target counterexample are automated-tested; an

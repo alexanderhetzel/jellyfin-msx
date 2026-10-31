@@ -418,6 +418,44 @@ at the first blocker without a source variant or relaxed target. See the
 [third attempt record](hosted-session-check.md#third-bounded-hosted-attempt--2026-10-31);
 #9 remains open without hosted A/B acceptance.
 
+**Positive own-request source assessment complete / unimplemented:** the
+[network authority assessment](hosted-session-network-assessment.md) defines a
+root/main-frame-only post-Continue request/response/terminal join with independent
+target identity, current frame/loader, strict origin/capability/routes, bounded
+full cursor drain, late-conflict rejection and opaque server validation.
+Independent pre-implementation API/privacy review accepted that refined design
+conditionally. It does not guarantee optional Cua source identities or command
+permission; no collector code or live command was added.
+
+The master-relayed separate #12 preflight threw before a usable root identity.
+Its retained category does not identify method/tool-policy/paused/transport/
+permission cause and is not proof of universal API unavailability. No guaranteed
+replacement target-identity accessor was found in the installed contract.
+Missing metadata stays unknown; no identity fill, hidden alternative or replay
+is justified. This is a concrete current observation limit, not a human-input
+gate, a production policy failure or a new runtime pass.
+
+The later separate public control also returned Error/no usable identity with
+no unambiguous cause. Independent source assessment of a frame-led replacement
+concludes it is insufficient: root Page/frame snapshots do not bind an unproven
+buffered source/session namespace, and omitted readEvents target is not
+documented as root-only. Optional source fields and terminal request IDs cannot
+repair that gap. No fallback collector was implemented. A future independently
+bound root-only stream or documented root identity with reliably preserved
+per-event namespace would require fresh review; matching unknown tuples or
+frame/target-ID substitution is not such a guarantee.
+
+After actual main PR #75 (`13ad0ba`) and #76 (`224adc2`) rebases, default-off
+candidate policy, PlayAccess, Compose, programmatic candidate/range fixtures,
+tests/docs and the 26-member package contract are preserved. Existing reviewed
+observer/driver/Node-test/workflow bytes are unchanged. Post-#76
+`uv run --no-sync pytest -q -W error`: **657 passed / 1 POSIX skip**;
+**74 Node tests** and Ruff check/format (**121 files**) passed, as did diff checks.
+Post-#75 both offline contract commands and exact 26-member wheel check passed;
+#76 changes no packaged production source. Source assessment is the completed
+milestone; #9 remains open and PR #73 remains draft without a new browser-ready
+adapter or runtime grant.
+
 ## Revocation source evidence and mocked observer subset — issue #32
 
 **Source-reviewed / automated-tested in part / device-unverified.**
