@@ -25,8 +25,23 @@ smoke passed. Diff/lock checks passed.
 
 Python/uv are not on this shell's default PATH; the commands explicitly selected
 the existing bundled Python and task-private uv. No global installation changed.
-Local Docker is unavailable; actual Linux 3.12/3.13, Docker/proxy/context/image,
-secret-scan CI and independent final-head review remain required before merge.
+Local Docker is unavailable. Actual [Linux CI on `9984710`](https://github.com/alexanderhetzel/jellyfin-msx/actions/runs/41214115638)
+passed CPython 3.12.15 and 3.13.17 (**543 passed / 2 skipped** each, warnings as
+errors), Ruff/format, synthetic HTTP/session, wheel/canaries and isolated
+installed-wheel smoke. Docker passed filtered-context export, pinned-image build,
+proxy validation, UID 10001, final image manifest, `pip check`, installed-wheel
+smoke and health/start/pair HTTP checks. Full-history redacted secret scan and
+CodeQL passed. Existing pip update/root-build notices and UID-range warning do
+not establish a test failure and remain visible. Independent exact-head review
+of `998471014e6391c4b3e7c634637bfe8c65c6717a` matched fresh PyPI metadata and all
+four actual wheel hashes/licenses, reran **544 passed / 1 POSIX skip** with
+warnings as errors, and found no source/security blocker. Its evidence-wording
+finding prompted an actual fresh installed-wheel smoke from the OS temporary
+directory outside the checkout, which passed; the reviewer separately confirmed
+installed-wheel import isolation and the same external-directory smoke. Review
+did not establish binary/source equivalence through artifact attestation or run
+local Docker. Final documentation-head review/checks and the master-controlled
+explicit squash merge are recorded in PR #47 before merge.
 No browser/relay, real Jellyfin, credentials, production, trust-store or physical
 device action/pass is part of this tooling update.
 
