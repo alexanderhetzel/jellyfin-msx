@@ -69,6 +69,7 @@ def test_opt_in_client_routes_csp_and_normal_pairing_restart_isolation(tmp_path)
         start = client.get("/msx/remember.json").json()
         assert start["action"] == "[home|interaction:load:" + ORIGIN + "/msx/remember.html]"
         plugin = client.get("/msx/remember.html")
+        assert 'data-jellyfin-msx-lifecycle="1"' in plugin.text
         csp = plugin.headers["Content-Security-Policy"]
         assert "frame-ancestors https://msx.benzac.de https://www.msx.benzac.de" in csp
         assert "connect-src 'self'" in csp and "unsafe-" not in csp

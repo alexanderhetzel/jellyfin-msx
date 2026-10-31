@@ -122,6 +122,16 @@ The following slotted run exercised the corrected real backend restart.
 
 ### Second actual Chrome run — 2026-10-31
 
+The later focused diagnostic adds only a RAM DOM bitmask on the own plugin's
+`html` element, `data-jellyfin-msx-lifecycle`: 1 = document root parsed,
+2 = own adapter script entered, 4 = SDK onReady callback entered,
+8 = handler registered, 16 = handler.ready entered, 32 = boot entered,
+64 = showContent requested. Flags accumulate; 127 means all boundaries were
+entered, not that MSX displayed the requested content. The marker has no secrets,
+context, URLs, storage, logging or telemetry. It resets with each document and
+does not change startup scheduling/authentication. A delayed-SDK adapter guard
+checks the boundary progression; actual automatic-iframe observation is pending.
+
 At source `95f1405`, official hosted MSX in connected Chrome used normal startup
 without `init=1`. Automatic startup displayed Opening Jellyfin. Ordinary Retry
 opened pairing; normal two-stage companion login with the synthetic account and

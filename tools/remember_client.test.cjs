@@ -123,3 +123,30 @@ test("browser adapter readiness and duplicate XHR callbacks remain bounded",()=>
     requests[0].onload(); const count=pages.length;
     requests[0].onload(); requests[0].onerror(); assert.equal(pages.length,count);
 });
+
+test("RAM-only lifecycle flags follow actual delayed adapter boundaries without values",()=>{
+    const vm=require("node:vm"), fs=require("node:fs");
+    let sdkReady, handler, initialized=false;
+    const attributes={"data-jellyfin-msx-lifecycle":"1"}, exposed=[], requests=[];
+    class XHR { open(){} setRequestHeader(){} send(){requests.push(this);} }
+    const scope={window:{location:{origin:"https://portal.test"}}, Date:{now:()=>1000000},
+        document:{documentElement:{setAttribute:(name,value)=>{
+            assert.equal(name,"data-jellyfin-msx-lifecycle");
+            assert.match(value,/^\d+$/); attributes[name]=value; exposed.push(value);
+        }}}, XMLHttpRequest:XHR, setTimeout:()=>{throw new Error("unexpected retry");},
+        TVXPluginTools:{onReady:fn=>{sdkReady=fn;}},
+        TVXServices:{storage:{isReady:()=>true,get:()=>raw()}},
+        TVXInteractionPlugin:{setupHandler:h=>{handler=h;}, init:()=>{initialized=true;},
+            showContent:()=>{}}};
+    vm.runInNewContext(fs.readFileSync(require.resolve("../src/jellyfin_msx/templates/remember.js"),"utf8"),scope);
+    assert.equal(attributes["data-jellyfin-msx-lifecycle"],"3");
+    assert.equal(requests.length,0); assert.equal(initialized,false);
+    sdkReady();
+    assert.equal(attributes["data-jellyfin-msx-lifecycle"],"15");
+    assert.equal(initialized,true); assert.equal(requests.length,0);
+    handler.ready();
+    assert.equal(attributes["data-jellyfin-msx-lifecycle"],"127");
+    assert.equal(requests.length,1);
+    assert(!JSON.stringify(exposed).includes(old));
+    handler.ready(); assert.equal(requests.length,1);
+});
