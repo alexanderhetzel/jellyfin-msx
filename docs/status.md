@@ -1,5 +1,44 @@
 # Verification status — 2026-10-31
 
+## QR companion pairing — issue #14
+
+**Implemented / automated-tested / device-unverified:** native MSX pairing now
+displays a locally generated PNG QR for an independent pending-only activation
+secret, with readable address/grouped code fallback. The image route revalidates
+pending state and has its own bounded peer/global budget; normal authentication,
+exact-origin CSRF, stage binding and no-store/no-referrer remain unchanged.
+Segno is the only added runtime dependency; Pillow/zxing-cpp decode in development
+only. Independent dependency review matched all 85 new locked artifact hashes
+to official PyPI and verified their licenses; existing versions did not change.
+
+[Actual QR browser observations and privacy boundaries](qr-pairing.md) record
+corrected official-MS​​X 1920x1080 rendered screenshot decode, clean activation
+sign-in/code skip, scan-only Waiting, normal credentials/Continue to private
+libraries, used-QR recovery, confirmed own disconnect and grouped-code fallback.
+Natural five-minute pending expiry then returned credential-free manual recovery;
+actual Create new code/Return, changed grouped code, normal sign-in and Continue
+reached libraries again. The final settled library screenshot was inspected.
+The first actual render caught an invalid native root structure which HTTP tests
+had missed; `pages` fixed it. Codes/QR URLs/raw images stayed in RAM; only masked
+or secret-free screenshots were retained. Full pairing-layout work stays #16;
+physical phone/Philips scan, distance/overscan/remote checks stay unchecked in #4.
+
+Windows / bundled Python 3.12.14: locked dev/build sync passed; full
+`uv run --no-sync --python .venv/Scripts/python.exe pytest -W error` with isolated
+`--basetemp` and `cache_dir` **408 passed / 1 POSIX skip**, no warnings; required
+uv Ruff check/format passed (**91 files** in the final local invocation), five
+existing Node browser-driver guards and whitespace check passed.
+Offline wheel build and exact **20-member** tracked-source/license/template
+allowlist passed. Initial default sandbox tests failed on OS temp/cache access;
+isolated temporary/cache directories and reviewed execution resolved that
+environmental failure. Initial helper title assumptions also failed with the
+new titleless native image; action lookup now handles native page/image items.
+No local Docker, real Jellyfin, media/audio or physical-TV pass is claimed.
+The final bounded synthetic relay exited 0/stopped, all nine recorded owned PIDs,
+listener and control directory were absent at 08:08 UTC; own tabs closed and MSX
+viewport restored. Final-head independent evidence review and CI are recorded in
+the linked PR; no browser-request trace was retained or inferred from unit tests.
+
 ## Two-stage pairing software acceptance — issue #13
 
 **Implemented / automated-tested / device-unverified:** the remaining normal

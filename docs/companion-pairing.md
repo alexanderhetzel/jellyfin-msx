@@ -67,9 +67,13 @@ compatibility remains separate, and physical Philips acceptance is deferred to
 ## Activation link contract and privacy
 
 `/pair?activation=…` accepts the device's independent random pending-only secret,
-never its private session capability. Valid links skip manual entry. QR rendering
-and MSX exposure of the link belong to #14; this milestone implements the receiving
-route. Activation validates pending state twice, before a 303 redirect and when
+never its private session capability. Valid links skip manual entry. Issue #14
+adds local PNG encoding and native MSX image delivery of that pending link;
+the readable companion address and grouped code remain beside it. The image
+route revalidates pending state on every request and rejects expired, removed,
+paired or currently claimed devices. Its independent peer/global request budget
+does not consume the activation-form budget. No external QR service is used.
+Activation validates pending state twice, before a 303 redirect and when
 rendering credentials at clean `/pair`. A transient HttpOnly `pair_activation`
 cookie carries only that activation secret for approximately the remaining
 pending lifetime (integer cookie expiry can round up by less than a second);

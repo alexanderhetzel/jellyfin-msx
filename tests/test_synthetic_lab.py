@@ -115,7 +115,7 @@ def test_csrf_does_not_authenticate_and_reports_never_expose_secrets():
     origin = "https://localhost:18091"
     app, _, fixture = build_synthetic_lab(Settings(origin, origin + "/jellyfin"))
     with TestClient(app, base_url=origin) as client:
-        page = client.get("/msx/pair.json").json()
+        page = client.get("/msx/pair.json").json()["pages"][0]
         target = page["items"][2]["action"].removeprefix("content:")
         secret = urlsplit(target).path.split("/")[3]
         code = re.search(r"TV code: ([A-Z0-9 ]+) \(valid", page["items"][1]["title"])[1]

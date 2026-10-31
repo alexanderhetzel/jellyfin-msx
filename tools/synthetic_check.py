@@ -22,7 +22,12 @@ def require(condition, stage):
 
 
 def action(page, title):
-    matches = [row["action"] for row in page.get("items", []) if row["title"].startswith(title)]
+    rows = page.get("items", []) + [
+        item for child in page.get("pages", []) for item in child.get("items", [])
+    ]
+    matches = [
+        row["action"] for row in rows if "action" in row and row.get("title", "").startswith(title)
+    ]
     require(len(matches) == 1, "render-contract")
     return matches[0]
 
@@ -34,7 +39,7 @@ def content(client, target):
 
 def pair(client, origin, fault=None):
     page = client.get("/msx/pair.json").json()
-    code = re.search(r"TV code: ([A-Z0-9 ]+) \(valid", page["items"][1]["title"])
+    code = re.search(r"TV code: ([A-Z0-9 ]+) \(valid", page["pages"][0]["items"][1]["title"])
     require(code is not None, "pairing-contract")
     home_action = action(page, "Continue after pairing")
     require(content(client, home_action).get("headline") == "Waiting for pairing", "pending")
