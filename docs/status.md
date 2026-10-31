@@ -43,7 +43,17 @@ revocation failure and draft #52 remain unchanged. #32 stays open/In progress;
 supported runtime range and rollout are **deferred** pending separately authorized
 evidence. Independent source/security review found no remaining blocking finding
 and reran all **54 candidate tests** with warnings as errors. It used no live
-server, browser or native player; current-head CI is recorded when complete.
+server, browser or native player. Exact implementation head `a8439b9` has an
+[independent review](https://github.com/alexanderhetzel/jellyfin-msx/pull/75#pullrequestreview-5723726078)
+and all twelve current [CI/CodeQL checks](https://github.com/alexanderhetzel/jellyfin-msx/pull/75/checks)
+passed. Linux CPython 3.12.15/3.13.17 each passed **639 tests / 2 skips**, warnings
+as errors, Ruff/format, synthetic/session contracts, wheel exclusion/manifest and
+isolated installed-wheel template/app/Fernet/SQLite smoke. Application Docker
+passed filtered context, build, proxy validation, UID/image manifest, pip check,
+installed-wheel and health/start/pair checks. Secret scans and all three CodeQL
+analyses passed. These are application/synthetic checks, not new real Jellyfin
+or `/File` acceptance. The documentation-only evidence commit must also keep
+its own required checks green before merge.
 
 ## Playback permission admission and authenticated-original inquiry — #32
 
