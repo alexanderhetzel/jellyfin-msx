@@ -1,5 +1,55 @@
 # Verification status — 2026-10-31
 
+## Pending-code expiry: denial observed, TV recovery incomplete — issue #9
+
+**Implemented / automated-tested with mocks / actual browser subset /
+recovery deferred /
+device-unverified.** The [resumable expiry check](pairing-code-expiry-check.md)
+uses the existing 300-second pending lifetime, waits 305 monotonic seconds after
+its private unused-code read, requires a clean fresh companion Step 1 and one
+expired submission, then normal new-code recovery and confirmed Disconnect.
+The original run deadline, post-read 485-second allowance, post-wait 180-second
+allowance and 60-second cleanup reserve are enforced. Async steps yield fixed
+progress around bounded operations; no code, raw errors or private URL is emitted.
+No live clock/TTL override, fixture, public scenario, service or production change
+was added. No CDP/private Network identity is required.
+
+The same denial predicate rejects an independent model that keeps the expired
+code valid. Other guards cover stale/CSRF evidence, missing time progression,
+budget overshoot/boundary, recovery refusal, stalled operations, late creation,
+cancellation and cleanup uncertainty. Independent plan review preceded edits;
+implementation review identified actual operation-timeout and post-wait reserve
+gaps, plus a zero-allowance scheduling edge; these were corrected before the
+final focused run. The required scope is baseline/candidate-off, with candidate
+delivery markers refused. **17 expiry Node tests / 91 total Node tests passed**.
+Frozen build/dev sync after current main's Pillow 13 update passed; full
+`uv run --no-sync pytest -q -W error`: **690 passed / 1 POSIX skip**;
+Ruff check/format passed (**124 files**), as did syntax/diff checks.
+
+This is a new pending-code criterion only. Historical JSON/playback/CSRF/login
+detector observations remain historical, and preferred outer/inner playback,
+authenticated-session expiry and A/B resource acceptance are separate gaps.
+The one granted expiry-only run at reviewed head `b43ad558` executed the ordinary
+wait for **307 monotonic seconds after the private unused-code read**. A fresh
+companion form rejected its single old-code submission with the specific
+invalid/expired message, keeping credentials hidden. Normal TV Continue then
+executed, but the expected expiry notice was not confirmed. The driver stopped
+at `expired-tv-notice`; the cause is unknown. New-code recovery, sign-in,
+libraries and Disconnect were not attempted. No retry or clock override ran.
+Source audit confirmed the Continue target, expiry headline/public recovery
+payload and disabled cache/reuse/preload; focused existing route/layout tests
+passed: `uv run --no-sync pytest -q tests/test_pairing_layout.py` (**3 passed**).
+This source evidence does not establish hosted headline visibility or the failure cause.
+
+Sanitized server counters were pairing statuses `[400]`, authentication 0,
+PlaybackInfo 0, paired sessions 0 and logout 0. The supervisor started at
+18:28:56 UTC with its original 18:43:56 deadline and stopped/exit 0; cleanup was
+verified at **18:37:14 UTC**. All three owned tabs, nine captured owned PIDs,
+port 18092 listener and control directory were absent; pending creations 0.
+See the [expiry evidence and limitations](pairing-code-expiry-check.md#granted-browser-observation--2026-10-31).
+PR #73 remains draft and #9 remains open. This is partial evidence, not full
+runtime recovery, A/B acceptance or a physical-TV pass.
+
 ## Pillow 13 development dependency review — #80
 
 **Implemented / automated-tested locally / device-unverified:** existing PR #78
@@ -317,6 +367,155 @@ local Docker. Final documentation-head review/checks and the master-controlled
 explicit squash merge are recorded in PR #47 before merge.
 No browser/relay, real Jellyfin, credentials, production, trust-store or physical
 device action/pass is part of this tooling update.
+
+## Hosted two-session command preparation — issue #9
+
+**Implemented / automated-tested with mocks / hosted-runtime-unverified /
+device-unverified.** The [hosted session command](hosted-session-check.md)
+prepares normal A/B pairing, confirmed A Disconnect, fresh retained-resource
+denial, B survival and re-pairing in A's original tab. Private URL plans remain
+opaque. Its strict own-origin observer distinguishes raw HTTP from wrapped MSX
+status, requires explicit fresh-response evidence and bounds conditional bodies.
+The authorized-B native positive control fails the unchanged A denial predicate
+at actual mocked HTTP 200 without buffering a video. This is detector evidence,
+not a real logout leak or hosted pass.
+
+After rebasing onto PR #74 (`e46a4de`),
+`uv run --no-sync pytest -q -W error`: **586 passed / 1 POSIX skip**;
+`node --test tools/*.test.mjs`: **51 passed**, including 32 new mocked observer
+and command guards. Ruff check and format check passed (**117 files**).
+Syntax and `git diff --check` passed. CI now runs mocked Node guards separately
+from the Python suite; it launches no browser or public service. Independent
+source review identified and corrected rejection of production's DeviceId and
+PlaySessionId query fields; malformed/foreign/duplicate targets remain rejected.
+The fresh Full-only playback admission, explicit synthetic permission fixtures,
+tools-only original-file prototype and complete #32/#47 evidence sections are
+preserved. Both synthetic HTTP and two-session commands passed after the rebase
+with browser/device flags false; the native-expiry limitation remains explicit.
+
+The installed Cua wrapper reference was read without browser actions; no new
+runtime, listener, relay, tab navigation or CDP command was run for this milestone.
+Per-origin platform authorization, fresh root Document events and bounded body
+access remain conditional runtime prerequisites. A source-ready command is not
+an unattended authorization guarantee. Existing expiry/native limitations, #32's
+real-server gap and #8/#12/#23 ownership remain unchanged; #9 stays open.
+
+**Later bounded execution failed:** exact `41031bc` received one master-granted
+baseline attempt. Scoped observer initialization completed; normal A sign-in,
+Continue and movies reached fixed failure stage `A-own-rendered-poster` with no
+resource observations. Its internal cause is unknown. B, revocation, re-pairing
+and the negative control were not run. No hosted acceptance pass follows.
+Server counters were paired_sessions=1, logout204=0, PlaybackInfo=0,
+authentication=1 and poster=1; normal UI session cleanup did not complete.
+Stopping the bounded service removed its remaining RAM session. All three owned
+tabs closed; supervisor exit0/stopped, all nine owned PIDs absent, listener18092
+and control directory absent at 15:49:27 UTC. Two ownerless TIME_WAIT sockets
+were not listeners. The slot was released without retry or a new budget.
+See the [runbook's failed-attempt record](hosted-session-check.md#first-bounded-hosted-attempt--2026-10-31).
+
+**Source-only follow-up / automated-tested / runtime-unverified:** the driver
+now distinguishes DOM collection, own-target selection and fixed opaque-capture
+substages, with finite sanitized observer problems. The DOM collector avoids
+an HTMLImageElement constructor dependency; a public mocked counterexample
+demonstrates that fragility without identifying the live failure cause. Cleanup
+uses normal visible Libraries navigation before confirmed Disconnect when the
+home control is absent. Review corrected an unsupported isVisible helper to
+documented bounded waitFor, and stateful regressions cover the old catalog-state
+cleanup failure and missing-control refusal. **69 Node tests**, **586 Python
+tests / 1 POSIX skip**, Ruff check/format (**117 files**), syntax and diff checks
+passed. Independent review reran all 69 Node tests with no source blocker.
+No live retry or new budget verified this follow-up; the old capture cause and
+hosted acceptance remain unresolved. See the runbook's source-only follow-up.
+
+**Second separately granted execution failed at a narrower boundary:** exact
+`8ed9e14` reached fixed `A-poster-target-selection`. DOM collection returned an
+array, but no unique accepted own-poster was selected; the rejection reason is
+not known. Checks/observations stayed empty, and B/resource denial/re-pairing/
+negative control were not run. Normal catalog-aware UI cleanup completed:
+separate counters showed paired_sessions=0 and logout204=1, with one login,
+one poster and no PlaybackInfo request. This is a cleanup observation, not a
+retained-resource denial pass. All three owned tabs and nine owned PIDs were
+gone, supervisor exit0/stopped and listener/control absent at 16:01:39 UTC.
+The slot was released at the first blocker; no source variant or budget reset
+ran. The [second attempt record](hosted-session-check.md#second-bounded-hosted-attempt--2026-10-31)
+keeps the unresolved target-shape/ambiguity question explicit; #9 stays open.
+
+**Later source-only attribute adapter / automated-tested / runtime-unverified:**
+source confirms the exact absolute own poster path and no query. Documented
+locator count/all/getAttribute reads replace DOM proxy/global assumptions;
+bounded strict single-URL CSS parsing rejects overriding or unsupported
+declarations. Review's concrete overridden-background counterexample prompted
+that rejection. Exact own origin, capability/item shape and canonical query-free
+targets remain mandatory; no blob/foreign/QR authority is inferred. Fixed bounded
+classification counts distinguish unavailable/ambiguous without values. Public
+attribute/proxy mocks and stalled-read guards are evidence of the observer
+contract correction, not the previous live cause. **74 Node tests**, **586 Python
+tests / 1 POSIX skip**, Ruff check/format (**117 files**), syntax and diff passed.
+No new runtime verified this adapter. The [source audit and limits](hosted-session-check.md#source-only-attribute-adapter-and-exact-image-contract)
+retain the possibility that ordinary DOM attributes expose no safe authority.
+
+**Third separately granted execution found no exact authority:** exact `7ed21b5`
+stopped at A poster target selection. Attribute counts were five IMG elements,
+zero URL-bearing inline backgrounds and two nonempty source values; both values
+were classified wrong-shape-or-item, with zero exact/distinct candidates and all
+other rejection counts zero. The underlying values and invalid-URL versus
+path/item distinction remain unknown. No resource observations, B flow,
+retained-target denial, re-pairing or negative control ran. Normal A UI cleanup
+was corroborated by paired_sessions=0/logout204=1; authentication=1, poster=1
+and PlaybackInfo=0. All three tabs and nine owned PIDs were gone, supervisor
+exit0/stopped and listener/control absent at 16:19:27 UTC. The slot was released
+at the first blocker without a source variant or relaxed target. See the
+[third attempt record](hosted-session-check.md#third-bounded-hosted-attempt--2026-10-31);
+#9 remains open without hosted A/B acceptance.
+
+**Positive own-request source assessment complete / unimplemented:** the
+[network authority assessment](hosted-session-network-assessment.md) defines a
+root/main-frame-only post-Continue request/response/terminal join with independent
+target identity, current frame/loader, strict origin/capability/routes, bounded
+full cursor drain, late-conflict rejection and opaque server validation.
+Independent pre-implementation API/privacy review accepted that refined design
+conditionally. It does not guarantee optional Cua source identities or command
+permission; no collector code or live command was added.
+
+The master-relayed separate #12 preflight threw before a usable root identity.
+Its retained category does not identify method/tool-policy/paused/transport/
+permission cause and is not proof of universal API unavailability. No guaranteed
+replacement target-identity accessor was found in the installed contract.
+Missing metadata stays unknown; no identity fill, hidden alternative or replay
+is justified. This is a concrete current observation limit, not a human-input
+gate, a production policy failure or a new runtime pass.
+
+The later separate public control also returned Error/no usable identity with
+no unambiguous cause. Independent source assessment of a frame-led replacement
+concludes it is insufficient: root Page/frame snapshots do not bind an unproven
+buffered source/session namespace, and omitted readEvents target is not
+documented as root-only. Optional source fields and terminal request IDs cannot
+repair that gap. No fallback collector was implemented. A future independently
+bound root-only stream or documented root identity with reliably preserved
+per-event namespace would require fresh review; matching unknown tuples or
+frame/target-ID substitution is not such a guarantee.
+
+After actual main PR #75 (`13ad0ba`) and #76 (`224adc2`) rebases, default-off
+candidate policy, PlayAccess, Compose, programmatic candidate/range fixtures,
+tests/docs and the 26-member package contract are preserved. Existing reviewed
+observer/driver/Node-test/workflow bytes are unchanged. Post-#76
+`uv run --no-sync pytest -q -W error`: **657 passed / 1 POSIX skip**;
+**74 Node tests** and Ruff check/format (**121 files**) passed, as did diff checks.
+Post-#75 both offline contract commands and exact 26-member wheel check passed;
+#76 changes no packaged production source. Source assessment is the completed
+milestone; #9 remains open and PR #73 remains draft without a new browser-ready
+adapter or runtime grant.
+
+Final source-assessment rebase onto actual main PR #77 (`e1a6bcd`) preserves its
+default-false candidate option and existing resume harness/ready marker together
+with all earlier candidate/fixture/Compose changes. Existing reviewed observer,
+driver, Node guards and workflow bytes remain unchanged from `7ed21b5`.
+`uv run --no-sync pytest -q -W error`: **690 passed / 1 POSIX skip**;
+**74 Node tests**, Ruff check/format (**122 files**), syntax/diff checks, both
+offline contract commands and the exact **26-member** wheel check passed.
+This finalization adds no collector or live attempt. The remaining method limit
+concerns binding this test's authority evidence, not a diagnosed external
+startup defect or overall #9 completion.
 
 ## Revocation source evidence and mocked observer subset — issue #32
 

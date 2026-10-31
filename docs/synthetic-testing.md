@@ -1,5 +1,23 @@
 # Synthetic integration lab
 
+The [pending-code expiry check](pairing-code-expiry-check.md) prepares a separate
+resumable normal-form flow using the existing 300-second lifetime and baseline
+fixture. Its mocked retained-code-valid counterexample must fail the ordinary
+denial assertion. Actual expiry/recovery remains unverified; no new scenario,
+clock override, service or private Network authority is used.
+
+The [positive own-request authority assessment](hosted-session-network-assessment.md)
+records the separate conditional main-frame metadata design after three stopped
+poster-capture attempts. It remains unimplemented: a separate generic preflight
+throw supplied no usable root identity, without establishing its cause or
+universal API unavailability. Existing offline checks do not fill that boundary.
+
+For source-prepared hosted A/B pairing, retained-resource denial, surviving B and
+A re-pairing, see [the hosted session check](hosted-session-check.md). Its mocked
+observer guards and authorized-target counterexample are automated-tested; an
+exclusive browser/relay grant and per-origin platform authorization are still
+required before any actual hosted acceptance can be claimed.
+
 For deterministic normal-auth A/B disconnect isolation and the explicit native
 token expiry boundary, see [the two-session contract](session-boundary-check.md).
 Its expected nonrevocation detector failure and source-pinned coverage audit are

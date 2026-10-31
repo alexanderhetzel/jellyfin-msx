@@ -6,6 +6,15 @@ concurrency:
   group: checks-${{ github.ref }}
   cancel-in-progress: true
 jobs:
+  browser-command-guards:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Mocked browser command guards (no browser or external runtime)
+        run: node --test tools/*.test.mjs
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 10
