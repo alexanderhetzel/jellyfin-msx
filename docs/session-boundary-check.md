@@ -128,7 +128,7 @@ The audit starts from main `e21d10307ee4ed166b9e0939168a8da4713ee6ef`:
 
 | Original #9 area | Accepted evidence already recorded | Remaining boundary |
 | --- | --- | --- |
-| Native pairing layout and pending expiry | [QR flow and natural expiry](qr-pairing.md), #16 | Repaired reusable command needs focused current-layout execution; do not replay the QR product acceptance as new evidence. |
+| Native pairing layout and pending expiry | [QR flow and natural expiry](qr-pairing.md), #16 | Focused command entry passed at 83df3d7; no hosted two-session resource or #12 startup acceptance is inferred. |
 | Authenticated series, pagination, focus and episode original | [Private navigation at source c20e8b6](series-navigation-results.md), #7 | Real-library/version coverage remains separate; no public substitution is relabelled private. |
 | Observed playback events and saved progress | [Lifecycle](playback-reporting.md), #18, and [saved resume at source bad458c](saved-progress.md), #19 | Physical behavior, unobserved failure classes and complete automation are not inferred. |
 | Private caption delivery and expiry | [Source-pinned subtitle evidence](private-subtitle-results.md), #22 | Delivered bytes cannot be recalled; this is not a blanket private-resource revocation pass. |
