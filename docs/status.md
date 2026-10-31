@@ -50,7 +50,10 @@ The old fallback items are ignored for a startup reference; runtime delivery-err
 handling must be observed separately. No paused-transport fix is inferred.
 
 Five new contract regressions failed on the old premature callback, then passed
-after the correction. All **20 Node client guards**, **45 affected Python tests**,
+after the correction. Independent review then found a delayed-timer ordering gap;
+an absolute deadline check at readiness/dispatch/completion/render boundaries
+corrected it, with a new red-to-green late-renewal/late-home regression.
+All **21 Node client guards**, **45 affected Python tests**,
 full `uv run --no-sync pytest -W error` **437 passed / 1 POSIX skip**, Ruff
 check/format **97 files**, diff check and offline wheel/exact **24-member**
 allowlist passed. No dependency/lock change. An initial affected-test command

@@ -224,11 +224,24 @@
     TVXPluginTools.onReady(function () {
         mark(4);
         var pending = null, sdkReady = false, starting = false, epoch = 0;
+        function deadlineNow() {
+            return typeof performance !== "undefined" && typeof performance.now === "function" ?
+                performance.now() : Date.now();
+        }
+        function expire() {
+            if (!pending || pending.expired || deadlineNow() < pending.deadline) { return false; }
+            pending.expired = true;
+            epoch += 1;
+            client.blocked = true;
+            client.recovery("Sign-in took too long. Create a new code to re-pair.");
+            return true;
+        }
         var client = new Client({origin: window.location.origin,
             now: function () { return Date.now() / 1000; },
             storage: function () { return TVXServices.storage; },
             onBoot: function () { mark(32); },
             render: function (value, terminal) {
+                if (expire()) { return; }
                 if (pending) {
                     if (!terminal) { return; }
                     var callback = pending.callback;
@@ -238,10 +251,11 @@
                 } else { mark(64); TVXInteractionPlugin.showContent(value); }
             },
             request: function (method, path, data, callback) {
+                if (expire()) { return; }
                 var xhr = new XMLHttpRequest(), done = false, requestEpoch = epoch;
                 function complete(error, value) {
                     if (done) { return; } done = true;
-                    if (requestEpoch === epoch) { callback(error, value); }
+                    if (requestEpoch === epoch && !expire()) { callback(error, value); }
                 }
                 xhr.open(method, path, true);
                 xhr.withCredentials = false;
@@ -259,10 +273,12 @@
                 catch (ignore) { complete({status: 0}); }
             }});
         function begin() {
+            if (expire()) { return; }
             if (!sdkReady || !pending || starting) { return; }
             starting = true;
             var attempts = 0, attemptEpoch = epoch;
             function start() {
+                if (expire()) { return; }
                 if (!pending || attemptEpoch !== epoch) { return; }
                 var ready = false;
                 try { ready = TVXServices.storage && TVXServices.storage.isReady(); } catch (ignore) {}
@@ -283,14 +299,12 @@
                 if (!pending) { client.run(data && data.data && data.data.operation); }
             },
             handleRequest: function (id, data, callback) {
+                expire();
                 if (id !== "init" || pending || client.busy) { callback(null); return; }
                 epoch += 1;
-                pending = {callback: callback, timer: setTimeout(function () {
-                    // A lost/late renewal may already be consumed. Never replay it.
-                    epoch += 1;
-                    client.blocked = true;
-                    client.recovery("Sign-in took too long. Create a new code to re-pair.");
-                }, 25000)};
+                // A lost/late renewal may already be consumed. Never replay it.
+                pending = {callback: callback, deadline: deadlineNow() + 25000,
+                    expired: false, timer: setTimeout(expire, 25000)};
                 begin();
             }
         });
