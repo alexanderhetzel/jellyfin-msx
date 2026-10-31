@@ -77,6 +77,13 @@ exited zero/stopped; all nine recorded PIDs, listener/control/own helpers were
 absent. The readable 1920x1080 public error capture was inspected. No Retry,
 login, restart, source variant or remaining acceptance matrix was attempted.
 
+**Observation normalization pending runtime check:** the plugin now has an
+ordinary empty body, matching the published plugin template and subtitle bridge.
+The prior hidden body was a concrete markup difference, not a proven cause of
+the timeout or selector failure. Scripts, fixed marker, CSP, authentication and
+scheduling are unchanged; guards protect the empty body and exact script policy.
+No successful startup is claimed from this markup change.
+
 **Focused diagnostic preparation:** a fixed RAM-only numeric bitmask on the own
 plugin document now records parsed/script/SDK/handler/boot/content-call boundaries
 without values, logging, telemetry, storage, timers or scheduling/auth changes.

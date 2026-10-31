@@ -74,7 +74,14 @@ def test_opt_in_client_routes_csp_and_normal_pairing_restart_isolation(tmp_path)
         )
         plugin = client.get("/msx/remember.html")
         assert 'data-jellyfin-msx-lifecycle="1"' in plugin.text
+        body = re.search(r"<body([^>]*)>(.*?)</body>", plugin.text, re.S)
+        assert body and not body[1].strip() and not body[2].strip()
+        assert re.findall(r'<script src="([^"]+)"', plugin.text) == [
+            "https://msx.benzac.de/js/tvx-plugin.min.js",
+            "/msx/remember.js",
+        ]
         csp = plugin.headers["Content-Security-Policy"]
+        assert "script-src 'self' https://msx.benzac.de/js/tvx-plugin.min.js;" in csp
         assert "frame-ancestors https://msx.benzac.de https://www.msx.benzac.de" in csp
         assert "connect-src 'self'" in csp and "unsafe-" not in csp
         assert "frame-ancestors 'none'" in client.get("/pair").headers["Content-Security-Policy"]
