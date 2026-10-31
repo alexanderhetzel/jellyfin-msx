@@ -128,8 +128,8 @@ production dependency exports before/after are byte-identical.
 The [official release notes](https://pillow.readthedocs.io/en/stable/releasenotes/13.0.0.html)
 drop Python 3.10, I-mode PNG saving, dtype-changing `fromarray(mode=...)`,
 `Image._show`, ImageCms product attributes and the misspelled Exif Makernote
-alias; child-image access moves to ImageFile. The tagged changelog also removes
-the private GIF Netpbm saver. None is used here: the only checked-in Pillow calls
+alias; child-image access moves to ImageFile. The [tagged release](https://github.com/python-pillow/Pillow/releases/tag/13.0.0)
+also removes the private GIF Netpbm saver. None is used here: the only checked-in Pillow calls
 are `Image.open(BytesIO(...))` in `tests/test_pairing_qr.py`, followed by zxing-cpp
 decoding. Existing tests decode actual endpoint PNGs, verify pending-only
 authority/staged pairing and denial paths, and decode a long-origin QR.
