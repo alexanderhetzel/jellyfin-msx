@@ -96,6 +96,15 @@ blank/outgoing screenshot is excluded. No credentials, Retry, restart or full
 matrix ran. This ends the body comparison without another markup/script/CSP
 variant; it does not identify a product cause or establish an external cause.
 
+Retained run-2 action history also rules out the simple claim that every failed
+automatic run lacked a prior top-level origin visit: healthz, then the public
+plugin shell with ready/script-count inspection, preceded its normal MSX launch;
+that automatic start still showed fallback. A later public-shell visit followed
+by explicit Retry correlated with manual generation-one renewal. The subtitle
+flow's prior companion-page visit is a workflow difference, not a demonstrated
+cause. These visits are not equivalent tests of necessity; no warm-up requirement
+or further variant follows. Final run-6 cleanup was 11:35:24 UTC / 12:35:24 Vienna.
+
 **Focused diagnostic preparation:** a fixed RAM-only numeric bitmask on the own
 plugin document now records parsed/script/SDK/handler/boot/content-call boundaries
 without values, logging, telemetry, storage, timers or scheduling/auth changes.
