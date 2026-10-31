@@ -19,6 +19,7 @@ from .errors import PortalError
 from .jellyfin import Jellyfin, identifier
 from .middleware import PairBodyLimit
 from .msx import button, content, text, wrapped
+from .pairing_qr import activation_png
 from .playback import PROFILE_NAME, choose_source, compatibility_reasons, resolve
 from .presentation import PAIR_CSS
 from .state import State
@@ -368,7 +369,7 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
     async def pairing(request: Request):
         limit(request, "new_pair", 10)
         secret, device = state.pair()
-        return content(
+        page = content(
             "Pair this TV",
             [
                 button(
@@ -382,6 +383,39 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
                 button("Continue after pairing", "content:" + device_url(secret, "home.json")),
                 button("Create new code", "content:" + url("/msx/pair.json")),
             ],
+        )
+        # Native MSX grid/image properties only. Keep manual entry available beside QR.
+        page["type"] = "pages"
+        del page["template"]
+        for item, row in zip(page["items"], (0, 1, 3, 4), strict=True):
+            item.update(layout=f"4,{row},8,1", color="#182632")
+        page["items"] += [
+            button(
+                "Scan only from your own TV. Sign in to link it.",
+                "info:Scanning identifies this TV. Sign in only if you started pairing here.",
+                layout="4,2,8,1",
+                color="#182632",
+            ),
+            {
+                "type": "space",
+                "layout": "0,0,4,4",
+                "image": url(f"/msx/pair/image/{device.activation}.png"),
+                "imageFiller": "fit",
+                "imageOverlay": 0,
+                "color": "white",
+            },
+        ]
+        page["pages"] = [{"items": page.pop("items")}]
+        return page
+
+    @app.get("/msx/pair/image/{activation}.png")
+    async def pairing_image(request: Request, activation: str):
+        limit(request, "pair_image", 30)
+        if len(activation) != 43 or not activation.isascii():
+            raise PortalError(400, "Pairing QR is unavailable. Create a new code on the TV.")
+        device = state.pending(activation=activation)
+        return Response(
+            activation_png(url("/pair", activation=device.activation)), media_type="image/png"
         )
 
     @app.get("/msx/device/{secret}/home.json")

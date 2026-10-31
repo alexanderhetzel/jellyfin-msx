@@ -97,6 +97,24 @@ To repeat the canary check, use a clean disposable checkout, run
 Seeding refuses existing paths; cleanup only deletes the exact synthetic bytes.
 Never put real credentials or private media in a build tree for testing.
 
+## QR dependencies — issue #14, 2026-10-31
+
+Segno **1.6.6** is the sole added runtime dependency: pure Python, no transitive
+dependencies, BSD-3-Clause. Its native PNG serializer needs no Pillow. Full QR
+encoding uses error correction M, integer scale and a four-module white quiet
+zone. [Official encoder documentation](https://segno.readthedocs.io/en/stable/)
+and the installed distribution LICENSE were reviewed; no upstream application
+code or proprietary MSX runtime is incorporated.
+
+Development-only Pillow **12.3.0** (MIT-CMU) and zxing-cpp **3.1.1** (Apache-2.0)
+independently decode actual PNG output and browser screenshots. They are absent
+from production dependency exports. Their installed license/metadata and
+[decoder input contract](https://github.com/zxing-cpp/zxing-cpp/blob/v3.1.1/wrappers/python/README.md)
+were reviewed. Independent review matched every new locked artifact URL/hash
+against official PyPI version JSON: Segno 2, Pillow 64, zxing-cpp 19 artifacts.
+Existing dependency versions did not change. The ordinary locked CI, wheel and
+production packaging checks remain required; no local Docker pass is claimed.
+
 ## Update review procedure
 
 Weekly Dependabot PRs cover uv application/build locks, pip bootstrap requirements,

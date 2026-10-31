@@ -4,7 +4,10 @@
 
 1. MSX loads `/msx/start.json` (also `/msx/start.json` under the MSX setup convention).
    Its content action loads `/msx/pair.json`, which creates a five-minute pairing.
-2. TV displays a short code and companion address `/pair`. The operator enters
+2. TV displays a locally generated QR, short code and companion address `/pair`.
+   The QR's independent pending-only activation secret opens the normal clean
+   credential stage; it never carries the private TV session capability or grants
+   library access. The operator scans only their own TV, or enters
    that code in a browser, checks it, then enters Jellyfin credentials in a
    device/cookie-bound second stage. Same-origin, CSRF-protected POSTs validate
    and authenticate against the single operator-configured Jellyfin server.
