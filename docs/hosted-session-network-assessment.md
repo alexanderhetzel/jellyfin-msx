@@ -270,3 +270,12 @@ Until then, missing metadata remains unknown; no adapter, hidden method, identit
 substitution, permission change, target inference or runtime replay is justified.
 This is a completed source-assessment limit, not proof of a universal product/
 tool failure or a request for human approval. A/B acceptance remains unresolved.
+
+The final assessment branch is based on actual PR #77 merge `e1a6bcd`, preserving
+its default-false candidate option and resume harness marker plus the earlier
+candidate policy, fixtures, Compose and package contract. Existing browser
+driver/probe/Node-test/workflow bytes are unchanged from reviewed `7ed21b5`.
+Local verification passed 690 Python tests with one POSIX skip, 74 Node tests,
+Ruff/format (122 files), syntax/diff checks, both offline contract commands and
+the exact 26-member wheel manifest. Those results verify the retained source
+union, not the unimplemented Network authority design or a live fallback.

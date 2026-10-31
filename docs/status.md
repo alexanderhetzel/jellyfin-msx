@@ -456,6 +456,17 @@ Post-#75 both offline contract commands and exact 26-member wheel check passed;
 milestone; #9 remains open and PR #73 remains draft without a new browser-ready
 adapter or runtime grant.
 
+Final source-assessment rebase onto actual main PR #77 (`e1a6bcd`) preserves its
+default-false candidate option and existing resume harness/ready marker together
+with all earlier candidate/fixture/Compose changes. Existing reviewed observer,
+driver, Node guards and workflow bytes remain unchanged from `7ed21b5`.
+`uv run --no-sync pytest -q -W error`: **690 passed / 1 POSIX skip**;
+**74 Node tests**, Ruff check/format (**122 files**), syntax/diff checks, both
+offline contract commands and the exact **26-member** wheel check passed.
+This finalization adds no collector or live attempt. The remaining method limit
+concerns binding this test's authority evidence, not a diagnosed external
+startup defect or overall #9 completion.
+
 ## Revocation source evidence and mocked observer subset — issue #32
 
 **Source-reviewed / automated-tested in part / device-unverified.**
