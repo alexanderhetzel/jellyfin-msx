@@ -1,8 +1,19 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { checkPairing } from "./browser_pairing_check.mjs";
+import { checkPairing, readPairingCode } from "./browser_pairing_check.mjs";
 
 const origin = "https://synthetic-only.trycloudflare.com";
+
+test("current QR layout code is read without the removed prose prefix", () => {
+  assert.equal(readPairingCode("Pair this TV\nScan with your phone\n1234 5678\nContinue after pairing"), "12345678");
+  assert.equal(readPairingCode("Pair this TV\r\n  0000\u00a01234  \r\nCreate new code"), "00001234");
+});
+
+test("code extraction fails closed on absent, embedded or ambiguous candidates", () => {
+  for (const value of [null, {}, "TV code: 1234 5678", "https://1234-5678.trycloudflare.com/pair", "12345678", "1234 5678\n8765 4321", "1234 5678\n1234 5678"]) {
+    assert.equal(readPairingCode(value), null);
+  }
+});
 
 test("invalid destinations or fault choices cannot open any tab", async () => {
   for (const value of ["http://localhost", "https://operator.example", origin + "/pair", origin + "?token=private", "https://nested.host.trycloudflare.com"]) {

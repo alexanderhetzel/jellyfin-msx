@@ -24,6 +24,61 @@ The twelve new observer checks are MockTransport-only. Independent final review
 and normal repository CI results are recorded in the subset PR; neither replaces
 the retained failing real-server contract in draft PR #52.
 
+## Current-layout command and two-session contract — issue #9
+
+**Implemented / automated-tested / device-unverified:** the reusable browser
+entry reads the accepted QR layout's standalone grouped code instead of the
+removed prose prefix, keeping it in its private closure and rejecting ambiguous
+text. No AX tree, QR image or private URL is emitted. The change is locally
+guard-tested; unchanged reviewed source `83df3d7` then completed one separately
+granted positive baseline command in connected Chrome. Normal sign-in/Continue
+reached private content and confirmed Disconnect passed; all ten existing command
+stages passed. The inspected final image is QR-free. Separate fixed server
+counters show paired_sessions=0, one logout204 and no PlaybackInfo request.
+
+The [two-session HTTP command and evidence audit](session-boundary-check.md)
+exercise normal production form authentication with strict mocked transport:
+confirmed A disconnect denies its retained private JSON/poster/resolver/media,
+B survives, A re-pairs without reviving the old capability, and portal expiry
+denies portal resources. A full bearer URL is intentionally not cookie-bound.
+An already-issued native URL remains valid after portal expiry; the report says
+native revocation is false. Synthetic ignored upstream logout exits 1 at the
+unchanged A media-revocation assertion, an expected detector failure rather than
+a real-server privacy pass. No real-version run or production policy changed.
+
+Windows/Python 3.12.14 locked offline dev/build sync passed. `uv run pytest -W
+error`: **522 passed / 1 POSIX skip**, no warnings; four focused session checks,
+seven Node browser guards, Ruff, format **108 files**, syntax/diff checks passed.
+The normal command passed with browser/device flags false; its negative CLI
+returned the fixed failed stage. At that local checkpoint no browser, relay,
+listener, secret store or external transport was used. Current accepted
+#7/#16/#18/#19/#22 evidence is
+referenced rather than replayed; #8 real cases, #12 startup and #23 native
+classification remain open. Overall #9 acceptance is not claimed.
+
+The later focused browser checkpoint is separate from those local checks:
+four owned tabs closed, supervisor exit0/stopped, all nine exact owned PIDs,
+listener18092/control absent at 14:47:09UTC, within the original900-second total.
+The shared slot was released immediately. No media, alternative-start, source
+variant, new budget or CDP/Network/viewport override was used. Exact actions,
+private-evidence boundaries and limited scope are in the linked runbook.
+
+The post-checkpoint source-only rebase preserves #19 plus the accepted #23
+subset/scenario at `7204161` and the coordination rule at `bc4599a`. The #9
+driver, session command/tests and CI step are unchanged from the focused source.
+Combined source validation passed **532 pytest / 1 POSIX skip**, **57 Node tests**,
+Ruff/format **109 files**, normal session CLI, locked offline wheel and exact
+**25-member** production allowlist. No further browser resource was used;
+documentation-only coordination changes did not trigger redundant broader tests.
+#23 original native classification and overall #9 gaps remain open.
+
+The later rebase onto `5348712` also preserves all five #32 source/observer files
+and its status block. Only the status insertion conflicted; both sections were
+retained. #9 driver/session/tests/CI bytes are unchanged. Affected validation:
+**16 session/observer tests**, **7 Node guards**, Ruff/format **112 files** and
+diff checks passed. No additional browser or broad local replay was run for this
+tooling/evidence-only upstream merge; current-head CI remains required.
+
 ## Saved progress — issue #19
 
 **Implemented / automated-tested / browser-tested / device-unverified.**
