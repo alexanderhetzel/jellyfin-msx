@@ -126,6 +126,7 @@ class SyntheticJellyfin:
                     "Id": path.rsplit("/", 1)[-1],
                     "Name": "Synthetic clip",
                     "Type": "Movie",
+                    "PlayAccess": "Full",
                     "Overview": "Generated test pattern and tone; no operator media.",
                     "MediaSources": [item_source],
                 },

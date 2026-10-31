@@ -125,6 +125,7 @@ class FakeJellyfin:
                     "Id": path.rsplit("/", 1)[-1],
                     "Name": "A movie",
                     "Type": "Movie",
+                    "PlayAccess": "Full",
                     "Overview": "A synopsis",
                     "MediaSources": [copy.deepcopy(self.source)],
                 },

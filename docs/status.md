@@ -1,5 +1,39 @@
 # Verification status — 2026-10-31
 
+## Playback permission admission and authenticated-original inquiry — #32
+
+**Implemented / automated-tested locally / device-unverified:** fresh item
+metadata must contain exact `PlayAccess == Full` before source selection and
+PlaybackInfo. Documented `None` returns fixed 403; absent/null/unknown/wrong-type
+values return fixed 502. No real metadata is defaulted to Full. Synthetic item
+fixtures now explicitly declare their existing permission assumption.
+The two initial desired-denial tests were red against the old actual resolver;
+the expanded ten-case admission suite passes, including unchanged Full delivery.
+This is an issuance guard, not an upstream logout or later policy-change fix.
+
+The [pinned route assessment](authenticated-original-assessment.md) identifies
+authenticated `/File` as a conditional static-original candidate, distinguishes
+Download's permission/attachment behavior, and sets exact-version/policy limits.
+A tools-only mock prototype returns IDs/container snapshots, never media URLs;
+its counterexamples cover wrong cuts, extents, malformed provenance, unsupported
+sources and revalidation denials. Sequential snapshots are not atomic permission
+leases or byte proofs. Neither tool nor new route is imported by production.
+The current media route and draft #52 strict real-server failure are unchanged;
+#32 stays open with no full version-range, new server, browser or device claim.
+
+Windows/Python 3.12.14 `uv run --no-sync pytest -q -W error`: **586 passed /
+1 POSIX skip**, no warnings. Ruff check and format passed (**116 files**);
+diff check and in-process synthetic HTTP contract passed (browser/device false).
+Locked offline wheel build and exact **25-member** source/license/template
+manifest check passed; the tools-only prototype is excluded from the wheel.
+The initial full run had **4 failures / 582 passed / 1 skip**: three synthetic
+episode detail responses still omitted the newly required Full field and one
+prototype assertion expected an older fixed reason. Both were corrected before
+the final full run. Independent source/security review found no remaining
+blocking findings and independently reran all **42 affected tests** with warnings
+as errors. It did not operate live servers or a browser. No new runtime,
+Jellyfin server/container, browser relay or operator access was used.
+
 ## uv bootstrap update — PR #47
 
 **Implemented / automated-tested locally / device-unverified:** the existing

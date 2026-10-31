@@ -44,6 +44,7 @@ class FailureJellyfin(SyntheticJellyfin):
                     "Id": REJECTED_PLAYBACK,
                     "Name": "Rejected playback",
                     "Type": "Movie",
+                    "PlayAccess": "Full",
                     "Overview": "Synthetic PlaybackInfo rejection; healthy clip remains available.",
                     "MediaSources": [source()],
                 },
