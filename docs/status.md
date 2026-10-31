@@ -38,6 +38,15 @@ code, renewal/cache, security or deployment changes.
 
 ## Remembered-device client preparation — issue #12
 
+**Focused diagnostic preparation:** a fixed RAM-only numeric bitmask on the own
+plugin document now records parsed/script/SDK/handler/boot/content-call boundaries
+without values, logging, telemetry, storage, timers or scheduling/auth changes.
+The automatic-iframe observation is still pending. A new delayed-SDK guard failed
+before implementation and now passes with all **13 Node client guards**;
+`uv run --no-sync pytest tests/test_remembered_client.py -q` passed **3 tests**,
+Ruff check/format **94 files** and diff check passed. Earlier full-suite results
+below are reused, not recounted as a new integration pass.
+
 **Current Chrome follow-up:** the maintainer now requires connected Chrome for
 all browser tests. The first bounded synthetic HTTPS run displayed normal startup's
 Opening Jellyfin fallback; ordinary Retry loaded pairing and Continue displayed

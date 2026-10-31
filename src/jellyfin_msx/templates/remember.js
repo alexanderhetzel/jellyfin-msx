@@ -164,6 +164,7 @@
         });
     };
     Client.prototype.boot = function () {
+        if (this.deps.onBoot) { this.deps.onBoot(); }
         var self = this, before, record;
         if (this.blocked) {
             this.recovery("A previous renewal was uncertain. Create a new code to re-pair."); return;
@@ -213,11 +214,21 @@
         module.exports = {Client: Client, key: KEY};
         return;
     }
+    // Fixed RAM-only boundary flags; never include authorization or context values.
+    var lifecycle = 1;
+    function mark(flag) {
+        lifecycle |= flag;
+        try { document.documentElement.setAttribute("data-jellyfin-msx-lifecycle", String(lifecycle)); }
+        catch (ignore) {} // Diagnostics must not change authorization behavior.
+    }
+    mark(2);
     TVXPluginTools.onReady(function () {
+        mark(4);
         var client = new Client({origin: window.location.origin,
             now: function () { return Date.now() / 1000; },
             storage: function () { return TVXServices.storage; },
-            render: function (value) { TVXInteractionPlugin.showContent(value); },
+            onBoot: function () { mark(32); },
+            render: function (value) { mark(64); TVXInteractionPlugin.showContent(value); },
             request: function (method, path, data, callback) {
                 var xhr = new XMLHttpRequest(), done = false;
                 function complete(error, value) {
@@ -241,6 +252,7 @@
         TVXInteractionPlugin.setupHandler({
             init: function () {},
             ready: function () {
+                mark(16);
                 if (client.started) { return; } client.started = true;
                 var attempts = 0;
                 function start() {
@@ -255,6 +267,7 @@
             handleData: function (data) { client.run(data && data.data && data.data.operation); },
             handleRequest: function (id, data, callback) { callback(client.last); }
         });
+        mark(8);
         TVXInteractionPlugin.init();
     });
 }());
