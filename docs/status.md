@@ -72,6 +72,13 @@ Ruff/format **109 files**, normal session CLI, locked offline wheel and exact
 documentation-only coordination changes did not trigger redundant broader tests.
 #23 original native classification and overall #9 gaps remain open.
 
+The later rebase onto `5348712` also preserves all five #32 source/observer files
+and its status block. Only the status insertion conflicted; both sections were
+retained. #9 driver/session/tests/CI bytes are unchanged. Affected validation:
+**16 session/observer tests**, **7 Node guards**, Ruff/format **112 files** and
+diff checks passed. No additional browser or broad local replay was run for this
+tooling/evidence-only upstream merge; current-head CI remains required.
+
 ## Saved progress — issue #19
 
 **Implemented / automated-tested / browser-tested / device-unverified.**

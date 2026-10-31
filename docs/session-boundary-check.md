@@ -122,6 +122,16 @@ offline wheel build and exact **25-member** production allowlist passed.
 The later coordination merge changed only two instruction documents, so source
 validation was not needlessly repeated for that documentation-only rebase.
 
+A subsequent rebase onto `5348712f2236b2936bc9eba99f02f0ac38869de3`
+preserves all five #32 source/strict-observer files, including its status section,
+alongside the coordination rule and #19/#23 union. The sole conflict was the
+status insertion; both sections were retained. The #9 driver, session command,
+tests and CI bytes remain unchanged. Affected validation passed **16 session/
+observer tests**, **7 browser guards**, Ruff/format **112 files** and diff checks.
+No product source changed in that upstream merge, so another browser or broad
+local test replay was not justified. The retained #32 evidence is not a new real
+version/revocation pass; draft #52 and overall #9 gaps remain open.
+
 ## Reconciliation with accepted feature evidence
 
 The audit starts from main `e21d10307ee4ed166b9e0939168a8da4713ee6ef`:
