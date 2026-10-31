@@ -68,7 +68,7 @@ def build_public_synthetic_lab(origin, *, allow_public_synthetic=False, scenario
     settings = Settings(
         origin,
         origin + "/jellyfin",
-        session_ttl=900,
+        session_ttl=240 if scenario == "subtitles" else 900,
         max_states=32,
         enable_subtitle_resources=scenario == "subtitles",
     )

@@ -46,7 +46,7 @@ def button(title: str, action: str, **kwargs):
     return {"title": text(title), "action": action, **kwargs}
 
 
-def subtitle_playback(available, resource, original):
+def subtitle_playback(available, original):
     """Public HTML5X properties; unique keys retain duplicate-language indices."""
     names = {"deu": "Deutsch", "ger": "Deutsch", "eng": "English"}
     properties = {
@@ -61,7 +61,7 @@ def subtitle_playback(available, resource, original):
     for track in available:
         index, language = track["index"], track["language"]
         label = f"{names.get(language, language)} (track {index})"
-        properties[f"html5x:subtitle:{language}-x-{index}:{label}"] = resource(index)
+        properties[f"html5x:subtitle:{language}-x-{index}:{label}"] = f"portal-subtitle-{index}"
     return content(
         "Subtitles",
         [

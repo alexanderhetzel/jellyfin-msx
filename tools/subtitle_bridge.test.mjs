@@ -6,8 +6,8 @@ const code = readFileSync(new URL("../src/jellyfin_msx/templates/subtitle-bridge
 function fixture(hash) {
     let handler;
     const requests = [], notices = [];
-    const window = { location: { hash } };
-    function XHR() { requests.push(this); this.open = (method, url) => { this.method = method; this.url = url; }; this.send = () => {}; }
+    const window = { location: { hash, origin: "https://portal.test" } };
+    function XHR() { requests.push(this); this.open = (method, url) => { this.method = method; this.url = url; }; this.send = () => {}; this.headers = {}; this.getResponseHeader = name => this.headers[name] || null; }
     runInNewContext(code, { window, XMLHttpRequest: XHR,
         TVXPluginTools: { onReady: fn => fn() },
         TVXInteractionPlugin: { setupHandler: h => { handler = h; }, init() {}, info: (...args) => notices.push(args) } });
@@ -20,6 +20,32 @@ test("invalid context cannot fetch; unknown request cannot fetch", () => {
     f.handler.handleRequest("init", null, value => { assert.equal(value, null); called++; });
     f.handler.handleRequest("unknown", null, value => { assert.equal(value, null); called++; });
     assert.equal(called, 2); assert.equal(f.requests.length, 0);
+});
+test("subtitle IDs validate only fixed authenticated resource paths", () => {
+    const f = fixture(hash); let value;
+    f.handler.handleRequest("subtitle:portal-subtitle-7", null, result => { value = result; });
+    const xhr = f.requests[0];
+    assert.equal(xhr.url, "/api/device/" + "s".repeat(43) + "/subtitles/" + "2".repeat(32) + "/" + "3".repeat(32) + "/7.vtt");
+    xhr.status = 200; xhr.responseText = "WEBVTT\n"; xhr.headers["Content-Type"] = "text/vtt; charset=utf-8"; xhr.onload();
+    assert.equal(value.url, "https://portal.test" + xhr.url);
+    assert.equal(f.notices.length, 0);
+});
+test("expired, missing and invalid subtitle responses give one fixed notice", () => {
+    for (const status of [401, 403, 404, 200]) {
+        const f = fixture(hash); let calls = 0;
+        f.handler.handleRequest("portal-subtitle-18", null, result => { assert.equal(result, null); calls++; });
+        const xhr = f.requests[0]; xhr.status = status; xhr.responseText = "private upstream text";
+        xhr.headers["Content-Type"] = "text/html"; xhr.onload(); xhr.onerror();
+        assert.equal(calls, 1); assert.equal(f.notices.length, 1);
+        assert.ok(f.notices[0][0].includes("Select Off or Stop"));
+    }
+});
+test("invalid subtitle IDs never construct a request", () => {
+    const f = fixture(hash);
+    for (const id of ["portal-subtitle-10001", "portal-subtitle--1", "portal-subtitle-01", "portal-subtitle-7/elsewhere", "https://other.test/"]) {
+        f.handler.handleRequest(id, null, result => assert.equal(result, null));
+    }
+    assert.equal(f.requests.length, 0);
 });
 test("media goes through same-origin normal resolver, not a vendor query", () => {
     const f = fixture(hash);

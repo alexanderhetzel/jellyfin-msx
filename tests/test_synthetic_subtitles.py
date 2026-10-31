@@ -23,9 +23,10 @@ def test_subtitle_scenario_normal_private_routes_and_recovery():
             len([k for k in page["items"][0]["properties"] if k.startswith("html5x:subtitle:")])
             == 3
         )
-        resource = next(
-            v for k, v in page["items"][0]["properties"].items() if "Deutsch (track 7)" in k
+        resource = (
+            private.replace("/msx/device/", "/api/device/") + f"/subtitles/{MOVIE}/{SOURCE}/7.vtt"
         )
+        assert app.state.portal.settings.session_ttl == 240
         response = client.get(resource, headers={"Origin": "https://msx.benzac.de"})
         assert response.status_code == 200 and "Grüße" in response.text
         assert not any(token in response.text + json.dumps(page) for token in fixture.tokens)

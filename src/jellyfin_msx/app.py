@@ -635,9 +635,6 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
         state.get(secret)
         return subtitle_playback(
             available,
-            lambda index: url(
-                f"/api/device/{secret}/subtitles/{item_id}/{media_source_id}/{index}.vtt"
-            ),
             original,
         )
 

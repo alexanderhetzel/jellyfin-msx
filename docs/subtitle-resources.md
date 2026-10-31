@@ -2,7 +2,7 @@
 
 ## Private subtitle menu implementation — 2026-10-31
 
-**Implemented / automated-tested / device-unverified; browser acceptance pending.**
+**Implemented / automated-tested / device-unverified; connected-Chrome acceptance pending.**
 With the existing opt-in enabled, eligible details offer Subtitle playback
 (WebVTT). A source-pinned preparation page validates up to eight admitted tracks
 within twelve seconds. Missing/malformed/unsupported tracks produce a clear
@@ -13,13 +13,17 @@ The play item uses official vendor-hosted unmodified HTML5X, Off initially,
 credential-free CORS and its native subtitle panel. Distinct keys such as
 `deu-x-7`/`deu-x-18` preserve duplicate-language absolute indices and explicit
 track labels. Switching uses the official panel rather than starting a new video.
-The [partial private Chrome run and remaining IAB gates](private-subtitle-results.md)
+The [partial private Chrome run and remaining browser gates](private-subtitle-results.md)
 establish initial callback/menu/resource operation, not a full software pass.
 Placement remains unaccepted. Generated-output layout/completion candidates and
-delayed failures need integrated-browser checks.
+delayed failures need connected-Chrome checks under the latest explicit instruction.
 The post-run candidate stops completion rather than advancing to the separate
 original-playback row, and disables next/previous mode changes. These published
-extended properties also remain unverified in the integrated browser.
+extended properties also remain browser-unverified.
+Track properties now carry only bounded opaque IDs. The transient bridge checks
+the authenticated subtitle resource when HTML5X requests its URL, with a fixed
+recovery notice for fresh denial/failure. Actual resolver timing and any later
+native-fetch failure remain browser gates.
 
 An independently authored transient interaction bridge uses only the published
 [interaction interface](https://msx.benzac.de/wiki/index.php?title=Interaction_Plugin)

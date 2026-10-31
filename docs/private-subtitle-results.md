@@ -1,4 +1,26 @@
-# Private subtitle UI: partial Chrome evidence and pending IAB — issue #22
+# Private subtitle UI: partial evidence and resumed Chrome acceptance — issue #22
+
+## Resumed browser contract
+
+The later explicit maintainer instruction is now connected Chrome for **all**
+browser verification and media inspection. It supersedes the temporary IAB-only
+pause recorded below. No IAB retry/fallback is needed. The original partial Chrome
+evidence stays valid within its limits. Final connected-Chrome placement, natural
+expiry, failure recovery and Stop/completion acceptance is still pending.
+
+The resumed candidate uses HTML5X's documented non-HTTP subtitle IDs. On a subtitle
+resolver request, the first-party bridge validates the existing authenticated
+resource through same-origin XHR, then returns only that fixed own-origin resource
+URL. Fresh denial/missing/type/size failures show a fixed Off/Stop recovery notice;
+no timer, renewal, persistence, arbitrary URL or online proxy is introduced.
+This callback behavior and the native player's load timing must be tested, not
+inferred from Node guards. A failure after callback validation may still race the
+native fetch; strict resource denial is preserved. Already delivered captions
+cannot be recalled. Only the trusted synthetic subtitles scenario has a fixed
+240-second session lifetime to exercise natural expiry within a 900-second run;
+production settings and other scenarios are unchanged.
+
+## Historical preparation pause
 
 **Implemented / automated-tested / device-unverified; not accepted for merge.**
 The private menu/bridge has partial actual connected-Chrome evidence. The later

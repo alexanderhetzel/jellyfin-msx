@@ -410,14 +410,9 @@ def test_subtitle_menu_uses_private_source_pinned_bridge_and_unique_labels(subti
     assert props["html5x:subtitle"] == "default" and props["html5x:cors"] == "true"
     assert props["trigger:complete"] == "player:stop"
     assert props["button:next:enable"] == props["button:prev:enable"] == "false"
-    assert (
-        props["html5x:subtitle:deu-x-7:Deutsch (track 7)"]
-        == "https://portal.test" + p.subtitle_path + "/7.vtt"
-    )
-    assert (
-        props["html5x:subtitle:deu-x-12:Deutsch (track 12)"]
-        == "https://portal.test" + p.subtitle_path + "/12.vtt"
-    )
+    assert props["html5x:subtitle:deu-x-7:Deutsch (track 7)"] == "portal-subtitle-7"
+    assert props["html5x:subtitle:deu-x-12:Deutsch (track 12)"] == "portal-subtitle-12"
+    assert "/api/device/" not in json.dumps(page)
     assert len(p.subtitle_requests) == 2
     assert not any(r.url.path.endswith("PlaybackInfo") for r in p.fake.requests)
 
