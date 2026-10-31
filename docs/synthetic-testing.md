@@ -1,5 +1,11 @@
 # Synthetic integration lab
 
+The [pending-code expiry check](pairing-code-expiry-check.md) prepares a separate
+resumable normal-form flow using the existing 300-second lifetime and baseline
+fixture. Its mocked retained-code-valid counterexample must fail the ordinary
+denial assertion. Actual expiry/recovery remains unverified; no new scenario,
+clock override, service or private Network authority is used.
+
 The [positive own-request authority assessment](hosted-session-network-assessment.md)
 records the separate conditional main-frame metadata design after three stopped
 poster-capture attempts. It remains unimplemented: a separate generic preflight

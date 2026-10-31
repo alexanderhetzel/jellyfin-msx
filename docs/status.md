@@ -1,5 +1,36 @@
 # Verification status — 2026-10-31
 
+## Pending-code expiry driver preparation — issue #9
+
+**Implemented / automated-tested with mocks / runtime-unverified /
+device-unverified.** The [resumable expiry check](pairing-code-expiry-check.md)
+uses the existing 300-second pending lifetime, waits 305 monotonic seconds after
+its private unused-code read, requires a clean fresh companion Step 1 and one
+expired submission, then normal new-code recovery and confirmed Disconnect.
+The original run deadline, post-read 485-second allowance, post-wait 180-second
+allowance and 60-second cleanup reserve are enforced. Async steps yield fixed
+progress around bounded operations; no code, raw errors or private URL is emitted.
+No live clock/TTL override, fixture, public scenario, service or production change
+was added. No CDP/private Network identity is required.
+
+The same denial predicate rejects an independent model that keeps the expired
+code valid. Other guards cover stale/CSRF evidence, missing time progression,
+budget overshoot/boundary, recovery refusal, stalled operations, late creation,
+cancellation and cleanup uncertainty. Independent plan review preceded edits;
+implementation review identified actual operation-timeout and post-wait reserve
+gaps, plus a zero-allowance scheduling edge; these were corrected before the
+final focused run. The required scope is baseline/candidate-off, with candidate
+delivery markers refused. **17 expiry Node tests / 91 total Node tests passed**.
+Frozen build/dev sync after current main's Pillow 13 update passed; full
+`uv run --no-sync pytest -q -W error`: **690 passed / 1 POSIX skip**;
+Ruff check/format passed (**124 files**), as did syntax/diff checks.
+
+This is a new pending-code criterion only. Historical JSON/playback/CSRF/login
+detector observations remain historical, and preferred outer/inner playback,
+authenticated-session expiry and A/B resource acceptance are separate gaps.
+No runtime or ordinary five-minute wait has been executed for this new driver.
+PR #73 remains draft and #9 remains open pending separately granted actual evidence.
+
 ## Pillow 13 development dependency review — #80
 
 **Implemented / automated-tested locally / device-unverified:** existing PR #78
