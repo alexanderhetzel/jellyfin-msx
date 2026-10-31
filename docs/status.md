@@ -465,6 +465,26 @@ code, renewal/cache, security or deployment changes.
 
 ## Remembered-device client preparation — issue #12
 
+**Startup-only foreground design — implemented / automated-tested /
+device-unverified; actual entry pending:** a second independent protocol audit
+confirmed the previous root reference grammar was valid but ignored fallback
+items. The chosen ordinary root has no reference/ready and executes the published
+startup-only `[home|content:request:interaction:init@...]` action. Private Pair,
+home and disconnect pages do not inherit it. Context-menu/restored-data exceptions,
+fresh-scene home behavior and error/Back recovery remain actual runtime criteria;
+no local scene/replacement model substitutes for them. Callback completion,
+exact-save, storage, deadline/epoch, singleflight and transient ownership remain
+unchanged. No CSP/body/timing or CommonJS proposal is mixed into this design.
+
+The generated-root contract regression first failed with the prior reference,
+then passed with ordered foreground dispatch and private-page hook isolation.
+On main `b9199f0`, full `uv run --no-sync pytest -W error`: **553 passed /
+1 POSIX skip**; **22 remembered-client Node guards**, Ruff check/format
+**114 files**, diff check and rebuilt offline wheel/exact **27-member** allowlist
+passed. All prior failed normal-entry/body/callback-order observations and unknown
+stages remain recorded below. No browser/relay was used for this source milestone;
+the source design is not a proven fix for their timeout.
+
 **Bounded source-comparison milestone — implemented / automated-tested /
 device-unverified, runtime still unaccepted:** main `e21d103` now includes accepted
 #18/#19. Comparing their registered request handler with #12 identified an extra

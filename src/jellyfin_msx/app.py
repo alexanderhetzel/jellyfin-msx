@@ -612,7 +612,8 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
             ],
         )
         page.update(
-            reference="request:interaction:init@" + url("/msx/remember.html"), restore=False
+            action="[home|content:request:interaction:init@" + url("/msx/remember.html") + "]",
+            restore=False,
         )
         return page
 

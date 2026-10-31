@@ -2,14 +2,44 @@
 
 ## Opt-in MSX client — 2026-10-31
 
-### Source comparison with accepted lifecycle/resume — 2026-10-31
+### Startup-only foreground entry — 2026-10-31
+
+**Implemented / automated-tested / device-unverified; runtime acceptance pending.**
+The public startup document is now ordinary content with usable Retry/Pair item
+definitions, without `reference` or `ready`. Its single startup action is
+`[home|content:request:interaction:init@` followed by the same own plugin URL and
+`]`. The published [Start Action](https://msx.benzac.de/wiki/index.php?title=Start_Action)
+replaces default home, so the explicit home preserves that scene step before the
+foreground content request. Unlike a ready hook, this is a startup action, not an
+action attached to every content-ready notification. Private Pair/home/disconnect
+pages contain no startup action, reference or ready hook.
+
+The public contract skips the action if the context menu is open at startup or
+start data is restored after a link. Those are explicit exceptions, not passes.
+The [home action](https://msx.benzac.de/wiki/index.php?title=Internal_Actions)
+may open the context menu if the main scene is already active. Normal fresh entry,
+visible fallback and error/Back access to Retry/Pair therefore need actual runtime
+verification; local JSON tests do not emulate runtime scene state or promise that
+recovery navigation has passed. No ready/replace sequence, delay, background loader,
+CSP/body change or ambient-module guard is combined with this design.
+
+A second independent protocol review confirmed that the prior reference syntax
+is valid but startup reference ignores its root fallback items. A proposed
+ready/replace composition cannot prove one-shot dispatch from the published API:
+ordered actions do not promise replacement completion before a request callback.
+The chosen startup-only foreground design avoids that extra ordering assumption.
+It is a product entry/recovery change, not proof of the previous timeout's cause.
+The separate ambient-CommonJS early-return witness and minimal guard proposal
+remain isolated; no actual ambient module or guard-only runtime fix is claimed.
+
+### Earlier callback-order comparison with accepted lifecycle/resume — 2026-10-31
 
 **Implemented / automated-tested / device-unverified; actual startup unaccepted.**
 The bounded audit compares this client with accepted #18/#19 at main `e21d103`:
 
 | Boundary | Comparison and result |
 | --- | --- |
-| Startup | #12 uses the documented public content-root reference; #18/#19 enter a private content-request action after normal pairing. Their acceptance does not validate automatic remembered startup. |
+| Startup | #12 then used the documented public content-root reference; #18/#19 enter a private content-request action after normal pairing. Their acceptance does not validate automatic remembered startup. |
 | SDK registration | Both register inside `TVXPluginTools.onReady`, then call `TVXInteractionPlugin.init`, using the same vendor SDK tag and deferred own script. |
 | Delivered init | Lifecycle handles it directly with an empty `ready` callback. #12 unnecessarily waited for a separate handler-ready notification after SDK registration. That extra event-order dependency is removed. |
 | Storage | Only #12 requires renewal storage. Its actual `storage.isReady` check and bounded polling remain; handler notification is not a substitute for this check. |
@@ -52,9 +82,8 @@ other pages retain frame denial. Script policy allows our own script and the
 vendor-hosted public API library; connect policy is same-origin. No proprietary
 runtime is copied, and no inline/eval exception or cross-origin POST is added.
 
-The startup document now uses the published
-[content reference request contract](https://msx.benzac.de/wiki/index.php?title=Content_Root_Object):
-`reference: request:interaction:init@` followed by our public plugin URL.
+The startup document uses the startup-only foreground action described above;
+its Retry control uses the same content-interaction request explicitly.
 The handler is registered after outer SDK readiness; `handler.ready` is
 diagnostic-only. One accepted `init` request waits for actual storage readiness,
 ordinary pairing or renewal, exact save/readback and authenticated home,
@@ -73,9 +102,10 @@ reject late work if the timer callback itself has not run. The deadline uses the
 monotonic performance clock where available, otherwise the local wall clock.
 An upstream renewal may already have committed; uncertain authority requires
 explicit re-pairing. A plugin that never loads cannot run this deadline: normal
-runtime request error/retry is the delivery boundary. The reference ignores most
-root content items, so the old two-button fallback is not promised on delivery
-failure. Actual automatic entry/reload/reopen/restart acceptance remains separate;
+runtime request error/retry is the delivery boundary. The earlier reference-based
+design ignored root fallback items; the current design retains them as ordinary
+content, while their actual accessibility on error/Back remains unverified.
+Actual automatic entry/reload/reopen/restart acceptance remains separate;
 this callback-contract correction does not prove a fix for paused transport.
 
 The first actual request-contract run at `cb0f162` failed normal automatic entry:

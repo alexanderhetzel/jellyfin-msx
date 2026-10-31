@@ -67,11 +67,15 @@ def test_opt_in_client_routes_csp_and_normal_pairing_restart_isolation(tmp_path)
         headers = {"Origin": ORIGIN}
         assert client.get("/msx/start.json").json()["parameter"].endswith("/msx/remember.json")
         start = client.get("/msx/remember.json").json()
-        assert start["reference"] == "request:interaction:init@" + ORIGIN + "/msx/remember.html"
-        assert "action" not in start
+        assert "reference" not in start and "ready" not in start
+        assert start["action"] == (
+            "[home|content:request:interaction:init@" + ORIGIN + "/msx/remember.html]"
+        )
+        assert start["restore"] is False
         assert start["items"][0]["action"] == (
             "content:request:interaction:init@" + ORIGIN + "/msx/remember.html"
         )
+        assert start["items"][1]["action"] == "content:" + ORIGIN + "/msx/pair.json"
         plugin = client.get("/msx/remember.html")
         assert 'data-jellyfin-msx-lifecycle="1"' in plugin.text
         body = re.search(r"<body([^>]*)>(.*?)</body>", plugin.text, re.S)
@@ -93,6 +97,7 @@ def test_opt_in_client_routes_csp_and_normal_pairing_restart_isolation(tmp_path)
         assert client.post(path + "pair", json={}).status_code == 403
         assert client.post(path + "pair", json={"untrusted": 1}, headers=headers).status_code == 400
         created = client.post(path + "pair", json={}, headers=headers).json()
+        assert not {"action", "ready", "reference"}.intersection(created["page"])
         pending = created["session"]
         assert (
             client.post(path + "status", json={"session": pending}, headers=headers).json()[
@@ -135,7 +140,9 @@ def test_opt_in_client_routes_csp_and_normal_pairing_restart_isolation(tmp_path)
         )
         home = client.get(f"/msx/device/{fresh}/home.json").json()
         assert home["headline"] == "Jellyfin libraries"
+        assert not {"action", "ready", "reference"}.intersection(home)
         confirm = client.get(action(home, "Disconnect TV").removeprefix("content:")).json()
+        assert not {"action", "ready", "reference"}.intersection(confirm)
         client.get(action(confirm, "Confirm disconnect").removeprefix("content:"))
         assert (
             client.post(
