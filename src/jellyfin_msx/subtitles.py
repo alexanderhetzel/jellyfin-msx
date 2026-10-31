@@ -2,6 +2,7 @@
 
 import asyncio
 import re
+import unicodedata
 from collections import Counter
 
 import httpx
@@ -13,9 +14,18 @@ from .playback import compatible
 MAX_BYTES = 1024 * 1024
 DEADLINE = 8
 MAX_ACTIVE = 4
+# Conservative client admission policy, not a font or hardware decoder limit.
+MAX_CUE_LINES = 2
+MAX_LINE_UNITS = 32
+UNSUPPORTED_LAYOUT = (
+    "Subtitle layout is unsupported. Use plain WebVTT with at most two short lines "
+    "per cue; long or complex text layouts are unavailable. Play without subtitles."
+)
+# Generated settings only: never accept arbitrary upstream layout or STYLE blocks.
+CUE_LAYOUT = "line:70%,end position:50%,center size:90% align:center"
 OFFICIAL_ORIGINS = {"https://msx.benzac.de", "https://www.msx.benzac.de"}
 UNSUPPORTED = (
-    "Only local external plain WebVTT subtitles are supported by this resource. "
+    "Only local external plain WebVTT with short one/two-line cues is supported. "
     "SRT/ASS, embedded and image subtitles are unavailable; no conversion is requested."
 )
 TIMING = re.compile(
@@ -33,7 +43,7 @@ def milliseconds(value):
     return ((hours * 60 + minutes) * 60 + seconds) * 1000 + millis
 
 
-def plain_vtt(raw):
+def plain_vtt(raw, *, position=False):
     """Admit a small, explicit subset, without changing the media timebase."""
     if len(raw) > MAX_BYTES:
         raise PortalError(502, "Subtitle exceeds the size limit. Select Off.")
@@ -66,12 +76,28 @@ def plain_vtt(raw):
             or len(block) > 4096
         ):
             raise PortalError(502, "Unsupported WebVTT cue or layout. Select Off.")
+        if len(lines) - 1 > MAX_CUE_LINES or any(
+            any(
+                unicodedata.category(c).startswith(("M", "C"))
+                or unicodedata.category(c) in {"Zl", "Zp"}
+                for c in line
+            )
+            or sum(2 if unicodedata.east_asian_width(c) in {"W", "F"} else 1 for c in line)
+            > MAX_LINE_UNITS
+            for line in lines[1:]
+        ):
+            raise PortalError(502, UNSUPPORTED_LAYOUT)
         start, end = (milliseconds(timing[g]) for g in ("start", "end"))
         if start < previous or end <= start or end > 86400000:
             raise PortalError(502, "Invalid WebVTT timing. Select Off.")
         previous = end  # Overlapping cues are outside the initial plain-text subset.
+        if position:
+            lines[0] += " " + CUE_LAYOUT
         output.append("\n".join(lines))
-    return ("\n\n".join(output) + "\n").encode("utf-8")
+    result = ("\n\n".join(output) + "\n").encode("utf-8")
+    if len(result) > MAX_BYTES:
+        raise PortalError(502, "Subtitle exceeds the size limit. Select Off.")
+    return result
 
 
 def eligible_track(stream):
@@ -129,6 +155,24 @@ class SubtitleResources:
         self.state = state
         self.active = 0
 
+    async def prepare(self, secret, item_id, source_id):
+        """Bound startup validation; never substitute another source or track."""
+        self.state.get(secret)
+        try:
+            async with asyncio.timeout(12):
+                catalogue = await self.request(secret, item_id, source_id)
+                available = catalogue["tracks"][:8]
+                if not available:
+                    raise PortalError(409, UNSUPPORTED)
+                for track in available:
+                    await self.request(secret, item_id, source_id, track["index"])
+                self.state.get(secret)
+                return available
+        except TimeoutError:
+            raise PortalError(
+                504, "Subtitle preparation timed out. Play without subtitles."
+            ) from None
+
     async def request(self, secret, item_id, source_id, index=None):
         device = self.state.get(secret)
         if not self.jellyfin.settings.enable_subtitle_resources:
@@ -179,7 +223,7 @@ class SubtitleResources:
                 self.state.get(secret)
                 if device.token.encode() in raw:
                     raise PortalError(502, "Invalid subtitle content. Select Off.")
-                return plain_vtt(bytes(raw))
+                return plain_vtt(bytes(raw), position=True)
         except (httpx.RequestError, TimeoutError):
             raise PortalError(504, "Subtitle request timed out. Retry or select Off.") from None
         finally:

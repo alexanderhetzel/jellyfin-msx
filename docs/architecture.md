@@ -118,8 +118,13 @@ a visible MSX response error. Player controls are MSX's standard controls.
 official HTML5X as a constrained browser-tested candidate for #22. Raw SRT/ASS
 and tested embedded MP4 text did not render; paused-switch/seek placement and
 missing-track notices have limitations. Production subtitles remain Off. The
-opt-in backend [resource contract](subtitle-resources.md) authenticates and bounds
-plain external WebVTT; actual private hosted selection/placement remains #22.
+opt-in [resource/bridge implementation](subtitle-resources.md) authenticates and
+bounds a two-line, short-text external WebVTT subset and offers source-pinned
+HTML5X controls. Actual Chrome delivery, boundary text, selection/seek/Off/Stop,
+rejected-layout original recovery and native-fetch expiry denial support #22's
+software criteria. Intermittent hosted Data Load Errors and missing native
+per-track error notices remain documented; no cause/fix or physical pass is
+inferred. See [source-pinned browser evidence](private-subtitle-results.md).
 
 M1 records playback *decisions*, not proof that video started. Automatic fallback,
 watch progress, resume, stop reporting and active transcode cleanup are M3 work.

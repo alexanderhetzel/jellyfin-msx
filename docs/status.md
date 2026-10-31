@@ -1,5 +1,41 @@
 # Verification status — 2026-10-31
 
+## Private subtitle selection — issue #22
+
+**Implemented / automated-tested / browser-tested / device-unverified.**
+Independent final review maps all four original software/browser criteria to
+source-pinned actual Chrome/MSX observations and mocked boundaries. Off and
+distinct source/absolute-index language choices work; HTTPS resources authenticate
+every native GET; sampled switching/seek/Off/Stop preserve position and timing.
+The declared two-line/32-display-unit client subset renders its W32/Han16
+boundary. Retained four-line/W33 negatives explain rejection and recover to
+decoded originals without conversion, truncation or timestamp changes.
+
+A later unused native subtitle GET received correlated HTTP401 after expiry.
+No specific per-track notice appeared; manual Off/Stop and expired-video replay
+recovery worked. Capability URLs remain private bearer material; delivered cue
+bytes cannot be recalled. Physical Philips/audio/remote/overscan remain issue4.
+
+Intermittent Data Load Errors during context reopening remain recorded. The
+failed document-marker comparison was removed, not declared a fix. Unchanged
+`e4e1ef97` completed healthy → layout rejection → healthy and same-cached-context
+Back/reopen (init1→2, visible by a 9355ms sample). Generic body reads preceded the
+result; no causal tool/application fix or zero-transient-failure guarantee.
+The historical removed proposal's extended sequence is not an original feature
+gate. [Actual actions, source pins and limits](private-subtitle-results.md) retain
+both successful and failed observations.
+
+Full Windows simple-cue source: `uv run pytest -W error` 428 passed / 1 POSIX skip.
+Restoration: 87 affected tests, Node17, Ruff check/format95 files, diff and locked
+offline wheel/exact22-member allowlist passed; current restored-head CI/CodeQL
+green. Final documentation/head review and merge checks are recorded in PR65.
+
+Latest cleanup at 11:05:55 UTC: supervisor exit0/stopped, all nine owned PIDs,
+listener18092/control absent, Network observation disabled, viewport reset
+succeeded and both tabs closed. Session naturally expired during cleanup Back;
+no logout claim. Original600-second bound preserved. No operator/Ultra, vendor
+code, renewal/cache, security or deployment changes.
+
 ## Authenticated hosted series navigation — issue #7
 
 **Implemented / automated-tested / browser-tested / device-unverified:** the
