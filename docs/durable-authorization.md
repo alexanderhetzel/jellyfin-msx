@@ -130,7 +130,20 @@ The later focused diagnostic adds only a RAM DOM bitmask on the own plugin's
 entered, not that MSX displayed the requested content. The marker has no secrets,
 context, URLs, storage, logging or telemetry. It resets with each document and
 does not change startup scheduling/authentication. A delayed-SDK adapter guard
-checks the boundary progression; actual automatic-iframe observation is pending.
+checks the boundary progression.
+
+The focused run at `fecdc4e` displayed the original fallback and one iframe with
+our public HTML source. The documented own-frame/test-ID attribute query failed
+with a Playwright selector deadline; no marker value was measured. The frame's
+`contentDocument` was unavailable across origins. This is **unknown**, not zero,
+and does not locate document loading, adapter execution or content delivery.
+No HTML/JS/vendor-SDK request/response categories were captured; no Network
+observation or new server telemetry was enabled. No credentials, Retry, restart
+or broad matrix were exercised. The known binary's pinned hash and exclusive
+bind passed after correcting a missing default binary path; one retry retained
+the original startup/total limits. Explicit cleanup at 11:57 Vienna time reported
+session exit zero/stopped and all nine owned PIDs/listener/control/helpers absent;
+the one owned tab closed. No speculative scheduling fix is inferred.
 
 At source `95f1405`, official hosted MSX in connected Chrome used normal startup
 without `init=1`. Automatic startup displayed Opening Jellyfin. Ordinary Retry
