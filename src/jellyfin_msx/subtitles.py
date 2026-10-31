@@ -129,6 +129,24 @@ class SubtitleResources:
         self.state = state
         self.active = 0
 
+    async def prepare(self, secret, item_id, source_id):
+        """Bound startup validation; never substitute another source or track."""
+        self.state.get(secret)
+        try:
+            async with asyncio.timeout(12):
+                catalogue = await self.request(secret, item_id, source_id)
+                available = catalogue["tracks"][:8]
+                if not available:
+                    raise PortalError(409, UNSUPPORTED)
+                for track in available:
+                    await self.request(secret, item_id, source_id, track["index"])
+                self.state.get(secret)
+                return available
+        except TimeoutError:
+            raise PortalError(
+                504, "Subtitle preparation timed out. Play without subtitles."
+            ) from None
+
     async def request(self, secret, item_id, source_id, index=None):
         device = self.state.get(secret)
         if not self.jellyfin.settings.enable_subtitle_resources:

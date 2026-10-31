@@ -1,6 +1,7 @@
 """Mocked private delivery evidence; this is not an MSX playback test."""
 
 import asyncio
+import json
 from dataclasses import replace
 
 import httpx
@@ -365,3 +366,81 @@ def test_deadline_and_concurrency_bound(subtitle_portal, monkeypatch):
         await jellyfin.client.aclose()
 
     asyncio.run(run())
+
+
+def test_subtitle_menu_uses_private_source_pinned_bridge_and_unique_labels(subtitle_portal):
+    p = subtitle_portal
+    p.fake.source["MediaStreams"].append(p.fake.source["MediaStreams"][2] | {"Index": 12})
+    detail = p.subtitle_client.get(p.path + "/detail.json", params={"item_id": MOVIE}).json()
+    target = next(
+        i["action"] for i in detail["items"] if i["title"].startswith("Subtitle playback")
+    )
+    assert target.startswith(
+        "content:request:interaction:init@https://portal.test/subtitle-bridge.html#"
+    )
+    assert target.endswith(f"/{MOVIE}/{SOURCE}") and TOKEN not in target
+    page = p.subtitle_client.get(
+        p.path + "/subtitle-playback.json", params={"item_id": MOVIE, "media_source_id": SOURCE}
+    ).json()
+    playback = page["items"][0]
+    assert (
+        playback["action"]
+        == "video:plugin:https://msx.benzac.de/plugins/html5x.html?id=portal-video"
+    )
+    assert TOKEN not in json.dumps(page) and "ApiKey" not in json.dumps(page)
+    props = playback["properties"]
+    assert props["html5x:subtitle"] == "default" and props["html5x:cors"] == "true"
+    assert (
+        props["html5x:subtitle:deu-x-7:Deutsch (track 7)"]
+        == "https://portal.test" + p.subtitle_path + "/7.vtt"
+    )
+    assert (
+        props["html5x:subtitle:deu-x-12:Deutsch (track 12)"]
+        == "https://portal.test" + p.subtitle_path + "/12.vtt"
+    )
+    assert len(p.subtitle_requests) == 2
+    assert not any(r.url.path.endswith("PlaybackInfo") for r in p.fake.requests)
+
+
+@pytest.mark.parametrize("status,content", [(404, VTT), (200, b"bad VTT")])
+def test_bad_subtitle_preparation_offers_clear_original_recovery(subtitle_portal, status, content):
+    p = subtitle_portal
+    p.subtitle_response = lambda: httpx.Response(
+        status, content=content, headers={"Content-Type": "text/vtt"}
+    )
+    page = p.subtitle_client.get(
+        p.path + "/subtitle-playback.json", params={"item_id": MOVIE, "media_source_id": SOURCE}
+    ).json()
+    assert page["headline"] == "Subtitles unavailable"
+    assert page["items"][1]["title"] == "Play without subtitles"
+    assert page["items"][1]["action"].startswith("video:resolve:")
+    assert not any(i["action"].startswith("video:plugin:") for i in page["items"])
+    assert TOKEN not in json.dumps(page)
+
+
+def test_bridge_public_code_is_secret_free_and_only_html_frame_policy_changes(portal):
+    html = portal.client.get("/subtitle-bridge.html")
+    js = portal.client.get("/subtitle-bridge.js")
+    assert html.status_code == js.status_code == 200
+    assert "https://msx.benzac.de/js/tvx-plugin.min.js" in html.text
+    assert "script-src 'self' https://msx.benzac.de" in html.headers["content-security-policy"]
+    assert (
+        "frame-ancestors https://msx.benzac.de https://www.msx.benzac.de"
+        in html.headers["content-security-policy"]
+    )
+    assert "connect-src 'self'" in html.headers["content-security-policy"]
+    assert "frame-ancestors 'none'" in portal.client.get("/pair").headers["content-security-policy"]
+    assert "application/javascript" in js.headers["content-type"]
+    assert "no-store" in js.headers["cache-control"]
+    assert "no-referrer" == html.headers["referrer-policy"]
+    assert TOKEN not in html.text + js.text and portal.secret not in html.text + js.text
+
+
+def test_subtitle_ui_absent_by_default_and_private_preparation_denied(portal):
+    detail = portal.client.get(portal.path + "/detail.json", params={"item_id": MOVIE}).json()
+    assert not any(i["title"].startswith("Subtitle playback") for i in detail["items"])
+    response = portal.client.get(
+        "/msx/device/unknown/subtitle-playback.json",
+        params={"item_id": MOVIE, "media_source_id": SOURCE},
+    )
+    assert response.json()["response"]["status"] == 401

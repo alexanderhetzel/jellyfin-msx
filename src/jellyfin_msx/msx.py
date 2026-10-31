@@ -46,6 +46,42 @@ def button(title: str, action: str, **kwargs):
     return {"title": text(title), "action": action, **kwargs}
 
 
+def subtitle_playback(available, resource, original):
+    """Public HTML5X properties; unique keys retain duplicate-language indices."""
+    names = {"deu": "Deutsch", "ger": "Deutsch", "eng": "English"}
+    properties = {
+        "button:content:icon": "subtitles",
+        "button:content:action": "panel:request:player:subtitle",
+        "html5x:cors": "true",
+        "html5x:subtitle": "default",
+    }
+    for track in available:
+        index, language = track["index"], track["language"]
+        label = f"{names.get(language, language)} (track {index})"
+        properties[f"html5x:subtitle:{language}-x-{index}:{label}"] = resource(index)
+    return content(
+        "Subtitles",
+        [
+            button(
+                "Play with subtitle controls (Off initially)",
+                "video:plugin:https://msx.benzac.de/plugins/html5x.html?id=portal-video",
+                playerLabel="Subtitles: use the subtitle button to choose a track or Off",
+                properties=properties,
+            ),
+            button("Play without subtitles", original),
+            button(
+                "Subtitle help",
+                "info:Use the subtitle button during playback for language or Off. "
+                "Selection keeps the playback position. If a track stops loading, "
+                "select Off or Stop and reopen details. Only external plain WebVTT is supported; "
+                "SRT/ASS, embedded and image subtitles need a compatible stored sidecar. "
+                "No conversion or burn-in is requested. Up to eight tracks are offered.",
+            ),
+            button("Back to details", "back"),
+        ],
+    )
+
+
 def pairing_page(headline, companion, code, image, proceed, retry, minutes):
     """Native activation layout; only the two recovery/proceed controls take focus."""
     page = content(headline, [])

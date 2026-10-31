@@ -1,5 +1,58 @@
 # Bounded subtitle resources — issue #22
 
+## Private subtitle menu implementation — 2026-10-31
+
+**Implemented / automated-tested / device-unverified; browser acceptance pending.**
+With the existing opt-in enabled, eligible details offer Subtitle playback
+(WebVTT). A source-pinned preparation page validates up to eight admitted tracks
+within twelve seconds. Missing/malformed/unsupported tracks produce a clear
+Subtitles unavailable page, a fixed explanation and Play without subtitles/Back
+recovery. No conversion is requested. The normal default deployment is unchanged.
+
+The play item uses official vendor-hosted unmodified HTML5X, Off initially,
+credential-free CORS and its native subtitle panel. Distinct keys such as
+`deu-x-7`/`deu-x-18` preserve duplicate-language absolute indices and explicit
+track labels. Switching uses the official panel rather than starting a new video.
+Actual callback ABI, timing/position/Stop, placement and delayed resource failures
+are browser gates; existing public research does not certify this private path.
+
+An independently authored transient interaction bridge uses only the published
+[interaction interface](https://msx.benzac.de/wiki/index.php?title=Interaction_Plugin)
+and [HTML5X ID interface](https://msx.benzac.de/wiki/index.php?title=HTML5X_Plugin).
+It loads from the portal origin; capability/item/source context is a client-side
+fragment, never a vendor-host HTTP query. The constant vendor player URL has only
+`id=portal-video`. The bridge requests the ordinary source-pinned play resolver
+over same-origin XHR and supplies its media URL through the public callback.
+Putting the resolved `ApiKey` URL into vendor `?url=` would disclose it in the
+vendor HTTP request and is deliberately excluded. Direct video's existing
+client/player token tradeoff still applies; subtitles withhold upstream tokens.
+
+Bridge HTML permits framing only by exact official MSX origins, same-origin XHR
+and scripts from self plus the vendor-hosted library. No inline script, arbitrary
+URL fetch, telemetry, logging, storage, renewal or background timer. Async replies
+are discarded if fragment context changes. Private responses remain no-store and
+no-referrer. Fragment URLs and screenshots remain private bearer material.
+
+Interaction ownership with #12: remember bootstrap/enrollment owns startup and
+pending pairing, with no continuing background work after authenticated home.
+The explicit authenticated subtitle action may replace that interaction plugin.
+Normal private Back and server Disconnect/Confirm do not reload remember.
+Never restore/rotate remember authority while subtitle playback uses the current
+grant; an explicit later public remember startup owns restoration. The subtitle
+bridge never reads/writes persistent credentials or assumes automatic restoration
+of the previous plugin. Final combined integration is subject to current-main review.
+
+Synthetic verification uses a trusted startup-only `subtitles` scenario on the
+existing bounded supervisor: normal pairing/auth, three local VTT tracks with
+German/English/duplicate German, plus missing/malformed startup negatives whose
+original recovery uses the same reviewed clip and strict authenticated Range
+endpoint. No public mutation API, operator configuration, network fallback or
+supervisor lifetime/listener change. Node guards test the first-party bridge;
+they do not substitute for MSX execution. Wheel/context allowlists include the
+reviewed first-party bridge HTML/JS and continue excluding all test tools/media.
+
+## Historical backend milestone — 2026-10-30
+
 **Implemented / automated-tested / device-unverified.** Opt-in backend contract,
 not completed native selection. Default `MSX_ENABLE_SUBTITLE_RESOURCES=false`;
 normal MSX UI remains Off. Issue #22 stays open for controlled-origin private

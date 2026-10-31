@@ -31,7 +31,7 @@ def package_sources(root: Path) -> dict[str, bytes]:
     return {
         name.removeprefix("src/"): (root / name).read_bytes()
         for name in tracked
-        if name.endswith((".py", ".html"))
+        if name.endswith((".py", ".html", ".js"))
     }
 
 

@@ -18,7 +18,7 @@ from .device_profile import MODEL, PROFILE_BASIS, evidence_warnings
 from .errors import PortalError
 from .jellyfin import Jellyfin, identifier
 from .middleware import PairBodyLimit
-from .msx import button, content, pairing_page, text, wrapped
+from .msx import button, content, pairing_page, subtitle_playback, text, wrapped
 from .pairing_qr import activation_png
 from .playback import PROFILE_NAME, choose_source, compatibility_reasons, resolve
 from .presentation import PAIR_CSS
@@ -27,6 +27,12 @@ from .subtitles import OFFICIAL_ORIGINS, SubtitleResources
 
 ItemId = Annotated[str, Query(pattern=r"^[a-fA-F0-9-]{32,36}$")]
 TEMPLATE = Path(__file__).with_name("templates").joinpath("pair.html").read_text(encoding="utf-8")
+SUBTITLE_BRIDGE = (
+    Path(__file__)
+    .with_name("templates")
+    .joinpath("subtitle-bridge.html")
+    .read_text(encoding="utf-8")
+)
 
 
 def create_app(settings: Settings | None = None, transport=None, state: State | None = None):
@@ -98,6 +104,12 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
                 "frame-ancestors 'none'; base-uri 'none'",
             }
         )
+        if request.url.path == "/subtitle-bridge.html":
+            response.headers["Content-Security-Policy"] = (
+                "default-src 'none'; script-src 'self' https://msx.benzac.de; "
+                "connect-src 'self'; frame-ancestors https://msx.benzac.de "
+                "https://www.msx.benzac.de; base-uri 'none'"
+            )
         if not settings.allow_http:
             response.headers["Strict-Transport-Security"] = "max-age=31536000"
         if request.url.path.startswith("/api/device/") and "/subtitles/" in request.url.path:
@@ -562,6 +574,15 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
             )
         if settings.allow_transcoding and selected:
             entries.append(play_button("Force HLS transcode", force=True))
+        if settings.enable_subtitle_resources and selected:
+            entries.append(
+                button(
+                    "Subtitle playback (WebVTT)",
+                    "content:request:interaction:init@"
+                    + url("/subtitle-bridge.html")
+                    + f"#{secret}/{item_id}/{identifier(selected.get('Id'))}",
+                )
+            )
         subtitles = {}
         for stream in selected.get("MediaStreams", []):
             if stream.get("Type") == "Subtitle" and isinstance(stream.get("Index"), int):
@@ -588,6 +609,51 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
         )
         entries.append(button("Diagnostics", "content:" + device_url(secret, "diagnostics.json")))
         return content(item.get("Name", "Details"), entries)
+
+    @app.get("/msx/device/{secret}/subtitle-playback.json")
+    async def subtitle_player(secret: str, item_id: ItemId, media_source_id: ItemId):
+        state.get(secret)
+        identifier(item_id)
+        identifier(media_source_id)
+        original = "video:resolve:" + device_url(
+            secret, "play.json", item_id=item_id, media_source_id=media_source_id
+        )
+        try:
+            available = await subtitles.prepare(secret, item_id, media_source_id)
+        except PortalError as error:
+            state.get(secret)
+            if error.status in {401, 403}:
+                raise
+            return content(
+                "Subtitles unavailable",
+                [
+                    button("Why subtitles are unavailable", "info:" + text(error.message)),
+                    button("Play without subtitles", original),
+                    button("Back to details", "back"),
+                ],
+            )
+        state.get(secret)
+        return subtitle_playback(
+            available,
+            lambda index: url(
+                f"/api/device/{secret}/subtitles/{item_id}/{media_source_id}/{index}.vtt"
+            ),
+            original,
+        )
+
+    @app.get("/subtitle-bridge.html")
+    async def subtitle_bridge():
+        return HTMLResponse(SUBTITLE_BRIDGE)
+
+    @app.get("/subtitle-bridge.js")
+    async def subtitle_bridge_script():
+        return Response(
+            Path(__file__)
+            .with_name("templates")
+            .joinpath("subtitle-bridge.js")
+            .read_text(encoding="utf-8"),
+            media_type="application/javascript",
+        )
 
     @app.get("/msx/device/{secret}/play.json")
     async def play(
