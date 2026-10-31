@@ -27,6 +27,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from jellyfin_msx.app import create_app
 from jellyfin_msx.config import Settings
 from tools.lab import ROOT, TrafficRecorder, attach_observations
+from tools.synthetic_failures import FailureJellyfin
 from tools.synthetic_lab import SyntheticJellyfin, attach_fixture_media
 from tools.windows_job import enter_kill_on_close_job
 
@@ -52,15 +53,17 @@ def validate_origin(origin):
     return origin
 
 
-def build_public_synthetic_lab(origin, *, allow_public_synthetic=False):
+def build_public_synthetic_lab(origin, *, allow_public_synthetic=False, scenario="baseline"):
     if allow_public_synthetic is not True:
         raise PreparationError("public-synthetic-opt-in-required")
     origin = validate_origin(origin)
+    if scenario not in {"baseline", "failures"}:
+        raise PreparationError("invalid-synthetic-scenario")
     raw = CLIP.read_bytes()
     if hashlib.sha256(raw).hexdigest() != MEDIA_SHA256:
         raise PreparationError("synthetic-clip-checksum")
     settings = Settings(origin, origin + "/jellyfin", session_ttl=900, max_states=32)
-    fixture = SyntheticJellyfin(origin)
+    fixture = (FailureJellyfin if scenario == "failures" else SyntheticJellyfin)(origin)
     recorder = TrafficRecorder(httpx.MockTransport(fixture.handle))
     app = create_app(settings, transport=recorder)
     app, launch = attach_observations(app, settings, recorder)
@@ -218,7 +221,7 @@ def tunnel_helper(binary, directory, seconds):
         stop_process(process)
 
 
-def backend_helper(seconds):
+def backend_helper(seconds, scenario="baseline"):
     # Reserve our exclusive listener BEFORE the tunnel can start: never expose an
     # unrelated existing listener. Keep ownership while waiting for fixed IPC config.
     with socket.socket() as listener:
@@ -228,7 +231,9 @@ def backend_helper(seconds):
         listener.listen(128)
         print("RESERVED", flush=True)
         origin = sys.stdin.buffer.readline(256).decode("ascii").strip()
-        app, _, _ = build_public_synthetic_lab(origin, allow_public_synthetic=True)
+        app, _, _ = build_public_synthetic_lab(
+            origin, allow_public_synthetic=True, scenario=scenario
+        )
         logging.getLogger("uvicorn.error").disabled = True
         logging.getLogger("uvicorn.access").disabled = True
         server = uvicorn.Server(
@@ -291,9 +296,11 @@ def ready_public(origin):
         return False
 
 
-def activate(binary, seconds=MAX_SECONDS):
+def activate(binary, seconds=MAX_SECONDS, scenario="baseline"):
     if not 1 <= seconds <= MAX_SECONDS:
         raise PreparationError("invalid-lifetime")
+    if scenario not in {"baseline", "failures"}:
+        raise PreparationError("invalid-synthetic-scenario")
     verify_binary(binary)
     CONTROL.parent.mkdir(parents=True, exist_ok=True)
     CONTROL.mkdir()  # Exclusive; never overwrite another run's containment state.
@@ -308,7 +315,9 @@ def activate(binary, seconds=MAX_SECONDS):
             (directory / "empty.yml").write_text("{}\n")
             try:
                 base = [sys.executable, "-m", "tools.synthetic_https", "--seconds", str(seconds)]
-                backend = spawn([*base, "--backend-helper"], directory, output=True)
+                backend = spawn(
+                    [*base, "--backend-helper", "--scenario", scenario], directory, output=True
+                )
                 processes.append(backend)
                 reserved = queue.Queue(maxsize=1)
 
@@ -367,7 +376,12 @@ def activate(binary, seconds=MAX_SECONDS):
                 )
                 print(
                     json.dumps(
-                        {"status": "ready", "public_origin": origin, "maximum_seconds": seconds}
+                        {
+                            "status": "ready",
+                            "public_origin": origin,
+                            "maximum_seconds": seconds,
+                            "scenario": scenario,
+                        }
                     ),
                     flush=True,
                 )
@@ -401,13 +415,14 @@ def main():
     modes.add_argument("--tunnel-helper", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--cloudflared", type=Path, default=BINARY)
     parser.add_argument("--seconds", type=int, default=MAX_SECONDS)
+    parser.add_argument("--scenario", choices=["baseline", "failures"], default="baseline")
     parser.add_argument("--directory", type=Path, help=argparse.SUPPRESS)
     args = parser.parse_args()
     try:
         if not 1 <= args.seconds <= MAX_SECONDS:
             raise PreparationError("invalid-lifetime")
         if args.backend_helper:
-            backend_helper(args.seconds)
+            backend_helper(args.seconds, args.scenario)
         elif args.tunnel_helper:
             _owned_job = enter_kill_on_close_job()
             tunnel_helper(args.cloudflared.resolve(), args.directory, args.seconds)
@@ -419,7 +434,7 @@ def main():
         elif args.activate_public_synthetic:
             if os.name != "nt":
                 raise PreparationError("activation-requires-reviewed-windows-supervision")
-            activate(args.cloudflared.resolve(), args.seconds)
+            activate(args.cloudflared.resolve(), args.seconds, args.scenario)
             print('{"status":"stopped"}')
         else:
             verify_binary(args.cloudflared)
@@ -435,6 +450,7 @@ def main():
                         "maximum_seconds": MAX_SECONDS,
                         "approval_required": True,
                         "tunnel_started": False,
+                        "scenario": args.scenario,
                     }
                 )
             )

@@ -1,5 +1,33 @@
 # Verification status — 2026-10-31
 
+## Hosted JSON/playback/access recovery — issue #9
+
+**Implemented / automated-tested / device-unverified:** a trusted startup-only
+`--scenario failures` selects authenticated strict mocked JSON/access/unreachable
+libraries and a PlaybackInfo-rejected item. Baseline remains the default; no
+public mutation endpoint, request-selected scenario, operator configuration,
+network fallback, production behavior or dependency changed. The supervisor's
+180-second startup and original 900-second total lifetime are preserved.
+
+[The extended connector command and actual results](browser-failure-check.md)
+record a 21-stage positive official-MSX Chrome run, specific visible failures and
+Back/home recovery, healthy native decoded 1280x720/time advancement/error-null,
+and Stop paused/time-zero/readyState-zero. JSON and playback variants each failed
+the same ordinary healthy-recovery assertion with a matching fresh denial. The
+upstream network error was a controlled MockTransport exception, not a real relay
+outage. Initial stale browser-ID refusal and independent-review corrections are
+recorded. All owned tabs closed; failed RAM sessions ended with service cleanup.
+Exit 0 / stopped and all exact helper/listener/control cleanup were verified within
+the original budget. The final Disconnected / Pair again screenshot was inspected.
+
+Local full pytest **398 passed / 1 POSIX skip** with `-W error`; focused **38 passed**;
+Node guards **5 passed**; syntax/diff and Ruff passed after removing one unused
+import; format **88 files** passed. Independent review repeated source/guard/
+mocked checks and inspected local evidence; browser execution/cleanup remain
+worker-observed. Issue #9 remains open for expiry, actual relay/network outage,
+series/pagination, source/resource/cross-session coverage and complete standalone
+automation. Audible sound and physical Philips behavior remain unverified.
+
 ## Connected Chrome pairing assertions — issue #9
 
 **Implemented / automated-tested / device-unverified:** the reusable

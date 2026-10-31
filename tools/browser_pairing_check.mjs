@@ -1,10 +1,11 @@
 // First-party UI driver. It neither imports nor inspects the proprietary MSX runtime.
 // Run through the connected browser's documented Tab APIs, never against an operator lab.
+import { exerciseFailures } from "./browser_failure_check.mjs";
 const ORIGIN = /^https:\/\/[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.trycloudflare\.com$/;
-const FAULTS = new Set(["none", "csrf", "login"]);
+const FAULTS = new Set(["none", "csrf", "login", "json", "playback"]);
 
-export async function checkPairing({ origin, newTab, fault = "none", saveEvidence } = {}) {
-  if (typeof origin !== "string" || !ORIGIN.test(origin) || !FAULTS.has(fault)) {
+export async function checkPairing({ origin, newTab, fault = "none", scenario = "pairing", saveEvidence } = {}) {
+  if (typeof origin !== "string" || !ORIGIN.test(origin) || !FAULTS.has(fault) || !["pairing", "failures"].includes(scenario) || (scenario === "failures" && ["csrf", "login"].includes(fault)) || (scenario === "pairing" && ["json", "playback"].includes(fault))) {
     return { status: "failed", stage: "invalid-synthetic-options", checks: [] };
   }
   if (typeof newTab !== "function") {
@@ -17,6 +18,9 @@ export async function checkPairing({ origin, newTab, fault = "none", saveEvidenc
   let msx;
   let companion;
   let result;
+  let media;
+  let stop;
+  let failureDenial;
   const open = async (url) => {
     const tab = await newTab(); // Create blank tabs so automatic snapshots contain no code.
     tabs.push(tab);
@@ -116,6 +120,19 @@ export async function checkPairing({ origin, newTab, fault = "none", saveEvidenc
     await visible(msx, /Synthetic movies/i);
     pass();
 
+    if (scenario === "failures") {
+      stage = "hosted-failure-recovery";
+      const report = await exerciseFailures(msx, fault);
+      checks.push(...report.checks);
+      stage = report.stage;
+      if (report.status !== "passed") {
+        failureDenial = report.observed_denial;
+        throw new Error("failure-scenario-incomplete");
+      }
+      media = report.media;
+      stop = report.stop;
+    }
+
     stage = "own-session-disconnect";
     await msx.playwright.getByText(/Disconnect TV/i).click();
     await visible(msx, /Confirm disconnect/i);
@@ -131,9 +148,12 @@ export async function checkPairing({ origin, newTab, fault = "none", saveEvidenc
       await saveEvidence(await msx.screenshot({ fullPage: false }));
     }
     result = { status: "passed", stage: "complete", checks, fault, category: "hosted-browser-pairing", device_verified: false };
+    if (media) result.media = media;
+    if (stop) result.stop = stop;
   } catch {
     // Browser exceptions may contain page URLs or form values. Never forward them.
     result = { status: "failed", stage, checks, fault, category: "hosted-browser-pairing", device_verified: false };
+    if (failureDenial !== undefined) result.observed_denial = failureDenial;
     if (stage === "normal-pairing" && companion) {
       try {
         result.observed_denial = await companion.playwright.evaluate(() => {
@@ -165,5 +185,6 @@ export async function checkPairing({ origin, newTab, fault = "none", saveEvidenc
       }
     }
   }
+  result.scenario = scenario;
   return result;
 }

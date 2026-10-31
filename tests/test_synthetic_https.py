@@ -252,6 +252,7 @@ def test_owned_helpers_cleanup_on_all_supervisor_exit_paths(monkeypatch, tmp_pat
     def spawn_fake(args, directory, *, output=False):
         # These local owned Python helpers never start cloudflared or any listener.
         if "--backend-helper" in args:
+            assert args[args.index("--scenario") + 1] == "failures"
             code = (
                 "import sys; print('RESERVED',flush=True); sys.stdin.readline(); sys.stdin.read()"
             )
@@ -278,12 +279,12 @@ def test_owned_helpers_cleanup_on_all_supervisor_exit_paths(monkeypatch, tmp_pat
     monkeypatch.setattr(https, "ready_public", lambda origin: True)
     if failure == "interrupt":
         with pytest.raises(KeyboardInterrupt):
-            https.activate(binary, seconds=4)
+            https.activate(binary, seconds=4, scenario="failures")
     elif failure in {"timeout", "helper-exit"}:
         with pytest.raises(https.PreparationError):
-            https.activate(binary, seconds=4)
+            https.activate(binary, seconds=4, scenario="failures")
     else:
-        https.activate(binary, seconds=1 if failure == "lifetime" else 4)
+        https.activate(binary, seconds=1 if failure == "lifetime" else 4, scenario="failures")
     assert len(processes) == 2 and all(p.poll() is not None for p in processes)
     assert not https.CONTROL.exists()
     assert "private request URL" not in capsys.readouterr().out
@@ -367,11 +368,14 @@ def test_occupied_listener_aborts_before_any_tunnel_helper(monkeypatch, tmp_path
     assert not https.CONTROL.exists()
 
 
-def test_actual_backend_reserves_local_only_and_exits_on_parent_eof(tmp_path):
+@pytest.mark.parametrize("scenario", ["baseline", "failures"])
+def test_actual_backend_reserves_local_only_and_exits_on_parent_eof(tmp_path, scenario):
     with socket.socket() as reservation:
         reservation.bind(("127.0.0.1", 0))
         port = reservation.getsockname()[1]
-    code = f"from tools import synthetic_https as h; h.PORT={port}; h.backend_helper(15)"
+    code = (
+        f"from tools import synthetic_https as h; h.PORT={port}; h.backend_helper(15, {scenario!r})"
+    )
     process = https.spawn([sys.executable, "-u", "-c", code], tmp_path, output=True)
     try:
         lines = queue.Queue()
