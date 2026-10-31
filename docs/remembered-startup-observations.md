@@ -91,8 +91,122 @@ SDK execution, app/child coverage, Network binding nor the cause of prior failur
 
 ## Proposed Page-only application observation
 
+### First attempt — run11, 2026-10-31
+
+At fixed `c9705af` / main `e1a6bcd`, initial ordinary UI was categorized unsettled
+and the intended official-MS​​X current origin was verified. The first diagnostic
+helper then failed while preparing capability acquisition, before the explicit
+Page command could be invoked. Actual getter invocation is unconfirmed. Retained stage capability_acquisition / class other / code
+unknown / reason unknown; explicit Page command invocations0. No frame tree,
+second snapshot, alternative command, Target/Network/enable/attachment/Fetch,
+marker read or identity substitution followed. No actual required platform
+prompt was observed. Local call stage is not a component or startup-cause diagnosis;
+implicit tool behavior remains unobserved. Public settled-wiki snapshot success
+is a separate supported fact, not refuted by this result.
+
+Initial ASGI counts were all zero; the final report before cleanup again had root
+JSON and plugin HTML each received1 / start200-send-returned1 / final-body-send-
+returned1, other categories0, aborted/incomplete0. These are observer-boundary
+sends, not browser receipt or parsing. Exploration stopped at the diagnostic
+block. Terminal UI was not observed afterward: no Data Load Error, timeout log,
+HTTP browser stage or screenshot is claimed for this run. No Retry, ForceInit,
+warm-up, credentials, restart, matrix or source variant ran.
+
+Finite projection and ASGI reports were retained before cleanup at ignored
+`.lab/reports/issue12-run11-{initial-asgi,final-asgi,projection}.json`.
+The sole owned tab closed; normal stop returned session14025 exit0/stopped.
+At17:13:43 UTC /18:13:43 Vienna all nine exact owned PIDs, listener18092,
+control and own helpers were absent. Original900-total/180-startup bounds held.
+No active resources remain. Child-frame metadata and SDK/adapter/handler stages
+remain unknown; startup remains unaccepted. No Page-method or platform cause follows.
+
+### Local helper correction after run11
+
+The original run11 artifact remains unchanged: class other, unknown code/reason,
+local stage capability_acquisition and zero explicit Page invocations. Its raw
+exception was discarded and cannot now be recovered or relabeled ReferenceError.
+
+A concrete local call-path defect was subsequently demonstrated. The helper was
+defined in one REPL call before its free `run11Tab` and `run11Origin` references
+were declared in a later call. The successful public control kept tab and command
+in the same call. On this installed REPL, a two-call pure JavaScript witness
+failed to resolve the later binding. The matching fake-tab acquisition witness
+raised ReferenceError at the recorded local phase, with getter0 and Page0.
+The old classifier omitted ReferenceError and projected precisely other/unknown.
+This invalidates attributing run11 to an actual capability getter or browser.
+It is a reproduced local helper defect, not retrospective proof of its discarded
+exception and not an application startup cause.
+
+The source comparison uses only the recorded calls, not browser internals:
+
+| Call-path item | Run11 versus successful public control |
+| --- | --- |
+| Provider and tab | Same connected Chrome extension; each created a fresh owned tab, with awaited navigation and current-origin read |
+| Capability/command API | Same awaited `tab.capabilities.get("cdp")` and documented Page send signature; no reset or stale-tab recovery was performed |
+| Tab and origin bindings | Run11 helper referenced values declared in a later REPL call; the public control used same-call values |
+| Other helper dependencies | Run11 state/classifier were defined with its helper; the projector already existed. The repair nevertheless passes every runtime dependency explicitly |
+| Page context | App UI unsettled versus verified public heading; this difference does not establish a tool readiness prerequisite or application cause |
+
+No discarded exception, previous secret history or hidden implementation was
+inspected. The local phase label alone cannot distinguish expression preparation
+from entry into the advertised capability getter.
+
+The repair passes every runtime dependency explicitly. A fake tab supplied in a
+later call reached getter1 / Page1 and a finite same-frame URL/MIME projection.
+Synthetic private fields did not enter output. Fixed local witness reports are
+ignored `.lab/reports/issue12-local-acquisition-scope-witness.json` and
+`.lab/reports/issue12-bound-snapshot-helper-witness.json`; browser actions0.
+No actual browser/protocol method was used to reproduce or repair this defect.
+
+The corrected diagnostic helper has this parameter-only call contract. `project`
+is the reviewed bounded finite frame projection; `classify` is the fixed error
+projection below. `phase` is a predeclared early/terminal/terminal_only enum.
+Create fresh state for the owned tab; never reuse another run's tab/capability.
+
+```javascript
+async function takeBoundSnapshot(tab, origin, state, project, classify, phase) {
+    const out = {phase, commandReturned: false,
+        errorStage: "capability_acquisition", errorClass: "none",
+        errorCode: "none", reason: "unknown"};
+    try {
+        if (!state.cap) state.cap = await tab.capabilities.get("cdp");
+        out.errorStage = "command_invocation";
+        state.attempts++;
+        let raw = await state.cap.send("Page.getFrameTree", {}, {timeoutMs: 5000});
+        out.commandReturned = true;
+        out.errorStage = "projection";
+        Object.assign(out, project(raw, origin));
+        raw = undefined;
+        if (!out.frameTreeObject || !out.rootFramePresent) {
+            out.reason = "unusable_shape";
+            state.failure = "unusable_shape";
+        } else {
+            out.errorStage = "none";
+            out.reason = "expected_shape";
+        }
+    } catch (thrown) {
+        Object.assign(out, classify(thrown));
+        state.failure = "snapshot_unavailable";
+    }
+    state.snapshots.push(out);
+    return out;
+}
+```
+
+The error classifier retains only `typeof thrown`, name-is-string,
+message-is-string and code-type, plus allowlisted classes/codes and fixed reason.
+ReferenceError is explicitly allowlisted alongside standard Error/TypeError/
+SyntaxError/RangeError and the prior protocol/timeout/security classes. Strings
+remain thrownType string with other/unknown, without their contents. No raw
+name/message, arbitrary keys, URL, identifier or exception text is emitted.
+Local error stage identifies an attempted helper step, not a failing component
+or protocol wire dispatch. No further browser run is authorized by this repair.
+
+### Reviewed procedure and limits
+
 This is a materially different positive observation boundary from the failed
-root-identity preflight. It requires a separate exclusive grant and has not run.
+root-identity preflight. Its first attempt stopped before the Page invocation as
+recorded above; any further attempt requires a new separate exclusive grant.
 No new reducer, fake Target ID or network join is needed. Keep the exact reviewed
 startup/client/HTML/CSP/deadlines, fixture containment and candidate-off policy.
 

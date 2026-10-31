@@ -465,6 +465,35 @@ code, renewal/cache, security or deployment changes.
 
 ## Remembered-device client preparation — issue #12
 
+**Page-only run11 — diagnostic blocked before command / device-unverified:**
+fixed `c9705af` / main `e1a6bcd` used one normal startup. Initial UI unsettled,
+current official origin verified. The helper failed while preparing acquisition before explicit
+Page.getFrameTree invocation: stage capability_acquisition / class other / code
+unknown / reason unknown, Page invocations0. No frame metadata or second snapshot,
+alternate/Target/Network/enable/attachment/Fetch/marker/identity substitution.
+No actual required prompt observed; implicit tool behavior unknown. This does
+not refute settled-public-page snapshot success or identify an application cause.
+
+Initial local ASGI allzero; final root/HTML each received1 / start200-send-returned1
+/ final-body-send-returned1; others0, aborted/incomplete0. Stopped at the diagnostic
+block, so no terminal UI/error/timeout/screenshot claim belongs to run11. Fixed
+projection and ASGI retained before cleanup; sole tab closed, session14025
+exit0/stopped, exact nine PIDs/listener18092/control/helpers absent at17:13:43 UTC
+/18:13:43 Vienna. Original bounds retained, no source or application variant.
+See [run11 evidence](remembered-startup-observations.md#first-attempt--run11-2026-10-31).
+
+**Local helper defect after run11 — reproduced / repaired locally:** a helper
+defined before tab/origin declarations in a later REPL call cannot resolve those
+forward free bindings in this installed runtime. Two-call fake acquisition raised
+ReferenceError with getter0/Page0; the old classifier mapped it to other/unknown.
+The immutable run11 artifact does not establish actual getter invocation or its
+discarded exception type. This corrects the earlier capability-failure attribution.
+Explicit parameters for tab/origin/state/projector/classifier/phase reached fake
+getter1/Page1 with finite, redacted same-frame projection. Error output now safely
+distinguishes ReferenceError and thrown-string shapes without text. Browser actions0,
+no product change or new runtime run. See the
+[reviewable helper contract and limits](remembered-startup-observations.md#local-helper-correction-after-run11).
+
 **Standalone public Page snapshot — observed / device-unverified:** a separate
 browser-only control verified public wiki heading/current origin, made one
 Page.getFrameTree call without Target/enable/Network and returned the expected
@@ -475,7 +504,7 @@ in about0.5 seconds, within60 total. Raw tree/URL/IDs discarded, fixed report
 accepted public-root snapshot metadata only; app/child/parsing/execution/Network
 support and startup cause remain unresolved. The proposed
 [Page-only application observation](remembered-startup-observations.md#proposed-page-only-application-observation)
-needs a separate grant and has not run.
+stopped before its first command in run11; further work needs a separate grant.
 
 **Rebase union on main `e1a6bcd` — automated-tested:** preserve the candidate CLI,
 resume-only option/readiness markers and all scenarios alongside remembered
