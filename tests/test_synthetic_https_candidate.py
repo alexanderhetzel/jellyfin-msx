@@ -319,6 +319,9 @@ def test_backend_option_reaches_factory_with_only_fake_socket_server_and_threads
     monkeypatch, capsys, candidate
 ):
     calls = []
+    monkeypatch.setattr(
+        https, "logging", SimpleNamespace(getLogger=lambda _: SimpleNamespace(disabled=False))
+    )
 
     class Listener:
         def __enter__(self):
