@@ -1,5 +1,50 @@
 # Verification status — 2026-10-31
 
+## Default-off authenticated-file software candidate — #32
+
+**Implemented / automated-tested with mocked transport / device-unverified:**
+explicit operator configuration can select the restricted authenticated `/File`
+candidate. Default `legacy` behavior remains unchanged. The candidate admits only
+reported original Movie/Episode single local MP4/H.264/AAC video/audio-only
+sources with subtitles Off, trusted stock/static private-origin declaration and
+one of the five exact source-assessed releases. A matching public version only
+restricts that declaration; it does not prove deployment provenance.
+Fresh Full permission, unique parent/PlaybackInfo/self-source membership and exact
+path/container/size/runtime checks bind the selected version byte target while
+parent item/source/PlaySession identity remains in resume and lifecycle reporting.
+Unsupported delivery modes deny with no old-route/primary-cut fallback.
+
+Source work is bounded to ten seconds within a fifteen-second operation including
+the lifecycle lock and old Stop; the client remains at eighteen seconds. Local
+capability/expiry/user-token generation is fenced after source awaits, within
+generation replacement and before publication. An unpublished grant is discarded
+if the final authority check fails. Sequential metadata reads are not an atomic
+permission lease; later policy changes, buffering and direct ApiKey exposure
+remain limitations. [Contract and rollout gates](authenticated-original-assessment.md).
+
+Windows/Python 3.12.14, explicit bundled Python and existing local uv:
+`uv run --no-sync pytest -q -W error`: **640 passed / 1 POSIX skip**, no warnings.
+The **54 new candidate tests** use only MockTransport and reject media GETs;
+they cover selected-cut/report/resume identity, malformed/falsy source metadata,
+ambiguous initial/negotiated membership, mutation/permission denials, unsupported
+modes, blocked source/lock/old-Stop deadlines and concurrent logout/expiry/token/
+generation changes. A controlled mutation bypassing the new authority rejection
+made the token-race test fail (200 versus required 401); restoring the guard made
+it pass. The reviewer independently reproduced the duplicate-PlaybackInfo
+counterexample before the unique-membership fix.
+Ruff check/format passed (**118 files**), as did diff check, synthetic HTTP and
+two-session contracts (browser/device flags false). Locked offline wheel build
+with exclusion canaries and the exact **26-member** source manifest passed.
+
+No live `/File` bytes, MIME/range, missing/invalid/revoked-credential response,
+native decode/seek/resume or physical TV pass is claimed. No operator settings,
+live server/container or browser were used. The original strict real `/Videos`
+revocation failure and draft #52 remain unchanged. #32 stays open/In progress;
+supported runtime range and rollout are **deferred** pending separately authorized
+evidence. Independent source/security review found no remaining blocking finding
+and reran all **54 candidate tests** with warnings as errors. It used no live
+server, browser or native player; current-head CI is recorded when complete.
+
 ## Playback permission admission and authenticated-original inquiry — #32
 
 **Implemented / automated-tested locally / device-unverified:** fresh item
@@ -17,8 +62,9 @@ Download's permission/attachment behavior, and sets exact-version/policy limits.
 A tools-only mock prototype returns IDs/container snapshots, never media URLs;
 its counterexamples cover wrong cuts, extents, malformed provenance, unsupported
 sources and revalidation denials. Sequential snapshots are not atomic permission
-leases or byte proofs. Neither tool nor new route is imported by production.
-The current media route and draft #52 strict real-server failure are unchanged;
+leases or byte proofs. At that earlier milestone neither tool nor a new route was
+imported by production; the later default-off candidate is recorded above.
+The default media route and draft #52 strict real-server failure are unchanged;
 #32 stays open with no full version-range, new server, browser or device claim.
 
 Windows/Python 3.12.14 `uv run --no-sync pytest -q -W error`: **586 passed /

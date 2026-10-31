@@ -13,11 +13,39 @@ Production startup and physical-TV HTTPS acceptance are separate from research.
 | `MSX_ALLOW_HTTP` | `true` only for isolated development; default `false` |
 | `MSX_MAX_BITRATE` | Optional operator/network budget in bits/sec; unset/empty by default. Not a TV decoder limit; validation accepts positive integers up to 1 Gbit/s |
 | `MSX_ALLOW_TRANSCODING` | Default `false`; keep disabled on Ultra.cc. Opt-in only on a host where conversion is permitted |
+| `MSX_ORIGINAL_DELIVERY` | Default `legacy`; `authenticated-file-candidate` is the restricted, device-unverified software candidate described below |
+| `MSX_ORIGINAL_SERVER_CONTRACT` | Candidate requires explicit operator declaration `stock-static-private-origin-v1`; absent by default |
+| `MSX_ORIGINAL_SERVER_VERSION` | Candidate requires declared exact `12.0.0`, `12.1.0`, `12.2.0`, `12.3.0` or `12.4.0` and matching public server version; absent by default, not a supported runtime range |
 | `MSX_DOMAIN` | Compose/Caddy DNS name; must match public origin |
 
 Secrets are entered in the browser form, not configuration. The eight-hour session
 TTL, five-minute pairing window and bounded 256-state store are currently code
 defaults. No persistent session volume exists. Run exactly one worker/replica.
+
+The authenticated-file candidate is **implemented / automated-tested with mocked
+transport / device-unverified**, and remains off. Its contract is an operator
+attestation of a stock server, static local library and private controlled HTTPS
+portal/Jellyfin origins, without plugins or path substitution that change the
+selected item's file semantics. JSON shape and a matching version cannot prove
+that deployment. Known shared preview origins are rejected for the portal; that
+denylist does not verify ownership of other origins. Unknown modes/contracts or
+releases, HTTP and enabled conversion reject startup rather than infer trust.
+No deployment has been enabled by this change. Real exact-cut bytes, MIME/ranges,
+credential denial and native decode/seek/resume remain rollout gates; see the
+[assessment and limitations](authenticated-original-assessment.md).
+
+In this mode only preferred original playback with watch progress is admitted:
+Movie/Episode, one local MP4 file with H.264 video/AAC audio, no subtitle or other
+stream types, subtitles Off, and the existing 1920x1080 admission policy. It uses
+the freshly authorized selected version's `/Items/{versionId}/File`, preserves
+the configured Jellyfin base path and exposes the same user ApiKey to the player.
+Parent identity still owns PlaybackInfo, resume and lifecycle reports. Fresh
+membership/extent checks and local authority fences run before publication.
+Source work has a ten-second budget inside a fifteen-second operation including
+session-lock/old-Stop waits; the client's eighteen-second timeout is unchanged.
+Unsupported legacy/Try original, HLS/burn-in and WebVTT/HTML5X requests deny without
+falling back. The default mode retains existing #19/#22 behavior and the strict
+documented `/Videos` revocation limitation.
 
 ## HTTPS and network
 

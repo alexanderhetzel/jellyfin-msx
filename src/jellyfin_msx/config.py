@@ -15,6 +15,9 @@ class Settings:
     max_bitrate: int | None = None
     allow_transcoding: bool = False
     enable_subtitle_resources: bool = False
+    original_delivery: str = "legacy"
+    original_server_contract: str | None = None
+    original_server_version: str | None = None
     authorization_db: str | None = None
     authorization_key: str | None = field(default=None, repr=False)
     authorization_ttl: int = 30 * 86400
@@ -50,6 +53,30 @@ class Settings:
             )
         if min(self.session_ttl, self.pairing_ttl, self.max_states) <= 0:
             raise ValueError("State limits must be positive")
+        if self.original_delivery not in {"legacy", "authenticated-file-candidate"}:
+            raise ValueError("Unknown original delivery mode")
+        if self.original_delivery == "authenticated-file-candidate":
+            if (
+                self.original_server_contract != "stock-static-private-origin-v1"
+                or self.original_server_version
+                not in {"12.0.0", "12.1.0", "12.2.0", "12.3.0", "12.4.0"}
+                or self.allow_transcoding
+                or not all(
+                    value.startswith("https://") for value in (self.public_url, self.jellyfin_url)
+                )
+            ):
+                raise ValueError(
+                    "Candidate requires declared stock/static private-origin contract, "
+                    "supported exact release, HTTPS and no conversion"
+                )
+            portal_host = urlsplit(self.public_url).hostname.rstrip(".")
+            if portal_host in {
+                "github.com",
+                "raw.githubusercontent.com",
+                "raw.githack.com",
+                "rawcdn.githack.com",
+            } or portal_host.endswith((".githack.com", ".githubusercontent.com")):
+                raise ValueError("Candidate requires an operator-controlled private portal origin")
         if self.enable_subtitle_resources and not all(
             value.startswith("https://") for value in (self.public_url, self.jellyfin_url)
         ):
@@ -76,6 +103,9 @@ class Settings:
             allow_transcoding=os.getenv("MSX_ALLOW_TRANSCODING", "false").lower() == "true",
             enable_subtitle_resources=os.getenv("MSX_ENABLE_SUBTITLE_RESOURCES", "false").lower()
             == "true",
+            original_delivery=os.getenv("MSX_ORIGINAL_DELIVERY", "legacy"),
+            original_server_contract=os.getenv("MSX_ORIGINAL_SERVER_CONTRACT") or None,
+            original_server_version=os.getenv("MSX_ORIGINAL_SERVER_VERSION") or None,
             authorization_db=os.getenv("MSX_AUTHORIZATION_DB") or None,
             authorization_key=os.getenv("MSX_AUTHORIZATION_KEY") or None,
             authorization_ttl=int(os.getenv("MSX_AUTHORIZATION_TTL", str(30 * 86400))),

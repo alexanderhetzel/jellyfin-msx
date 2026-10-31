@@ -15,6 +15,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Response
 from starlette.middleware.cors import CORSMiddleware
 
+from . import original_file
 from .config import Settings
 from .device_profile import MODEL, PROFILE_BASIS, evidence_warnings
 from .errors import PortalError
@@ -233,8 +234,31 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
 
     @app.post("/api/playback/start")
     async def playback_start(request: Request):
+        if not original_file.enabled(settings):
+            return await playback_start_result(request)
+        try:
+            async with asyncio.timeout(original_file.OPERATION_SECONDS):
+                return await playback_start_result(request)
+        except TimeoutError:
+            raise PortalError(504, "Authenticated original operation timed out.") from None
+
+    async def playback_start_result(request):
         secret = bearer(request)
         device = state.get(secret)
+        authority = (device.user_id, device.token, device.authorization_generation)
+
+        def authorize_candidate():
+            current = state.get(secret)
+            if (
+                current is not device
+                or (current.user_id, current.token, current.authorization_generation) != authority
+            ):
+                raise PortalError(401, "Playback authorization changed. Reopen the item details.")
+
+        async def candidate_send(kind, grant, payload):
+            authorize_candidate()
+            await send_report(kind, grant, payload)
+
         state.limit("lifecycle-start:" + device.device_id, 12)
         limit(request, "lifecycle-start", 48)
         body = await playback_body(request)
@@ -249,6 +273,8 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
         ):
             raise PortalError(400, "Playback report rejected.")
         item_id, source_id = identifier(body["item_id"]), identifier(body["media_source_id"])
+        if original_file.enabled(settings):
+            authorize_candidate()
         context = {}
         try:
             stream_url, decision = await resolve(
@@ -265,6 +291,8 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
             record_playback_failure(device, error)
             raise
         state.get(secret)  # Expiry/revocation during upstream negotiation fails closed.
+        if original_file.enabled(settings):
+            authorize_candidate()
         ticks, play_session = context["duration_ticks"], context["play_session_id"]
         if (
             type(ticks) not in (int, float)
@@ -282,9 +310,17 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
             ticks / 10_000_000,
             device.expires,
             "DirectPlay" if context["mode"] == "DirectPlay" else "Transcode",
-            send=send_report,
+            send=candidate_send if original_file.enabled(settings) else send_report,
+            authorize=authorize_candidate if original_file.enabled(settings) else None,
         )
-        state.get(secret)  # The session lock/old Stop may have awaited during logout.
+        try:
+            state.get(secret)  # The session lock/old Stop may have awaited during logout.
+            if original_file.enabled(settings):
+                authorize_candidate()
+        except BaseException:
+            if original_file.enabled(settings):
+                lifecycle.discard_unpublished(grant)
+            raise
         state.record(device, decision)
         return {
             "grant": grant.secret,
@@ -314,7 +350,14 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
         alternatives = []
         seen = {source_id}
         for source in sources:
-            if compatible(source, settings.max_bitrate) and source.get("Id") not in seen:
+            if (
+                compatible(source, settings.max_bitrate)
+                and source.get("Id") not in seen
+                and (
+                    not original_file.enabled(settings)
+                    or original_file.admitted(source, settings.max_bitrate)
+                )
+            ):
                 alternative = identifier(source.get("Id"))
                 seen.add(alternative)
                 alternatives.append(alternative)
@@ -762,7 +805,8 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
                         + f"#{secret}/{item_id}/{identifier(selected.get('Id'))}/0/-1/{choice}",
                     )
                 )
-            entries.append(play_button("Try original (TV unverified)"))
+            if not original_file.enabled(settings):
+                entries.append(play_button("Try original (TV unverified)"))
             entries.append(
                 button(
                     MODEL + ": documentation-based candidate",
@@ -802,7 +846,7 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
             )
         if settings.allow_transcoding and selected:
             entries.append(play_button("Force HLS transcode", force=True))
-        if settings.enable_subtitle_resources and selected:
+        if settings.enable_subtitle_resources and selected and not original_file.enabled(settings):
             entries.append(
                 button(
                     "Subtitle playback (WebVTT)",
@@ -841,6 +885,8 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
     @app.get("/msx/device/{secret}/subtitle-playback.json")
     async def subtitle_player(secret: str, item_id: ItemId, media_source_id: ItemId):
         state.get(secret)
+        if original_file.enabled(settings):
+            raise original_file.unsupported()
         identifier(item_id)
         identifier(media_source_id)
         original = "video:resolve:" + device_url(
@@ -868,6 +914,8 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
 
     @app.get("/subtitle-bridge.html")
     async def subtitle_bridge():
+        if original_file.enabled(settings):
+            raise original_file.unsupported()
         return HTMLResponse(SUBTITLE_BRIDGE)
 
     @app.get("/lifecycle.html")
@@ -891,6 +939,8 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
 
     @app.get("/subtitle-bridge.js")
     async def subtitle_bridge_script():
+        if original_file.enabled(settings):
+            raise original_file.unsupported()
         return Response(
             Path(__file__)
             .with_name("templates")
@@ -944,10 +994,16 @@ def create_app(settings: Settings | None = None, transport=None, state: State | 
 
     @app.get("/api/device/{secret}/subtitles/{item_id}/{source_id}")
     async def subtitle_catalogue(secret: str, item_id: str, source_id: str):
+        if original_file.enabled(settings):
+            state.get(secret)
+            raise original_file.unsupported()
         return await subtitles.request(secret, item_id, source_id)
 
     @app.get("/api/device/{secret}/subtitles/{item_id}/{source_id}/{index}.vtt")
     async def subtitle_resource(secret: str, item_id: str, source_id: str, index: int):
+        if original_file.enabled(settings):
+            state.get(secret)
+            raise original_file.unsupported()
         raw = await subtitles.request(secret, item_id, source_id, index)
         return Response(raw, media_type="text/vtt")
 
