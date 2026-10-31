@@ -202,11 +202,78 @@ name/message, arbitrary keys, URL, identifier or exception text is emitted.
 Local error stage identifies an attempted helper step, not a failing component
 or protocol wire dispatch. No further browser run is authorized by this repair.
 
+### Corrected-helper attempt — run12, 2026-10-31
+
+At fixed `8e1ba5e` / main `e1a6bcd`, one normal startup used the parameter-bound
+helper with fresh tab/origin/state and explicit projector/classifier/phase.
+The early observation returned the expected frame-tree/root shape and official
+root origin. Own-plugin URL/HTML MIME, about:blank, browser-error and unknown-frame
+flags were false; other-frame true, budget exceeded false, child coverage unknown.
+These describe the bounded early snapshot, not absence of the intended frame.
+The successful call validates that the repaired local path can reach the API in
+the application-root context; it establishes no child or SDK behavior.
+
+The ordinary UI then showed Load Error / Data Load Error. The second predeclared
+Page invocation threw: commandReturned false, local stage command_invocation,
+class Error, thrownType object, name/message-is-string true, codeType undefined,
+code unknown and reason unknown. No terminal frame metadata was obtained. The
+two invocations are local attempts, not proof of protocol wire dispatch; no
+unrecorded raw exception or component cause is inferred. No third call, alternate
+command, Target/Network/enable/attachment/Fetch/body/marker probe or recovery ran.
+
+Initial ASGI counts were all zero. Before stopping, root JSON and plugin HTML
+each had received1 / start200-send-returned1 / final-body-send-returned1. Other
+categories, aborted and incomplete were zero. No own JavaScript or subsequent
+authorization/home request was observed at this server boundary. ASGI sends do
+not establish browser receipt/parsing, and the failed terminal observation cannot
+locate the plugin's current frame. No runtime timeout log or browser HTTP stage
+was collected; previous runs' observations are not imported.
+
+Fixed reports are ignored
+`.lab/reports/issue12-run12-{initial-asgi,final-asgi,projection}.json`.
+The sanitized 2560x1249 error image at
+`.lab/reports/issue12-run12-bound-frame-data-load-error.png` was inspected: public
+error/focus only, no URL/code/QR/secret; raw pixels stayed in RAM. Reports were
+retained before closing the sole owned tab and stopping normally. Session83283
+exited0/stopped; at17:40:02 UTC /18:40:02 Vienna all nine exact owned PIDs,
+listener18092, control and own helpers were absent. Original900-total/180-startup
+bounds held; candidate remained off. No credentials, Retry, ForceInit, warm-up,
+restart, matrix, source variant or new budget. Startup remains unaccepted and
+the cause unresolved. No further run is implied.
+
+### Remaining diagnosis boundary
+
+Independent source/evidence review found no new failing own-code, served-response
+or public startup-contract difference that justifies another variant. Pair,
+renewal and home response shapes align with the adapter; accepted lifecycle/
+subtitle handlers already support asynchronous callbacks. Handler ordering,
+exact-save, deadline/epoch and valid startup grammar have local witnesses.
+The literal SDK/deferred-adapter comparison supplies no order/CSP/body fix.
+
+A second local fake call in a later REPL cell also exercised the repaired
+helper's cached-capability branch: getter1 / Page2, successful finite same-frame
+projection, browser actions0. Ignored report
+`.lab/reports/issue12-cached-fake-snapshot-witness.json`. This tests local helper
+logic only, not a real tool capability's lifetime or the terminal Error's cause.
+
+The earliest unresolved boundary remains attributable own-plugin HTML browser
+receipt/current-document state, followed by parsing, script fetching/execution,
+SDK registration and accepted-init callback delivery. Server final-body send
+returns do not cross it. Run12's early missing match with unknown child coverage
+and unavailable terminal tree do not establish absence. Moving that boundary
+would require positive, attributable own-document/execution or accepted-init
+evidence under a separately granted documented capability, or a reproducible
+failing local contract test. No new discriminant is presently justified by the
+retained source/artifacts; no generic observation expansion, additional granular
+rerun, CommonJS/CSP/body/order/SDK timing variant or external/platform-block label
+follows. Issue #12 remains open and PR #64 draft; automatic startup is unaccepted.
+
 ### Reviewed procedure and limits
 
 This is a materially different positive observation boundary from the failed
 root-identity preflight. Its first attempt stopped before the Page invocation as
-recorded above; any further attempt requires a new separate exclusive grant.
+recorded above; the corrected attempt returned an early snapshot but failed at
+its terminal command. Any further attempt requires a new separate exclusive grant.
 No new reducer, fake Target ID or network join is needed. Keep the exact reviewed
 startup/client/HTML/CSP/deadlines, fixture containment and candidate-off policy.
 

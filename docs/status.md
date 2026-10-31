@@ -465,6 +465,31 @@ code, renewal/cache, security or deployment changes.
 
 ## Remembered-device client preparation — issue #12
 
+**Corrected-helper run12 — actual startup failed / device-unverified:** fixed
+`8e1ba5e` / main `e1a6bcd` used explicit tab/origin/state/projector/classifier/phase.
+Early Page.getFrameTree returned valid root metadata/expected origin; no matching
+own-plugin URL/HTML flag in that early bounded snapshot, child coverage unknown.
+This validates the local repair's API path, not plugin absence or execution.
+UI then showed Data Load Error. The second planned Page invocation threw class
+Error at local command_invocation, object/name+message string/code undefined,
+code/reason unknown. Terminal frame metadata was not obtained; no later retry.
+
+Initial ASGI allzero; final root/HTML each received1 / start200-send-returned1 /
+final-body-send-returned1, others0, aborted/incomplete0. No own-JS/auth/home request
+observed at this boundary; no browser-receipt, timeout-log or cause inference.
+Finite reports and inspected sanitized2560x1249 error image retained before stop,
+raw pixels RAM-only. Sole tab closed, session83283 exit0/stopped; cleanup17:40:02 UTC
+/18:40:02 Vienna all nine owned PIDs/listener18092/control/helpers absent. Original
+bounds/candidate-off policy retained, no source/product/auth/restart variant.
+See [run12 evidence](remembered-startup-observations.md#corrected-helper-attempt--run12-2026-10-31).
+Both independent evidence/source reviews found no privacy/claim blocker and no
+new own-code/response-contract defect justifying a further variant. Local fake
+second-call validation passed getter1/Page2 without browser actions; real tool
+handle lifetime/cause remains unknown. Earliest unresolved boundary is attributable
+own-document browser state/execution and accepted init, not server send completion.
+No further useful source discriminant or runtime run is authorized by this evidence;
+#12 stays OPEN / PR64 DRAFT, no platform-block or completion claim.
+
 **Page-only run11 — diagnostic blocked before command / device-unverified:**
 fixed `c9705af` / main `e1a6bcd` used one normal startup. Initial UI unsettled,
 current official origin verified. The helper failed while preparing acquisition before explicit
