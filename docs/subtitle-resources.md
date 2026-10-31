@@ -2,6 +2,25 @@
 
 ## Private subtitle menu implementation — 2026-10-31
 
+### Simple-cue admission candidate — awaiting affected Chrome check
+
+Issue #22 defines the narrowed candidate before implementation: at most two
+explicit text lines per cue, each at most 32 display-budget units. Unicode East
+Asian W/F characters count two units, others one. Combining marks, Unicode C
+categories and line/paragraph separators are outside this initial simple-text
+subset. These are conservative client admission rules, not certified glyph
+metrics, language coverage or hardware decoder limits. A successful boundary
+check cannot promise every font/platform fits.
+
+The whole track fails closed when any cue exceeds this subset; no truncation,
+reflow, dropped cue or timing change. Preparation explains unsupported layout
+and retains Play without subtitles/Back. Admitted text/timestamps are unchanged.
+The actual failing long/four-line fixture is retained as a distinct negative;
+another negative is a 33-W single line. Healthy duplicate-DE18 uses two boundary
+lines: 32 W characters and 16 wide Han characters. Those exact boundaries and
+negative-original recovery require actual official Chrome observation before
+acceptance. Late unused native subtitle GET after expiry remains a separate gate.
+
 **Implemented / automated-tested / device-unverified; connected-Chrome acceptance pending.**
 With the existing opt-in enabled, eligible details offer Subtitle playback
 (WebVTT). A source-pinned preparation page validates up to eight admitted tracks

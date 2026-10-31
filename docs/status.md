@@ -14,6 +14,16 @@ The [source-pinned evidence](private-subtitle-results.md) separates these result
 from earlier failures and retains their limits. No guessed font/decoder limits
 or silent text truncation are used to declare this accepted.
 
+The following simple-cue candidate was defined in issue22 before behavior:
+whole-track maximum2explicitlines/32display-budgetunits per line (East Asian W/F
+counts2); combining/Unicode C/line-separator forms unsupported. Fixed layout
+explanation/original recovery replaces clipping; no text/time rewriting.
+Failed four-line text remains a separate synthetic negative, with W33long-line
+negative and healthy W32/Han16boundary. Actual boundary/negative/late-fetch checks
+remain pending. Fresh full Windows `uv run pytest -W error`:428passed/1POSIXskip;
+Node17, Ruff95files, diff and offlinewheel/exact22memberallowlist pass. Independent
+review ran128focusedPython/Node17 and approved affected Chrome tests only.
+
 **Implemented / automated-tested / device-unverified; unaccepted draft:** opt-in
 source-pinned preparation UI and first-party transient resolver bridge for official
 HTML5X, avoiding an upstream-token-bearing vendor URL query. Normal default stays

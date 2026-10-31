@@ -1,5 +1,13 @@
 # Private subtitle UI: HTTPS delivery passes; cue layout incomplete — issue #22
 
+The subsequent simple-cue admission candidate is defined in owning issue #22
+and [the resource contract](subtitle-resources.md): two short lines with a
+conservative display-unit budget; reject whole unsupported tracks rather than
+discarding or rewriting text/times. It preserves the failed fixture as an
+explicit negative. Actual boundary/wide-glyph rendering, rejection/original
+recovery and late unused native-fetch expiry remain pending; no acceptance is
+inferred from the narrower parser or short-cue images below.
+
 ## Latest actual result at `3cee411` — 2026-10-31
 
 **Implemented / automated-tested / partial browser-tested / device-unverified;

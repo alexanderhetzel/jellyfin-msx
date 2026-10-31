@@ -2,6 +2,7 @@
 
 import asyncio
 import re
+import unicodedata
 from collections import Counter
 
 import httpx
@@ -13,11 +14,18 @@ from .playback import compatible
 MAX_BYTES = 1024 * 1024
 DEADLINE = 8
 MAX_ACTIVE = 4
+# Conservative client admission policy, not a font or hardware decoder limit.
+MAX_CUE_LINES = 2
+MAX_LINE_UNITS = 32
+UNSUPPORTED_LAYOUT = (
+    "Subtitle layout is unsupported. Use plain WebVTT with at most two short lines "
+    "per cue; long or complex text layouts are unavailable. Play without subtitles."
+)
 # Generated settings only: never accept arbitrary upstream layout or STYLE blocks.
 CUE_LAYOUT = "line:70%,end position:50%,center size:90% align:center"
 OFFICIAL_ORIGINS = {"https://msx.benzac.de", "https://www.msx.benzac.de"}
 UNSUPPORTED = (
-    "Only local external plain WebVTT subtitles are supported by this resource. "
+    "Only local external plain WebVTT with short one/two-line cues is supported. "
     "SRT/ASS, embedded and image subtitles are unavailable; no conversion is requested."
 )
 TIMING = re.compile(
@@ -68,6 +76,17 @@ def plain_vtt(raw, *, position=False):
             or len(block) > 4096
         ):
             raise PortalError(502, "Unsupported WebVTT cue or layout. Select Off.")
+        if len(lines) - 1 > MAX_CUE_LINES or any(
+            any(
+                unicodedata.category(c).startswith(("M", "C"))
+                or unicodedata.category(c) in {"Zl", "Zp"}
+                for c in line
+            )
+            or sum(2 if unicodedata.east_asian_width(c) in {"W", "F"} else 1 for c in line)
+            > MAX_LINE_UNITS
+            for line in lines[1:]
+        ):
+            raise PortalError(502, UNSUPPORTED_LAYOUT)
         start, end = (milliseconds(timing[g]) for g in ("start", "end"))
         if start < previous or end <= start or end > 86400000:
             raise PortalError(502, "Invalid WebVTT timing. Select Off.")

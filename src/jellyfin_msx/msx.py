@@ -86,6 +86,8 @@ def subtitle_playback(available, original):
                 "Selection keeps the playback position. If a track stops loading, "
                 "select Off or Stop and reopen details. Only external plain WebVTT is supported; "
                 "SRT/ASS, embedded and image subtitles need a compatible stored sidecar. "
+                "Cues must use at most two short plain-text lines; long or complex layouts "
+                "are unavailable rather than truncated. "
                 "No conversion or burn-in is requested. Up to eight tracks are offered.",
             ),
             button("Back to details", "back"),

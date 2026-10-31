@@ -5,7 +5,7 @@ from fastapi.testclient import TestClient
 from tools.synthetic_check import action, pair
 from tools.synthetic_https import build_public_synthetic_lab
 from tools.synthetic_lab import MOVIE, SOURCE
-from tools.synthetic_subtitles import MALFORMED, MISSING, cues
+from tools.synthetic_subtitles import BOUNDARY_TEXT, LAYOUT, LONG, MALFORMED, MISSING, cues
 
 
 def test_subtitle_scenario_normal_private_routes_and_recovery():
@@ -29,15 +29,16 @@ def test_subtitle_scenario_normal_private_routes_and_recovery():
         assert app.state.portal.settings.session_ttl == 240
         response = client.get(resource, headers={"Origin": "https://msx.benzac.de"})
         assert response.status_code == 200 and "Grüße" in response.text
-        assert len(cues(18).decode().split("\n\n")[1].splitlines()[1:]) == 4
-        assert "Wrapped subtitle text" in cues(18).decode()
+        assert BOUNDARY_TEXT in cues(18).decode()
         assert not any(token in response.text + json.dumps(page) for token in fixture.tokens)
-        for item in (MISSING, MALFORMED):
+        for item in (MISSING, MALFORMED, LAYOUT, LONG):
             bad = client.get(
                 private + "/subtitle-playback.json",
                 params={"item_id": item, "media_source_id": SOURCE},
             ).json()
             assert bad["headline"] == "Subtitles unavailable"
+            if item in (LAYOUT, LONG):
+                assert "Subtitle layout is unsupported" in json.dumps(bad)
             assert action(bad, "Play without subtitles").startswith("video:resolve:")
             resolved = client.get(
                 action(bad, "Play without subtitles").removeprefix("video:resolve:")

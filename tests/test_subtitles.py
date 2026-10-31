@@ -308,12 +308,46 @@ def test_parser_cue_count_and_size_bounds():
 
     raw = (
         "WEBVTT\n\n"
-        + "\n\n".join(f"{timestamp(i)} --> {timestamp(i + 1)}\n" + "x" * 50 for i in range(9000))
+        + "\n\n".join(f"{timestamp(i)} --> {timestamp(i + 1)}\n" + "x" * 32 for i in range(9000))
         + "\n"
     ).encode()
     assert len(raw) < MAX_BYTES and len(plain_vtt(raw)) <= MAX_BYTES
     with pytest.raises(PortalError, match="size limit"):
         plain_vtt(raw, position=True)
+
+
+def test_simple_cue_boundary_preserves_text_and_timestamps():
+    raw = (
+        "WEBVTT\n\n00:00:00.000 --> 00:00:08.000\n"
+        + "W" * 32
+        + "\n"
+        + "漢" * 16
+        + "\n\n00:00:08.000 --> 00:00:16.000\nGrüße, ÄÖÜ äöü ß\nSecond line\n"
+    ).encode()
+    assert plain_vtt(raw) == raw
+    assert plain_vtt(raw, position=True).replace((" " + CUE_LAYOUT).encode(), b"") == raw
+
+
+@pytest.mark.parametrize(
+    "cue",
+    ["W" * 33, "漢" * 17, "First\nSecond\nThird", "e\u0301", "a\u200db", "a\u2028b", "a\u0085b"],
+)
+def test_unsupported_layout_rejects_the_whole_track_and_explains_recovery(subtitle_portal, cue):
+    p = subtitle_portal
+    raw = VTT + ("\n00:00:10.000 --> 00:00:12.000\n" + cue + "\n").encode()
+    with pytest.raises(PortalError, match="Subtitle layout is unsupported"):
+        plain_vtt(raw)
+    p.subtitle_response = lambda: httpx.Response(
+        200, content=raw, headers={"Content-Type": "text/vtt"}
+    )
+    response = p.subtitle_client.get(p.subtitle_path + "/7.vtt")
+    assert response.status_code == 502 and cue not in response.text
+    page = p.subtitle_client.get(
+        p.path + "/subtitle-playback.json", params={"item_id": MOVIE, "media_source_id": SOURCE}
+    ).json()
+    assert page["headline"] == "Subtitles unavailable"
+    assert "at most two short lines" in json.dumps(page)
+    assert any(i["title"] == "Play without subtitles" for i in page["items"])
 
 
 @pytest.mark.parametrize(
